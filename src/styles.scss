@@ -1,1 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+@import './variables.scss';
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: $backgroundColor; color: #dae5e4; }
+table {
+    td { background-color: $backgroundColor !important; color: $white !important; }
+    th { background-color: $backgroundColor !important; color: $cyan !important; }
+}
+
+.breadcrumbs {
+    margin-bottom: 20px;
+}
+
+.upload-file {
+    margin-top: 20px;
+}
+
+.filters {
+    display: flex;
+
+    div {
+        margin-right: $smallMargin;
+    }
+}

@@ -1,0 +1,48 @@
+<div>
+    <div>
+        <button mat-fab extended routerLink="/">
+            <mat-icon>home</mat-icon>
+            Baş səhifə
+        </button>
+    </div>
+
+    <div *ngIf="isLoading">
+        Loading districts...
+    </div>
+      
+    <div *ngIf="hasError">
+        {{ errorMessage }}
+    </div>
+      
+    <div *ngIf="!isLoading && !hasError">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Rayon kodu
+                    </th>
+                    <th>
+                        Rayon adı
+                    </th>
+                </tr>    
+            </thead>
+            <tbody>
+                <tr *ngFor="let district of districts">
+                    <td>
+                        {{ district.code }}
+                    </td>
+                    <td>
+                        {{ district.name }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <button mat-fab extended (click)="openAddDistrictDialog()">
+            <mat-icon>add</mat-icon>
+            Yeni rayon əlavə et
+        </button>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+* {
+    padding: 20px;
+
+    .title {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    * {
+        padding: 0;
+    }
+}

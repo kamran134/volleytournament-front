@@ -1,0 +1,104 @@
+<div>
+    <div class="breadcrumbs">
+        <button mat-fab extended routerLink="/">
+            <mat-icon>home</mat-icon>
+            Baş səhifə
+        </button>
+    </div>
+
+    <div *ngIf="isLoading">
+        Müəllimlər yüklənir...
+    </div>
+      
+    <div *ngIf="hasError">
+        {{ errorMessage }}
+    </div>
+
+    <div class="filters" *ngIf="districts.length > 0">
+        <div>
+            <mat-form-field>
+                <mat-label>Rayonlar</mat-label>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
+                    <mat-option *ngFor="let district of districts" [value]="district._id">
+                        {{ district.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>Məktəblər</mat-label>
+                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
+                    <mat-option *ngFor="let school of schools" [value]="school._id">
+                        {{ school.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+      
+    <div *ngIf="!isLoading && !hasError">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Məktəb kodu
+                    </th>
+                    <th>
+                        Müəllimənin kodu
+                    </th>
+                    <th>
+                        Müəllimənin soyadı, adı və ata adı
+                    </th>
+                    <th>
+                        Rayon
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let teacher of teachers">
+                    <td>
+                        {{ teacher.school.code }}
+                    </td>
+                    <td>
+                        {{ teacher.code }}
+                    </td>
+                    <td>
+                        {{ teacher.fullname }}
+                    </td>
+                    <td>
+                        {{ teacher.school.district.name }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="!isLoading && !hasError && teachers.length > 0">
+        <mat-paginator
+            [length]="totalCount"
+            [pageIndex]="pageIndex"
+            [showFirstLastButtons]="true"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 20, 50, 100]"
+            (page)="onPageChange($event)"
+        />
+    </div>
+
+    <div class="upload-file">
+        <form (submit)="onSubmit($event)" enctype="multipart/form-data">
+            <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />
+            <button mat-fab extended (click)="fileInput.click()">
+                <mat-icon fontIcon="attach_file"></mat-icon>
+                Faylı seç
+            </button>
+            <div style="display: inline-block; width: 500px; padding: 0 20px;">
+                <label *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">{{ fileInput.files[0].name}}</label>
+            </div>
+            <button mat-fab extended type="submit">
+                <mat-icon>upload</mat-icon>
+                Yüklə
+            </button>
+        </form>
+    </div>
+</div>
