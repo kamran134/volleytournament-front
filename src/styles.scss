@@ -4,10 +4,48 @@
 @import 'bootstrap/scss/bootstrap';
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: $backgroundColor; color: #dae5e4; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: $backgroundColor;
+
+    &.dark-mode {
+        background-color: $backgroundColor;
+        color: $white;
+    }
+}
+
 table {
-    td { background-color: $backgroundColor !important; color: $white !important; }
-    th { background-color: $backgroundColor !important; color: $cyan !important; }
+    thead {
+        tr {
+            border-color: $backgroundColor;
+        }
+    }
+    tbody {
+        tr {
+            border-color: $backgroundColor;
+        }
+    }
+
+    &.dark-mode {
+        thead {
+            tr {
+                border-color: cyan;
+            }
+        }
+        tbody {
+            tr {
+                border-color: inherit;
+            }
+        }
+        td {
+            background-color: $backgroundColor !important;
+            color: $white !important;
+        }
+        th {
+                background-color: $backgroundColor !important; color: $cyan !important;
+        }
+    }
 }
 
 .breadcrumbs {
@@ -24,4 +62,8 @@ table {
     div {
         margin-right: $smallMargin;
     }
+}
+
+mat-form-field {
+    width: 100%;
 }

@@ -14,7 +14,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Ləğv et</button>
+    <button mat-button mat-dialog-close (click)="onCancel()">Ləğv et</button>
     <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!data.name || !data.code">
         Yadda saxla
     </button>

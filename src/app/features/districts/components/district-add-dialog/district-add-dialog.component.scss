@@ -1,21 +1,5 @@
 @import '../../../../../variables.scss';
 
-mat-form-field {
-    width: 100%;
-    input {
-        width: 100%;
-        background-color: $backgroundColor;
-        color: $white;
-        &::placeholder {
-            color: $white;
-        }
-    }
-}
-
-mat-label {
-    color: $white;
-}
-
 mat-dialog-content {
     padding: 16px 24px;
     background-color: $backgroundColor;
@@ -28,11 +12,6 @@ h2[mat-dialog-title] {
     font-weight: bold;
 }
 
-mat-dialog-actions {
-    margin-top: 16px;
-    display: flex;
-    justify-content: flex-end;
-}
 
 button {
     margin-left: 8px;

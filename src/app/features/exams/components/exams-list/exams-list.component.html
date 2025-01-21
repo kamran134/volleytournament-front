@@ -1,0 +1,77 @@
+<div>
+    <div class="breadcrumbs">
+        <button mat-fab extended routerLink="/">
+            <mat-icon>home</mat-icon>
+            Baş səhifə
+        </button>
+    </div>
+
+    <div *ngIf="isLoading">
+        İmtahanlar yüklənir...
+    </div>
+      
+    <div *ngIf="hasError">
+        {{ errorMessage }}
+    </div>
+    
+    <!-- <div class="filters" *ngIf="districts.length > 0">
+        <div>
+            <mat-form-field>
+                <mat-label>İ</mat-label>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onSelectChanged()" multiple>
+                    <mat-option *ngFor="let district of districts" [value]="district._id">
+                        {{ district.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div> -->
+
+    <div *ngIf="!isLoading && !hasError">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        İmtahan kodu
+                    </th>
+                    <th>
+                        İmtahan adı
+                    </th>
+                    <th>
+                        İmtahan tarixi
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let exam of exams">
+                    <td>
+                        {{ exam.code }}
+                    </td>
+                    <td>
+                        {{ exam.name }}
+                    </td>
+                    <td>
+                        {{ exam.date | momentDateFormat: 'DD.MM.YYYY' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="!isLoading && !hasError && exams && exams.length > 0" >
+        <mat-paginator
+            [length]="totalCount"
+            [pageIndex]="pageIndex"
+            [showFirstLastButtons]="true"
+            [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 20, 50]"
+            (page)="onPageChange($event)" />
+    </div>
+
+    <div>
+        <button mat-flat-button extended (click)="openAddExamDialog()">
+            <mat-icon>add</mat-icon>
+            İmtahan əlavə et
+        </button>
+    </div>
+</div>
