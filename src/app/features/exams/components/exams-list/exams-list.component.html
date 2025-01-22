@@ -13,19 +13,6 @@
     <div *ngIf="hasError">
         {{ errorMessage }}
     </div>
-    
-    <!-- <div class="filters" *ngIf="districts.length > 0">
-        <div>
-            <mat-form-field>
-                <mat-label>İ</mat-label>
-                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onSelectChanged()" multiple>
-                    <mat-option *ngFor="let district of districts" [value]="district._id">
-                        {{ district.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div> -->
 
     <div *ngIf="!isLoading && !hasError">
         <table class="table">
@@ -51,7 +38,7 @@
                         {{ exam.name }}
                     </td>
                     <td>
-                        {{ exam.date | momentDateFormat: 'DD.MM.YYYY' }}
+                        {{ exam.date | date: 'dd.MM.YYYY' }}
                     </td>
                 </tr>
             </tbody>
