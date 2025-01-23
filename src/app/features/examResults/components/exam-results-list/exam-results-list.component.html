@@ -1,1 +1,8 @@
-<p>exam-results-list works!</p>
+<mat-grid-list cols="4" rowHeight="100px">
+    <mat-grid-tile [colspan]="4" [rowspan]="2">
+        {{'İmtahan nəticələri üzrə statistika'}}    
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <button mat-raised-button>Fayl əlavə et</button>
+    </mat-grid-tile>
+</mat-grid-list>
