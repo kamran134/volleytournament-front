@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>İmtahan detalları</h2>
+<mat-dialog-content>
+    <p><strong>Kod:</strong> {{ data.exam.code }}</p>
+    <p><strong>Ad:</strong> {{ data.exam.name }}</p>
+    <p><strong>Tarix:</strong> {{ data.exam.date | momentDateFormat: 'DD.MM.YYYY' }}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="addResults()">Nəticələri əlavə et</button>
+    <button mat-button (click)="onClose()">Bağla</button>
+</mat-dialog-actions>

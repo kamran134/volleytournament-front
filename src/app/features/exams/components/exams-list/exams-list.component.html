@@ -15,33 +15,36 @@
     </div>
 
     <div *ngIf="!isLoading && !hasError">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        İmtahan kodu
-                    </th>
-                    <th>
-                        İmtahan adı
-                    </th>
-                    <th>
-                        İmtahan tarixi
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let exam of exams">
-                    <td>
-                        {{ exam.code }}
-                    </td>
-                    <td>
-                        {{ exam.name }}
-                    </td>
-                    <td>
-                        {{ exam.date | date: 'dd.MM.YYYY' }}
-                    </td>
-                </tr>
-            </tbody>
+        <table mat-table [dataSource]="exams" class="mat-elevation-z8">
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>
+                    İmtahan kodu
+                </th>
+                <td mat-cell *matCellDef="let exam">
+                    {{ exam.code }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>
+                    İmtahan adı
+                </th>
+                <td mat-cell *matCellDef="let exam">
+                    {{ exam.name }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>
+                    İmtahan tarixi
+                </th>
+                <td mat-cell *matCellDef="let exam">
+                    {{ exam.date | date: 'dd.MM.YYYY' }}
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row" (click)="openExamDetails(row)"></tr>
         </table>
     </div>
 

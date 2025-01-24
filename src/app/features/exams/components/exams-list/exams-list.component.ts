@@ -17,7 +17,9 @@ import { Exam, ExamData } from '../../../../models/exam.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ExamAddDialogComponent } from '../exam-add-dialog/exam-add-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
-import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe';
+import { MatTableModule } from '@angular/material/table';
+import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
+// import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe';
 
 @Component({
     selector: 'app-exams-list',
@@ -33,13 +35,16 @@ import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe'
         MatSelectModule,
         FormsModule,
         ReactiveFormsModule,
-        MomentDateFormatPipe
+        MatTableModule,
+        // MomentDateFormatPipe
     ],
     templateUrl: './exams-list.component.html',
     styleUrl: './exams-list.component.scss'
 })
 export class ExamsListComponent implements OnInit {
     constructor(private examService: ExamService, private dialog: MatDialog,) {}
+
+    displayedColumns: string[] = ['name', 'code', 'date'];
 
     exams: Exam[] = [];
     totalCount: number = 0;
@@ -98,6 +103,17 @@ export class ExamsListComponent implements OnInit {
                     // Обнови список районов, если нужно
                 });
             }
+        });
+    }
+
+    openExamDetails(exam: Exam) {
+        const dialogRef = this.dialog.open(ExamResultDialogComponent, {
+            width: '500px',
+            data: { exam: exam },
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(result);
         });
     }
 }
