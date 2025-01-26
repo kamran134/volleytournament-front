@@ -108,7 +108,7 @@ export class ExamsListComponent implements OnInit {
 
     openExamDetails(exam: Exam) {
         const dialogRef = this.dialog.open(ExamResultDialogComponent, {
-            width: '500px',
+            width: '800px',
             data: { exam: exam },
         });
 

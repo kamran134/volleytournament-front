@@ -24,4 +24,12 @@ export class ExamService {
         const url: string = `${this.configService.getApiUrl()}/exams`;
         return this.http.post<Exam>(url, exam);
     }
+
+    uploadResults(file: File, examId: string): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('examId', examId);
+
+        return this.http.post(`${this.configService.getApiUrl()}/student-results/upload`, formData);
+    }
 }
