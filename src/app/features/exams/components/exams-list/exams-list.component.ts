@@ -19,7 +19,6 @@ import { ExamAddDialogComponent } from '../exam-add-dialog/exam-add-dialog.compo
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
-// import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe';
 
 @Component({
     selector: 'app-exams-list',

@@ -16,7 +16,7 @@ import { FilterParams } from '../../../../models/filterParams.model';
 import { District } from '../../../../models/district.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 
 @Component({
