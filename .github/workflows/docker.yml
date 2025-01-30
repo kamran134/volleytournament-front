@@ -1,0 +1,21 @@
+name: Build and Push Frontend Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build --cache-from=ghcr.io/kamran134/education-system-frontend:latest -t ghcr.io/kamran134/education-system-frontend:latest .
+          docker push ghcr.io/kamran134/education-system-frontend:latest
