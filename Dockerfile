@@ -3,15 +3,15 @@ FROM node:18 AS build
 
 WORKDIR /app
 
-# Копируем package.json и сразу устанавливаем зависимости (включая package-lock.json)
-COPY package.json ./
-RUN npm install --omit=dev
+# Копируем package.json и устанавливаем зависимости
+COPY package.json package-lock.json ./
+RUN npm install --omit=dev && npm install -g @angular/cli
 
 # Копируем весь проект
 COPY . .
 
 # Собираем Angular-приложение в режиме production
-RUN npm run build --configuration=production
+RUN ng build --configuration=production
 
 # Используем Nginx для раздачи статических файлов
 FROM nginx:alpine
