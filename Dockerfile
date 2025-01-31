@@ -3,14 +3,8 @@ FROM node:18 AS build
 
 WORKDIR /app
 
-# Копируем package.json (без package-lock.json, если его нет)
+# Копируем package.json и сразу устанавливаем зависимости (включая package-lock.json)
 COPY package.json ./
-
-# Генерируем package-lock.json, если его нет
-RUN npm install --package-lock-only
-
-# Копируем package-lock.json и устанавливаем зависимости
-COPY package-lock.json ./
 RUN npm install --omit=dev
 
 # Копируем весь проект
