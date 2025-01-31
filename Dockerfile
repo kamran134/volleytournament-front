@@ -1,29 +1,27 @@
-# Используем Node.js для сборки Angular-приложения
+# Stage 1: Build the frontend
 FROM node:18 AS build
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
 # Копируем package.json и package-lock.json
 COPY package.json package-lock.json ./
 
-# Устанавливаем зависимости (включая dev-зависимости)
-RUN npm install -g @angular/cli && npm install --omit=dev
+# Устанавливаем зависимости внутри контейнера
+RUN npm install
 
-# Копируем исходный код
+# Копируем весь исходный код в контейнер
 COPY . .
 
-# Запускаем сборку Angular
-RUN npm run build --configuration=production
+# Собираем проект
+RUN npm run build
 
-# Используем Nginx для раздачи фронтенда
+# Stage 2: Production image
 FROM nginx:alpine
 
-# Копируем собранный проект в Nginx
-COPY --from=build /app/dist/education-system-frontend /usr/share/nginx/html
+# Копируем собранный проект в контейнер
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Открываем порт 80
+# Открываем порт 80 для nginx
 EXPOSE 80
 
-# Запускаем Nginx
 CMD ["nginx", "-g", "daemon off;"]
