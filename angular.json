@@ -56,7 +56,8 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputPath": "dist/education-system-frontend"
             },
             "development": {
               "optimization": false,
