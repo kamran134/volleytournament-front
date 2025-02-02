@@ -4,10 +4,12 @@ FROM node:18 AS build
 WORKDIR /app
 
 # Копируем package.json
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 # Устанавливаем зависимости
-RUN npm install && npm install -g @angular/cli
+#RUN npm install && npm install -g @angular/cli
+# Устанавливаем зависимости и кешируем их
+RUN npm ci
 
 # Копируем весь проект
 COPY . .
