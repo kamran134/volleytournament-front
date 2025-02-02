@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json ./
 
 # Устанавливаем зависимости
-RUN npm install --omit=dev && npm install -g @angular/cli
+RUN npm install && npm install -g @angular/cli
 
 # Копируем весь проект
 COPY . .
