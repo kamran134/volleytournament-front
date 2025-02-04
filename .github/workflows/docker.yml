@@ -1,21 +1,25 @@
-name: Build and Push Frontend Docker Image
+name: Deploy Frontend to GHCR
 
 on:
   push:
     branches:
-      - main
+      - main  # Меняй, если хочешь триггерить из другой ветки
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: Build Docker image
         run: |
-          docker build --cache-from=ghcr.io/kamran134/education-system-frontend:latest -t ghcr.io/kamran134/education-system-frontend:latest .
+          docker build -t ghcr.io/kamran134/education-system-frontend:latest .
+
+      - name: Push Docker image to GHCR
+        run: |
           docker push ghcr.io/kamran134/education-system-frontend:latest
