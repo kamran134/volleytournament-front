@@ -1,8 +1,10 @@
 <main class='main'>
+    <div class="header">
+        <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">Tünd tema</mat-slide-toggle>
+    </div>
     <div class='content'>
         <div class='title'><h1>{{ title }}</h1></div>
         <div>
-            <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">Tünd tema</mat-slide-toggle>
             <router-outlet></router-outlet>
         </div>
     </div>

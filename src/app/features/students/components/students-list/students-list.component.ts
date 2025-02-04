@@ -44,7 +44,7 @@ export class StudentsListComponent {
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     selectedDistrictIds: string[] = [];
 
-    displayedColumns: string[] = ['lastName', 'firstName', 'middleName', 'code', 'grade', 'teacher'];
+    displayedColumns: string[] = ['lastName', 'firstName', 'middleName', 'code', 'grade', 'teacher', 'status'];
 
     constructor(
         private studentService: StudentService,
