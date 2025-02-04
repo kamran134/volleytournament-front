@@ -4,7 +4,7 @@ import { DistrictsListComponent } from './features/districts/components/district
 import { SchoolsListComponent } from './features/schools/components/schools-list/schools-list.component';
 import { TeachersListComponent } from './features/teachers/components/teachers-list/teachers-list.component';
 import { ExamsListComponent } from './features/exams/components/exams-list/exams-list.component';
-import { ExamResultsListComponent } from './features/examResults/components/exam-results-list/exam-results-list.component';
+import { StatsComponent } from './features/stats/components/stats-main/stats.component';
 import { StudentsListComponent } from './features/students/components/students-list/students-list.component';
 
 export const routes: Routes = [
@@ -14,6 +14,6 @@ export const routes: Routes = [
     { path: 'teachers', component: TeachersListComponent },
     { path: 'students', component: StudentsListComponent },
     { path: 'exams', component: ExamsListComponent },
-    { path: 'exam-results', component: ExamResultsListComponent },
+    { path: 'stats', component: StatsComponent },
     { path: '**', redirectTo: '' }
 ];

@@ -58,6 +58,19 @@
             (page)="onPageChange($event)" />
     </div>
 
+    <div *ngIf="studentsWithoutTeacher.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Müəllimləri olmayan və yüklənməyən şagirdlərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>{{ studentsWithoutTeacher.join(', ') }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div>
         <button mat-flat-button extended (click)="openAddExamDialog()">
             <mat-icon>add</mat-icon>

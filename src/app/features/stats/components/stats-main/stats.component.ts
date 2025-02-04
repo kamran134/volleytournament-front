@@ -3,12 +3,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
-  selector: 'app-exam-results-list',
+  selector: 'app-stats',
   standalone: true,
   imports: [MatGridListModule, MatButtonModule],
-  templateUrl: './exam-results-list.component.html',
-  styleUrl: './exam-results-list.component.scss'
+  templateUrl: './stats.component.html',
+  styleUrl: './stats.component.scss'
 })
-export class ExamResultsListComponent {
+export class StatsComponent {
 
 }

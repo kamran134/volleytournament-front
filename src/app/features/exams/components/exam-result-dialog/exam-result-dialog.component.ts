@@ -48,7 +48,7 @@ export class ExamResultDialogComponent implements OnInit {
                         horizontalPosition: this.horizontalPosition,
                         verticalPosition: this.verticalPosition
                     });
-                    this.dialogRef.close();
+                    this.dialogRef.close(response?.studentsWithoutTeacher);
                 },
                 error: (error: Error) => {
                     this.snackBar.open(`Fayl yüklənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', {

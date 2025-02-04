@@ -1,4 +1,4 @@
-import { District } from "./district.model";
+import { Teacher } from "./teacher.model";
 
 export interface StudentData {
     data: Student[];
@@ -12,4 +12,5 @@ export interface Student {
     middleName: string;
     code: number;
     grade: number;
+    teacher: Teacher;
 }

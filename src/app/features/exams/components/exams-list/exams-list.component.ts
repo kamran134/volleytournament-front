@@ -19,6 +19,7 @@ import { ExamAddDialogComponent } from '../exam-add-dialog/exam-add-dialog.compo
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-exams-list',
@@ -35,6 +36,7 @@ import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dia
         FormsModule,
         ReactiveFormsModule,
         MatTableModule,
+        MatCardModule,
         // MomentDateFormatPipe
     ],
     templateUrl: './exams-list.component.html',
@@ -55,6 +57,7 @@ export class ExamsListComponent implements OnInit {
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     selectedDistrictIds: string[] = [];
+    studentsWithoutTeacher: string[] = [];
 
     ngOnInit(): void {
         this.loadExams();
@@ -113,6 +116,9 @@ export class ExamsListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             console.log(result);
+            if (result && Array.isArray(result)) {
+                this.studentsWithoutTeacher = result.map((student: any) => student.code);
+            }
         });
     }
 }
