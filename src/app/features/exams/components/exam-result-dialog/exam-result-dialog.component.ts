@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { ExamService } from '../../services/exam.service';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Error } from '../../../../models/error.model';
@@ -19,6 +19,11 @@ export class ExamResultDialogComponent implements OnInit {
     file: File | null = null;
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
+    matSnackConfig: MatSnackBarConfig = {
+        duration: 5000,
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition
+    }
     
     constructor(
         public dialogRef: MatDialogRef<ExamResultDialogComponent>,
@@ -43,22 +48,26 @@ export class ExamResultDialogComponent implements OnInit {
         if (this.file) {
             this.examService.uploadResults(this.file, this.data.exam._id).subscribe({
                 next: (response) => {
-                    this.snackBar.open('Fayl uğurla yükləndi', 'OK', {
-                        duration: 5000,
-                        horizontalPosition: this.horizontalPosition,
-                        verticalPosition: this.verticalPosition
-                    });
+                    this.snackBar.open('Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
                     this.dialogRef.close(response?.studentsWithoutTeacher);
                 },
                 error: (error: Error) => {
-                    this.snackBar.open(`Fayl yüklənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', {
-                        duration: 5000,
-                        horizontalPosition: this.horizontalPosition,
-                        verticalPosition: this.verticalPosition
-                    });
+                    this.snackBar.open(`Fayl yüklənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
                 }
             });
         }
+    }
+
+    onDelete(event: Event): void {
+        event.preventDefault();
+        this.examService.deleteResults(this.data.exam._id).subscribe({
+            next: (response) => {
+                this.snackBar.open('Nəticələr uğurla silindi', 'OK', this.matSnackConfig)
+            },
+            error: (error: Error) => {
+                this.snackBar.open(`Nəticələr silinərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
+            }
+        });
     }
 
     onClose(): void {

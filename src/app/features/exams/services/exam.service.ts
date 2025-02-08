@@ -4,6 +4,7 @@ import { ConfigService } from '../../../services/config.service';
 import { Observable } from 'rxjs';
 import { Exam, ExamData } from '../../../models/exam.model';
 import { FilterParams } from '../../../models/filterParams.model';
+import { ExamResult } from '../../../models/examResult.model';
 
 @Injectable({
     providedIn: 'root'
@@ -31,5 +32,10 @@ export class ExamService {
         formData.append('examId', examId);
 
         return this.http.post(`${this.configService.getApiUrl()}/student-results/upload`, formData);
+    }
+
+    deleteResults(examId: string): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/student-results/${examId}`;
+        return this.http.delete(url);
     }
 }

@@ -13,6 +13,7 @@
                 <label *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">{{ fileInput.files[0].name}}</label>
             </div>
             <button mat-button type="submit" [disabled]="!fileInput.files || fileInput.files.length === 0"><mat-icon>save</mat-icon> Yüklə</button>
+            <button mat-button (click)="onDelete($event)"><mat-icon>delete</mat-icon> Nəticələri sil</button>
             <button mat-button (click)="onClose()">Bağla</button>
         </div>
     </form>
