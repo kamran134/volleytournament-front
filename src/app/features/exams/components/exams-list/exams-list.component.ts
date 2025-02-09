@@ -36,8 +36,7 @@ import { MatCardModule } from '@angular/material/card';
         FormsModule,
         ReactiveFormsModule,
         MatTableModule,
-        MatCardModule,
-        // MomentDateFormatPipe
+        MatCardModule
     ],
     templateUrl: './exams-list.component.html',
     styleUrl: './exams-list.component.scss'
@@ -110,7 +109,7 @@ export class ExamsListComponent implements OnInit {
 
     openExamDetails(exam: Exam) {
         const dialogRef = this.dialog.open(ExamResultDialogComponent, {
-            width: '800px',
+            width: '1000px',
             data: { exam: exam },
         });
 

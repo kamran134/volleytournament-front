@@ -11,7 +11,7 @@ import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnack
 import { StudentService } from '../../services/student.service';
 import { FilterParams } from '../../../../models/filterParams.model';
 import { MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-students-list',
@@ -48,7 +48,8 @@ export class StudentsListComponent {
 
     constructor(
         private studentService: StudentService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {}
 
     ngOnInit(): void {
@@ -82,13 +83,14 @@ export class StudentsListComponent {
     }
 
     openStudentDetails(studentId: string): void {
-        this.studentService.getStudentById(studentId).subscribe({
-            next: (student) => {
-                console.log(student);
-            },
-            error: (error) => {
-                console.error(error);
-            }
-        });
+        this.router.navigate(['/students', studentId]);
+        // this.studentService.getStudentById(studentId).subscribe({
+        //     next: (student) => {
+        //         console.log(student);
+        //     },
+        //     error: (error) => {
+        //         console.error(error);
+        //     }
+        // });
     }
 }

@@ -1,9 +1,18 @@
+<div class="breadcrumbs">
+    <button mat-fab extended routerLink="/">
+        <mat-icon>home</mat-icon>
+        Baş səhifə
+    </button>
+</div>
+
 <mat-grid-list cols="4" rowHeight="100px">
     <mat-grid-tile [colspan]="4" [rowspan]="2">
         {{'İmtahan nəticələri üzrə statistika'}}    
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" [rowspan]="1">
-        <button mat-raised-button (click)="updateStats()">Statistikanı yenilə</button>
-        <button mat-raised-button (click)="updateStats()">Respublika üzrə statistikanı yenilə</button>
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+        <div class="statistics-action">
+            <button mat-raised-button (click)="updateStats()"><mat-spinner *ngIf="loading1" class="loader"></mat-spinner>Statistikanı yenilə</button>
+            <button mat-raised-button (click)="updateStatsByRepublic()"><mat-spinner *ngIf="loading2" class="loader"></mat-spinner>Respublika üzrə statistikanı yenilə</button>
+        </div>
     </mat-grid-tile>
 </mat-grid-list>

@@ -1,0 +1,23 @@
+.student-card {
+    margin: auto;
+    padding: 16px;
+}
+  
+table {
+    width: 100%;
+    margin-top: 16px;
+}
+  
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    text-align: center;
+}
+
+.status {
+    color: rgb(33, 220, 195);
+    font-weight: 600;
+}

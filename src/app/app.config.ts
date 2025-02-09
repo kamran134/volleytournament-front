@@ -32,6 +32,7 @@ export const appConfig: ApplicationConfig = {
             MatNativeDateModule
         ),
         { provide: DateAdapter, useClass: CustomDateAdapter },
-        { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS }
+        { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
+        { provide: 'NG_HYDRATION', useValue: false }
     ]
 };

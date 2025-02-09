@@ -6,6 +6,7 @@ import { TeachersListComponent } from './features/teachers/components/teachers-l
 import { ExamsListComponent } from './features/exams/components/exams-list/exams-list.component';
 import { StatsComponent } from './features/stats/components/stats-main/stats.component';
 import { StudentsListComponent } from './features/students/components/students-list/students-list.component';
+import { StudentDetailsComponent } from './features/students/components/student-details/student-details.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -13,6 +14,7 @@ export const routes: Routes = [
     { path: 'schools', component: SchoolsListComponent },
     { path: 'teachers', component: TeachersListComponent },
     { path: 'students', component: StudentsListComponent },
+    { path: 'students/:id', component: StudentDetailsComponent },
     { path: 'exams', component: ExamsListComponent },
     { path: 'stats', component: StatsComponent },
     { path: '**', redirectTo: '' }
