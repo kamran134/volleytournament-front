@@ -7,12 +7,102 @@
 
 <mat-grid-list cols="4" rowHeight="100px">
     <mat-grid-tile [colspan]="4" [rowspan]="2">
-        {{'İmtahan nəticələri üzrə statistika'}}    
+        <h2>{{'İmtahan nəticələri üzrə statistika'}}</h2>
     </mat-grid-tile>
+</mat-grid-list>
+    <!--<mat-grid-tile [colspan]="4" [rowspan]="2">-->
+<div class="stats-container">
+    <mat-card class="student-card">
+        <mat-card-title>{{'Son ayda inkişaf edən şagirdlər'}}</mat-card-title>
+        <mat-card-content>
+            <table mat-table [dataSource]="stats.developingStudents!" class="mat-elevation-z8">
+                <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
+                    <td mat-cell *matCellDef="let student">
+                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="score">
+                    <th mat-header-cell *matHeaderCellDef> Balları </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.score }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Statusu </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.status }} </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="['fullName', 'status']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['fullName', 'status'];"></tr>
+            </table>
+        </mat-card-content>    
+    </mat-card>
+
+    <mat-card class="student-card">
+        <mat-card-title>{{'Son ayın şagirdləri'}}</mat-card-title>
+        <mat-card-content>
+            <table mat-table [dataSource]="stats.studentsOfMonth!" class="mat-elevation-z8">
+                <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
+                    <td mat-cell *matCellDef="let student">
+                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="score">
+                    <th mat-header-cell *matHeaderCellDef> Balları </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.score }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Statusu </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.status }} </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="['fullName', 'status']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['fullName', 'status'];"></tr>
+            </table>
+        </mat-card-content>    
+    </mat-card>
+
+    <mat-card class="student-card">
+        <mat-card-title>{{'Respublika üzrə son ayın şagirdləri'}}</mat-card-title>
+        <mat-card-content>
+            <table mat-table [dataSource]="stats.studentsOfMonthByRepublic!" class="mat-elevation-z8">
+                <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
+                    <td mat-cell *matCellDef="let student">
+                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="score">
+                    <th mat-header-cell *matHeaderCellDef> Balları </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.score }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Statusu </th>
+                    <td mat-cell *matCellDef="let student"> {{ student.status }} </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="['fullName', 'status']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['fullName', 'status'];"></tr>
+            </table>
+        </mat-card-content>    
+    </mat-card>
+</div>
+    
+    
+    <!--</mat-grid-tile>-->
+<mat-grid-list cols="4" rowHeight="100px">
     <mat-grid-tile [colspan]="2" [rowspan]="1">
         <div class="statistics-action">
-            <button mat-raised-button (click)="updateStats()"><mat-spinner *ngIf="loading1" class="loader"></mat-spinner>Statistikanı yenilə</button>
-            <button mat-raised-button (click)="updateStatsByRepublic()"><mat-spinner *ngIf="loading2" class="loader"></mat-spinner>Respublika üzrə statistikanı yenilə</button>
+            <button mat-raised-button (click)="updateStats()">{{loading1 ? 'Yenilənir...' : 'Statistikanı yenilə'}}</button>
+            <button mat-raised-button (click)="updateStatsByRepublic()">{{loading2 ? 'Yenilənir...' : 'Respublika üzrə statistikanı yenilə'}}</button>
+            <!-- <button mat-raised-button (click)="updateStats()"><mat-spinner *ngIf="loading1" class="loader"></mat-spinner>Statistikanı yenilə</button>
+            <button mat-raised-button (click)="updateStatsByRepublic()"><mat-spinner *ngIf="loading2" class="loader"></mat-spinner>Respublika üzrə statistikanı yenilə</button> -->
         </div>
     </mat-grid-tile>
 </mat-grid-list>

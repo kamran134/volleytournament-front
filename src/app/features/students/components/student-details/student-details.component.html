@@ -23,10 +23,10 @@
             <h3>İmtahan nəticələri</h3>
             <table mat-table [dataSource]="student.results || []" class="mat-elevation-z8">
                 <!-- Экзамен -->
-                <!-- <ng-container matColumnDef="exam">
-                    <th mat-header-cell *matHeaderCellDef> İmtahan </th>
-                    <td mat-cell *matCellDef="let result"> {{ result.exam.date }} </td>
-                </ng-container> -->
+                <ng-container matColumnDef="examDate">
+                    <th mat-header-cell *matHeaderCellDef> İmtahan tarixi</th>
+                    <td mat-cell *matCellDef="let result">{{ result.exam.date | date: 'dd.MM.YYYY' }}</td>
+                </ng-container>
     
                 <!-- Уровень -->
                 <ng-container matColumnDef="level">
@@ -51,8 +51,8 @@
                     </td>
                 </ng-container>
     
-                <tr mat-header-row *matHeaderRowDef="['level', 'totalScore', 'disciplines']"></tr>
-                <tr mat-row *matRowDef="let row; columns: ['level', 'totalScore', 'disciplines'];"></tr>
+                <tr mat-header-row *matHeaderRowDef="['examDate', 'level', 'totalScore', 'disciplines']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['examDate', 'level', 'totalScore', 'disciplines'];"></tr>
             </table>
         </mat-card-content>
     </mat-card>

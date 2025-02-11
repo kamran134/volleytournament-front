@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { StatsService } from '../../services/stats.service';
@@ -8,6 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Stats } from '../../../../models/stats.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
     selector: 'app-stats',
@@ -18,12 +21,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         MatSnackBarModule,
         MatIconModule,
         MatProgressSpinnerModule,
+        MatCardModule,
+        MatTableModule,
         CommonModule,
-        RouterModule],
+        RouterModule
+    ],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
-export class StatsComponent {
+export class StatsComponent implements OnInit {
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     matSnackConfig: MatSnackBarConfig = {
@@ -31,13 +37,29 @@ export class StatsComponent {
         horizontalPosition: this.horizontalPosition,
         verticalPosition: this.verticalPosition
     }
+    loading: boolean = false;
     loading1: boolean = false;
     loading2: boolean = false;
+    stats: Stats = {}
 
     constructor(private statsService: StatsService, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
-        console.log('StatsComponent initialized');
+        this.getStats();
+    }
+
+    getStats(): void {
+        this.loading = true;
+        this.statsService.getStats().subscribe({
+            next: (response) => {
+                this.loading = false;
+                this.stats = response;
+            },
+            error: (error: Error) => {
+                this.loading = false;
+                this.snackBar.open(`Statistikanın yüklənməsi zamanı xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
+            }
+        })
     }
 
     updateStats(): void {

@@ -20,6 +20,8 @@ export interface Student {
     code: number;
     grade: number;
     teacher: Teacher;
+    status?: string;
+    score?: number;
 }
 
 export interface StudentWithResult {
