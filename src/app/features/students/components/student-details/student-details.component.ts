@@ -39,7 +39,6 @@ export class StudentDetailsComponent implements OnInit {
         this.studentService.getStudentById(this.studentId).subscribe({
             next: (data) => {
                 this.student = data;
-                console.log('student: ', this.student);
             },
             error: (error: Error) => {
                 console.error('Şagirdin alınmasında xəta!', error.error);
