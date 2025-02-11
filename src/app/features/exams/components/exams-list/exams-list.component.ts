@@ -20,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
 import { MatCardModule } from '@angular/material/card';
+import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-exams-list',
@@ -44,7 +45,7 @@ import { MatCardModule } from '@angular/material/card';
 export class ExamsListComponent implements OnInit {
     constructor(private examService: ExamService, private dialog: MatDialog,) {}
 
-    displayedColumns: string[] = ['name', 'code', 'date'];
+    displayedColumns: string[] = ['name', 'code', 'date', 'actions'];
 
     exams: Exam[] = [];
     totalCount: number = 0;
@@ -117,6 +118,48 @@ export class ExamsListComponent implements OnInit {
             console.log(result);
             if (result && Array.isArray(result)) {
                 this.studentsWithoutTeacher = result.map((student: any) => student.code);
+            }
+        });
+    }
+
+    onExamDelete(event: MouseEvent, exam: Exam) {
+        event.stopPropagation();
+
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'İmtahanı və onun nəticələrini silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.examService.deleteExam(exam._id).subscribe({
+                    next: (data) => {
+                        this.loadExams();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
+    }
+
+    onAllExamsDelete() {
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Bütün imtahanları və onların nəticələrini silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.examService.deleteAllExams().subscribe({
+                    next: (data) => {
+                        this.loadExams();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
             }
         });
     }

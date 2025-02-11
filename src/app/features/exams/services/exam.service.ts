@@ -38,4 +38,14 @@ export class ExamService {
         const url: string = `${this.configService.getApiUrl()}/student-results/${examId}`;
         return this.http.delete(url);
     }
+
+    deleteExam(examId: string): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/exams/${examId}`;
+        return this.http.delete(url);
+    }
+
+    deleteAllExams(): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/exams`;
+        return this.http.delete(url);
+    }
 }
