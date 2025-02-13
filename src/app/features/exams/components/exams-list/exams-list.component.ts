@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
+    MatSnackBarConfig,
     MatSnackBarHorizontalPosition,
     MatSnackBarModule,
     MatSnackBarVerticalPosition
@@ -56,6 +57,11 @@ export class ExamsListComponent implements OnInit {
     errorMessage = '';
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
+    matSnackConfig: MatSnackBarConfig = {
+            duration: 5000,
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition
+    }
     selectedDistrictIds: string[] = [];
     studentsWithoutTeacher: string[] = [];
 

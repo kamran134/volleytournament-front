@@ -1,3 +1,5 @@
-export const Response = {
-    
+export interface ResponseFromBackend {
+    data: any;
+    message?: string;
+    error?: string;
 }
