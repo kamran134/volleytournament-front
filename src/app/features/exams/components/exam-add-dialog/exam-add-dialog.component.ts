@@ -31,10 +31,12 @@ export class ExamAddDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<ExamAddDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { name: string; code: string, date: Date }
-    ) {}
+    ) {
+        this.data.date = this.data.date || null;
+    }
 
     onSave(): void {
-        this.data.date = moment(this.date.value).toDate();
+        // this.data.date = moment(this.data.date.value).toDate();
         this.dialogRef.close(this.data);
     }
 
@@ -47,7 +49,6 @@ export class ExamAddDialogComponent {
         ctrlValue.month(normalizedMonthAndYear.month());
         ctrlValue.year(normalizedMonthAndYear.year());
         this.date.setValue(ctrlValue);
-        console.log(this.date);
         datepicker.close();
     }
 }

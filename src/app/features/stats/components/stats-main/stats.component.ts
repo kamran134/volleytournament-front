@@ -57,7 +57,7 @@ export class StatsComponent implements OnInit {
             },
             error: (error: Error) => {
                 this.loading = false;
-                this.snackBar.open(`Statistikanın yüklənməsi zamanı xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         })
     }
@@ -71,7 +71,7 @@ export class StatsComponent implements OnInit {
             },
             error: (error: Error) => {
                 this.loading1 = false;
-                this.snackBar.open(`Statistika yenilənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
+                this.snackBar.open(`${error.error.message}`, 'Bağla', this.matSnackConfig);
             }
         });
     }
@@ -85,7 +85,7 @@ export class StatsComponent implements OnInit {
             },
             error: (error: Error) => {
                 this.loading2 = false;
-                this.snackBar.open(`Respublika üzrə statistika yenilənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
     }

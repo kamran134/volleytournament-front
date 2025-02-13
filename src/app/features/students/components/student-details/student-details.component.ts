@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../../services/student.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Params, RouterModule } from '@angular/router';
 import { StudentWithResult } from '../../../../models/student.model';
 import { Error } from '../../../../models/error.model';
 import { MatCardModule } from '@angular/material/card';
@@ -25,6 +25,8 @@ import { MatButtonModule } from '@angular/material/button';
 export class StudentDetailsComponent implements OnInit {
     studentId!: string;
     student!: StudentWithResult | null;
+    prevPageSize: number = 10;
+    prevPageIndex: number = 0;
 
     constructor(private studentService: StudentService, private route: ActivatedRoute) {}
 
@@ -32,6 +34,11 @@ export class StudentDetailsComponent implements OnInit {
         this.route.params.subscribe(params => {
             this.studentId = params['id']!;
             this.loadStudent();
+        });
+
+        this.route.queryParams.subscribe((params: Params) => {
+            this.prevPageSize = params['pageSize'] ? +params['pageSize'] : this.prevPageSize;
+            this.prevPageIndex = params['pageIndex'] ? +params['pageIndex'] : this.prevPageIndex;
         });
     }
 

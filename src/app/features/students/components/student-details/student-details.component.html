@@ -1,5 +1,5 @@
 <div class="breadcrumbs">
-    <button mat-fab extended routerLink="/students">
+    <button mat-fab extended routerLink="/students" [queryParams]="{ pageSize: prevPageSize, pageIndex: prevPageIndex}">
         <mat-icon>people</mat-icon>
         Şagirdlər
     </button>

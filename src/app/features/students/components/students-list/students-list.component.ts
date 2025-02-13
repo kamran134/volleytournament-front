@@ -11,7 +11,7 @@ import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnack
 import { StudentService } from '../../services/student.service';
 import { FilterParams } from '../../../../models/filterParams.model';
 import { MatTableModule } from '@angular/material/table';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-students-list',
@@ -49,11 +49,19 @@ export class StudentsListComponent {
     constructor(
         private studentService: StudentService,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
-        this.loadStudents();
+        this.route.queryParams.subscribe({
+            next: (params: Params) => {
+                this.pageSize = params['pageSize'] ? +params['pageSize'] : this.pageSize;
+                this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : this.pageIndex;
+                this.loadStudents();
+            },
+            error: (error) => { console.error(error); }
+        });
     }
 
     loadStudents(): void {
@@ -79,18 +87,33 @@ export class StudentsListComponent {
     onPageChange(event: PageEvent): void {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
-        this.loadStudents();
+
+        const queryParams = {
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize
+        };
+
+        const navigationExtras: NavigationExtras = {
+            queryParams,
+            replaceUrl: true
+        }
+
+        this.router.navigate([], navigationExtras).then(() => {
+            this.loadStudents();
+        });
     }
 
     openStudentDetails(studentId: string): void {
-        this.router.navigate(['/students', studentId]);
-        // this.studentService.getStudentById(studentId).subscribe({
-        //     next: (student) => {
-        //         console.log(student);
-        //     },
-        //     error: (error) => {
-        //         console.error(error);
-        //     }
-        // });
+        const queryParams = {
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize
+        };
+
+        const navigationExtras: NavigationExtras = {
+            queryParams,
+            replaceUrl: true
+        }
+
+        this.router.navigate(['/students', studentId], navigationExtras);
     }
 }

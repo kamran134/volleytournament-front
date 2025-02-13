@@ -102,7 +102,6 @@ export class ExamsListComponent implements OnInit {
             if (result) {
                 this.examService.addExam(result).subscribe(() => {
                     this.ngOnInit();
-                    // Обнови список районов, если нужно
                 });
             }
         });
