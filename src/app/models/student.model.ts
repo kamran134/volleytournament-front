@@ -20,6 +20,8 @@ export interface Student {
     code: number;
     grade: number;
     teacher: Teacher;
+    school: School;
+    district: District;
     status?: string;
     score?: number;
 }

@@ -28,33 +28,36 @@
     </div>
 
     <div *ngIf="!isLoading && !hasError">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Məktəb kodu
-                    </th>
-                    <th>
-                        Məktəb adı
-                    </th>
-                    <th>
-                        Rayon
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let school of schools">
-                    <td>
-                        {{ school.code }}
-                    </td>
-                    <td>
-                        {{ school.name }}
-                    </td>
-                    <td>
-                        {{ school.district.name }}
-                    </td>
-                </tr>
-            </tbody>
+        <table mat-table [dataSource]="schools" class="mat-elevation-z8">
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>
+                    Məktəb kodu
+                </th>
+                <td mat-cell *matCellDef="let school">
+                    {{ school.code }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>
+                    Məktəb adı
+                </th>
+                <td mat-cell *matCellDef="let school">
+                    {{ school.name }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="district">
+                <th mat-header-cell *matHeaderCellDef>
+                    Məktəbin yerləşdiyi rayon
+                </th>
+                <td mat-cell *matCellDef="let school">
+                    {{ school.district.name }}
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['code', 'name', 'district']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'district'];"></tr>
         </table>
     </div>
 
@@ -71,16 +74,16 @@
     <div class="upload-file">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />
-            <button mat-fab extended (click)="fileInput.click()">
+            <button mat-flat-button extended (click)="fileInput.click()">
                 <mat-icon fontIcon="attach_file"></mat-icon>
-                Faylı seç
+                Fayldan yüklə
             </button>
             <div style="display: inline-block; width: 500px; padding: 0 20px;">
                 <label *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">
                     {{ fileInput.files[0].name}}
                 </label>
             </div>
-            <button mat-fab extended type="submit">
+            <button mat-flat-button extended type="submit" *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">
                 <mat-icon>upload</mat-icon>
                 Yüklə
             </button>

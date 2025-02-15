@@ -13,11 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FilterParams } from '../../../../models/filterParams.model';
-import { District } from '../../../../models/district.model';
+import { District, DistrictData } from '../../../../models/district.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
     selector: 'app-schools-list',
@@ -30,6 +31,7 @@ import { DistrictService } from '../../../districts/services/district.service';
         MatIconModule,
         MatPaginator,
         MatFormFieldModule,
+        MatTableModule,
         MatSelectModule,
         MatOption,
         FormsModule,
@@ -125,8 +127,8 @@ export class SchoolsListComponent implements OnInit {
     loadDistricts(): void {
         this.districtService.getDistricts()
             .subscribe({
-                next: (data: District[]) => {
-                    this.districts = data;
+                next: (response: DistrictData) => {
+                    this.districts = response.data;
                 },
                 error: (err: any) => {
                     this.isLoading = false;

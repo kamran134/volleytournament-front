@@ -12,6 +12,13 @@ import { StudentService } from '../../services/student.service';
 import { FilterParams } from '../../../../models/filterParams.model';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '@angular/router';
+import { DistrictService } from '../../../districts/services/district.service';
+import { SchoolService } from '../../../schools/services/school.service';
+import { TeacherService } from '../../../teachers/services/teacher.service';
+import { District, DistrictData } from '../../../../models/district.model';
+import { School, SchoolData } from '../../../../models/school.model';
+import { Teacher, TeacherData } from '../../../../models/teacher.model';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
     selector: 'app-students-list',
@@ -27,6 +34,8 @@ import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '
         MatOption,
         RouterModule,
         MatTableModule,
+        MatSelectModule,
+        FormsModule,
         ReactiveFormsModule
     ],
     templateUrl: './students-list.component.html',
@@ -34,6 +43,9 @@ import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '
 })
 export class StudentsListComponent {
     students: Student[] = [];
+    districts: District[] = [];
+    schools: School[] = [];
+    teachers: Teacher[] = [];
     totalCount: number = 0;
     pageSize: number = 10;
     pageIndex: number = 0;
@@ -43,14 +55,19 @@ export class StudentsListComponent {
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     selectedDistrictIds: string[] = [];
+    selectedSchoolIds: string[] = [];
+    selectedTeacherIds: string[] = [];
 
-    displayedColumns: string[] = ['lastName', 'firstName', 'middleName', 'code', 'grade', 'teacher', 'status'];
+    displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district'];
 
     constructor(
         private studentService: StudentService,
-        private snackBar: MatSnackBar,
+        private districtService: DistrictService,
+        private schoolService: SchoolService,
+        private teacherService: TeacherService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private snackBar: MatSnackBar,
     ) {}
 
     ngOnInit(): void {
@@ -62,14 +79,21 @@ export class StudentsListComponent {
             },
             error: (error) => { console.error(error); }
         });
+        this.loadDistricts();
     }
 
     loadStudents(): void {
         this.isLoading = true;
         const params: FilterParams = {
             page: this.pageIndex + 1,
-            size: this.pageSize
+            size: this.pageSize,
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(",")
         };
+
+        this.isLoading = true;
+
         this.studentService.getStudents(params).subscribe({
             next: (data: StudentData) => {
                 this.students = data.data;
@@ -82,6 +106,72 @@ export class StudentsListComponent {
                 this.isLoading = false;
             }
         });
+    }
+
+    loadTeachers(): void {
+        const params: FilterParams = {
+            schoolIds: this.selectedSchoolIds.join(",")
+        }
+
+        this.teacherService.getTeachersForFilter(params)
+            .subscribe({
+                next: (response: TeacherData) => {
+                    this.teachers = response.data;
+                },
+                error: (error: any) => {
+                    this.isLoading = false;
+                    this.hasError = true;
+                    this.errorMessage = `Müəllimlərin alınmasında xəta: ${error.message}`;
+                }
+            })
+
+    }
+
+    loadSchools(): void {
+        const params: FilterParams = {
+            districtIds: this.selectedDistrictIds.join(",")
+        }
+
+        this.schoolService.getSchoolsForFilter(params)
+            .subscribe({
+                next: (response: SchoolData) => {
+                    this.schools = response.data;
+                },
+                error: (error: any) => {
+                    this.isLoading = false;
+                    this.hasError = true;
+                    this.errorMessage = `Məktəblərin alınmasında xəta: ${error.message}`;
+                }
+            });
+    }
+
+    loadDistricts(): void {
+        this.districtService.getDistricts()
+            .subscribe({
+                next: (response: DistrictData) => {
+                    this.districts = response.data;
+                },
+                error: (err: any) => {
+                    this.isLoading = false;
+                    this.hasError = true;
+                    this.errorMessage = `Error fetching districts: ${err.message}`;
+                }
+            });
+    }
+
+    onDistrictSelectChanged(): void {
+        this.loadSchools();
+        this.loadTeachers();
+        this.loadStudents();
+    }
+
+    onSchoolSelectChanged(): void {
+        this.loadTeachers();
+        this.loadStudents();
+    }
+
+    onTeacherSelectChanged(): void {
+        this.loadStudents();
     }
 
     onPageChange(event: PageEvent): void {

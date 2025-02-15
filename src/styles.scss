@@ -59,8 +59,16 @@ table {
 .filters {
     display: flex;
 
-    div {
+    > div {
         margin-right: $smallMargin;
+    }
+
+    &__schools {
+        width: 550px;
+    }
+
+    &__teachers {
+        width: 550px;
     }
 }
 

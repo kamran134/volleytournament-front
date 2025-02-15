@@ -12,9 +12,15 @@ export class StudentService {
     constructor(private http: HttpClient, private configService: ConfigService) { }
 
     getStudents(params: FilterParams): Observable<StudentData> {
-        let url: string = `${this.configService.getApiUrl()}/students`;
-        if (params.page && params.size) {
-            url = `${url}?page=${params.page}&size=${params.size}`;
+        let url: string = `${this.configService.getApiUrl()}/students?page=${params.page}&size=${params.size}`;
+        if (params.districtIds && params.districtIds.length > 0) {
+            url = `${url}&districtIds=${params.districtIds}`;
+        }
+        if (params.schoolIds && params.schoolIds.length > 0) {
+            url = `${url}&schoolIds=${params.schoolIds}`;
+        }
+        if (params.teacherIds && params.teacherIds.length > 0) {
+            url = `${url}&teacherIds=${params.teacherIds}`;
         }
         return this.http.get<StudentData>(url);
     }

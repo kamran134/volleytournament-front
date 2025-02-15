@@ -12,14 +12,22 @@ export class TeacherService {
 
   constructor(private http: HttpClient, private configService: ConfigService) { }
 
-    getTeachers(param: FilterParams): Observable<TeacherData> {
-        let url: string = `${this.configService.getApiUrl()}/teachers?page=${param.page}&size=${param.size}`;
+    getTeachers(params: FilterParams): Observable<TeacherData> {
+        let url: string = `${this.configService.getApiUrl()}/teachers?page=${params.page}&size=${params.size}`;
 
-        if (param.districtIds && param.districtIds.length > 0) {
-            url = `${url}&districtIds=${param.districtIds}`;
+        if (params.districtIds && params.districtIds.length > 0) {
+            url = `${url}&districtIds=${params.districtIds}`;
         }
-        if (param.schoolIds && param.schoolIds.length > 0) {
-            url = `${url}&schoolIds=${param.schoolIds}`;
+        if (params.schoolIds && params.schoolIds.length > 0) {
+            url = `${url}&schoolIds=${params.schoolIds}`;
+        }
+        return this.http.get<TeacherData>(url);
+    }
+
+    getTeachersForFilter(params: FilterParams): Observable<TeacherData> {
+        let url: string = `${this.configService.getApiUrl()}/teachers/filter`;
+        if (params.schoolIds && params.schoolIds.length > 0) {
+            url = `${url}?schoolIds=${params.schoolIds}`;
         }
         return this.http.get<TeacherData>(url);
     }

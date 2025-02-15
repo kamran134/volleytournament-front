@@ -3,4 +3,5 @@ export interface FilterParams {
     size?: number;
     districtIds?: string;
     schoolIds?: string;
+    teacherIds?: string;
 }

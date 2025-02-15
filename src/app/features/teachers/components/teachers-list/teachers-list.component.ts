@@ -14,8 +14,9 @@ import { MatOption, MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
-import { District } from '../../../../models/district.model';
+import { District, DistrictData } from '../../../../models/district.model';
 import { School, SchoolData } from '../../../../models/school.model';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
     selector: 'app-teachers-list',
@@ -28,6 +29,7 @@ import { School, SchoolData } from '../../../../models/school.model';
         MatIconModule,
         MatPaginator,
         MatFormFieldModule,
+        MatTableModule,
         MatSelectModule,
         FormsModule,
         ReactiveFormsModule
@@ -150,8 +152,8 @@ export class TeachersListComponent implements OnInit {
     loadDistricts(): void {
         this.districtService.getDistricts()
             .subscribe({
-                next: (data: District[]) => {
-                    this.districts = data;
+                next: (response: DistrictData) => {
+                    this.districts = response.data;
                 },
                 error: (err: any) => {
                     this.isLoading = false;
