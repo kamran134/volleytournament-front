@@ -29,4 +29,11 @@ export class StudentService {
         let url: string = `${this.configService.getApiUrl()}/students/${studentId}`;
         return this.http.get<StudentWithResult>(url);
     }
+
+    uploadFile(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return this.http.post(`${this.configService.getApiUrl()}/students/upload`, formData);
+    }
 }

@@ -135,4 +135,21 @@
             [pageSizeOptions]="[5, 10, 20, 50]"
             (page)="onPageChange($event)" />
     </div>
+
+    <!-- <div class="upload-file">
+        <form (submit)="onSubmit($event)" enctype="multipart/form-data">
+            <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />
+            <button mat-flat-button extended (click)="fileInput.click()">
+                <mat-icon fontIcon="attach_file"></mat-icon>
+                Fayldan yüklə
+            </button>
+            <div style="display: inline-block; width: 500px; padding: 0 20px;">
+                <label *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">{{ fileInput.files[0].name}}</label>
+            </div>
+            <button mat-flat-button extended type="submit" *ngIf="fileInput && fileInput.files && fileInput.files.length > 0">
+                <mat-icon>upload</mat-icon>
+                Yüklə
+            </button>
+        </form>
+    </div> -->
 </div>

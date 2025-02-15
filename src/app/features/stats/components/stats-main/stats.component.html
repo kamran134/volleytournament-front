@@ -10,16 +10,34 @@
         <h2>{{'İmtahan nəticələri üzrə statistika'}}</h2>
     </mat-grid-tile>
 </mat-grid-list>
+
+<mat-grid-list cols="4" rowHeight="100px">
+    <mat-grid-tile [colspan]="1" [rowspan]="2">
+        <mat-form-field>            
+            <mat-label>Ay seçin</mat-label>
+            <input matInput
+                [matDatepicker]="monthPicker"
+                [formControl]="monthControl"
+                [value]="monthControl.value | monthName" readonly="">
+            <mat-datepicker-toggle matIconSuffix [for]="monthPicker"></mat-datepicker-toggle>
+            <mat-datepicker #monthPicker
+                startView="multi-year"
+                (monthSelected)="updateMonth($event)"
+                panelClass="month-picker"></mat-datepicker>
+        </mat-form-field>
+    </mat-grid-tile>
+</mat-grid-list>
+
     <!--<mat-grid-tile [colspan]="4" [rowspan]="2">-->
 <div class="stats-container">
     <mat-card class="student-card">
-        <mat-card-title>{{'Son ayda inkişaf edən şagirdlər'}}</mat-card-title>
+        <mat-card-title>{{(monthControl.value | monthName) + ' aydında inkişaf edən şagirdlər'}}</mat-card-title>
         <mat-card-content>
             <table mat-table [dataSource]="stats.developingStudents!" class="mat-elevation-z8">
                 <ng-container matColumnDef="fullName">
                     <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
-                    <td mat-cell *matCellDef="let student">
-                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    <td mat-cell *matCellDef="let result">
+                        {{ result.student.lastName }} {{ result.student.firstName }} {{ result.student.middleName }}
                     </td>
                 </ng-container>
     
@@ -45,8 +63,8 @@
             <table mat-table [dataSource]="stats.studentsOfMonth!" class="mat-elevation-z8">
                 <ng-container matColumnDef="fullName">
                     <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
-                    <td mat-cell *matCellDef="let student">
-                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    <td mat-cell *matCellDef="let result">
+                        {{ result.student.lastName }} {{ result.student.firstName }} {{ result.student.middleName }}
                     </td>
                 </ng-container>
     
@@ -57,7 +75,7 @@
     
                 <ng-container matColumnDef="status">
                     <th mat-header-cell *matHeaderCellDef> Statusu </th>
-                    <td mat-cell *matCellDef="let student"> {{ student.status }} </td>
+                    <td mat-cell *matCellDef="let result"> {{ result.student.status }} </td>
                 </ng-container>
     
                 <tr mat-header-row *matHeaderRowDef="['fullName', 'status']"></tr>
@@ -72,19 +90,19 @@
             <table mat-table [dataSource]="stats.studentsOfMonthByRepublic!" class="mat-elevation-z8">
                 <ng-container matColumnDef="fullName">
                     <th mat-header-cell *matHeaderCellDef> Soyadı, adı, ata adı </th>
-                    <td mat-cell *matCellDef="let student">
-                        {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
+                    <td mat-cell *matCellDef="let result">
+                        {{ result.student.lastName }} {{ result.student.firstName }} {{ result.student.middleName }}
                     </td>
                 </ng-container>
     
                 <ng-container matColumnDef="score">
                     <th mat-header-cell *matHeaderCellDef> Balları </th>
-                    <td mat-cell *matCellDef="let student"> {{ student.score }} </td>
+                    <td mat-cell *matCellDef="let result"> {{ result.student.score }} </td>
                 </ng-container>
     
                 <ng-container matColumnDef="status">
                     <th mat-header-cell *matHeaderCellDef> Statusu </th>
-                    <td mat-cell *matCellDef="let student"> {{ student.status }} </td>
+                    <td mat-cell *matCellDef="let result"> {{ result.student.status }} </td>
                 </ng-container>
     
                 <tr mat-header-row *matHeaderRowDef="['fullName', 'status']"></tr>

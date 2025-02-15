@@ -20,8 +20,8 @@ export class StatsService {
         return this.http.post(url, {});
     }
 
-    getStats(): Observable<Stats> {
-        let url: string = `${this.configService.getApiUrl()}/stats`;
+    getStats(month: string): Observable<Stats> {
+        let url: string = `${this.configService.getApiUrl()}/stats?month=${month}`;
         return this.http.get<Stats>(url, {});
     }
 }

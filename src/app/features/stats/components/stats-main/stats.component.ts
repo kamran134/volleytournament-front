@@ -11,6 +11,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Stats } from '../../../../models/stats.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import moment from 'moment';
+import { MonthNamePipe } from '../../../../pipes/month-name.pipe';
 
 @Component({
     selector: 'app-stats',
@@ -23,19 +29,23 @@ import { MatTableModule } from '@angular/material/table';
         MatProgressSpinnerModule,
         MatCardModule,
         MatTableModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatInputModule,
         CommonModule,
+        ReactiveFormsModule,
+        MonthNamePipe,
         RouterModule
     ],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
 export class StatsComponent implements OnInit {
-    horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    verticalPosition: MatSnackBarVerticalPosition = 'top';
+    monthControl = new FormControl(new Date());
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
     }
     loading: boolean = false;
     loading1: boolean = false;
@@ -50,7 +60,13 @@ export class StatsComponent implements OnInit {
 
     getStats(): void {
         this.loading = true;
-        this.statsService.getStats().subscribe({
+
+        const selectedDate = this.monthControl.value;
+        if (!selectedDate) return;
+
+        const month = selectedDate.toISOString().slice(0, 7);
+
+        this.statsService.getStats(month).subscribe({
             next: (response) => {
                 this.loading = false;
                 this.stats = response;
@@ -88,5 +104,10 @@ export class StatsComponent implements OnInit {
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
+    }
+
+    updateMonth(event: Date) {
+        this.monthControl.setValue(event, { emitEvent: true });
+        this.getStats();
     }
 }

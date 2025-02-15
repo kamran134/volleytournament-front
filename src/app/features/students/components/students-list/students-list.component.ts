@@ -42,6 +42,7 @@ import { MatSelectModule } from '@angular/material/select';
     styleUrl: './students-list.component.scss'
 })
 export class StudentsListComponent {
+    file: File | null = null;
     students: Student[] = [];
     districts: District[] = [];
     schools: School[] = [];
@@ -205,5 +206,38 @@ export class StudentsListComponent {
         }
 
         this.router.navigate(['/students', studentId], navigationExtras);
+    }
+
+    onFileChange(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input?.files?.length) {
+            this.file = input.files[0]
+        }
+    }
+
+    onSubmit(event: Event): void {
+        event.preventDefault();
+
+        if (this.file) {
+            this.studentService.uploadFile(this.file).subscribe({
+                next: () => this.snackBar.open('Fayl uğurla yükləndi', 'OK', {
+                    horizontalPosition: this.horizontalPosition,
+                    verticalPosition: this.verticalPosition,
+                    duration: 5000
+                }),
+                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', {
+                    horizontalPosition: this.horizontalPosition,
+                    verticalPosition: this.verticalPosition,
+                    duration: 5000
+                })
+            });
+        }
+        else {
+            this.snackBar.open('Fayl seçilməyib', 'Bağla', {
+                horizontalPosition: this.horizontalPosition,
+                verticalPosition: this.verticalPosition,
+                duration: 5000
+            });
+        }
     }
 }
