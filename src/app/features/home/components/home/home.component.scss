@@ -1,9 +1,15 @@
-.cards-container {
+.cards {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 20px;
+    
+    &__container {
+        max-width: 680px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+        gap: 20px;
+    }
 }
   
 .card {

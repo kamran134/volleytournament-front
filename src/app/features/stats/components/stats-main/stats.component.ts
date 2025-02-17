@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { StatsService } from '../../services/stats.service';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Error } from '../../../../models/error.model';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import moment from 'moment';
 import { MonthNamePipe } from '../../../../pipes/month-name.pipe';
 
 @Component({
@@ -49,8 +48,8 @@ export class StatsComponent implements OnInit {
     }
     loading: boolean = false;
     loading1: boolean = false;
-    loading2: boolean = false;
     stats: Stats = {}
+    columns: string[] = ["fullName", "district", "teacher", "score"]
 
     constructor(private statsService: StatsService, private snackBar: MatSnackBar) {}
 
@@ -92,19 +91,19 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    updateStatsByRepublic(): void {
-        this.loading2 = true;
-        this.statsService.updateStatsByRepublic().subscribe({
-            next: (response) => {
-                this.loading2 = false;
-                this.snackBar.open('Respublika üzrə statistika yeniləndi', 'OK', this.matSnackConfig);
-            },
-            error: (error: Error) => {
-                this.loading2 = false;
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-    }
+    // updateStatsByRepublic(): void {
+    //     this.loading2 = true;
+    //     this.statsService.updateStatsByRepublic().subscribe({
+    //         next: (response) => {
+    //             this.loading2 = false;
+    //             this.snackBar.open('Respublika üzrə statistika yeniləndi', 'OK', this.matSnackConfig);
+    //         },
+    //         error: (error: Error) => {
+    //             this.loading2 = false;
+    //             this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+    //         }
+    //     });
+    // }
 
     updateMonth(event: Date) {
         this.monthControl.setValue(event, { emitEvent: true });
