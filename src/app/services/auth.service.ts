@@ -22,18 +22,27 @@ export class AuthService {
     private hasToken(): boolean {
         return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token');
     }
+    // private hasToken(): boolean {
+    //     if (isPlatformBrowser(this.platformId)) {
+    //         return document.cookie.split(';').some(item => item.trim().startsWith('token='));
+    //     }
+    //     return false;
+    // }
 
     login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-        return this.http.post<{ token: string }>(`${this.configService.getAuthUrl()}/login`, credentials).pipe(
+        return this.http.post<{ token: string }>(`${this.configService.getAuthUrl()}/login`, credentials, { withCredentials: true }).pipe(
+        //return this.http.post<void>(`${this.configService.getAuthUrl()}/login`, credentials, { withCredentials: true }).pipe(
             tap (response => {
+                // console.log('resp', response);
                 localStorage.setItem('token', response.token);
                 this.authStatus.next(true);
+                // this.router.navigate(['/admin']);
             })
         );
     }
 
     register(credentials: { email: string; password: string; confirmPassword: string }): Observable<any> {
-        return this.http.post(`${this.configService.getAuthUrl()}/register`, credentials);
+        return this.http.post(`${this.configService.getAuthUrl()}/register`, credentials, { withCredentials: true });
     }
 
     saveToken(token: string): void {

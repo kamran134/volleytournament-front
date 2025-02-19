@@ -136,6 +136,10 @@
             (page)="onPageChange($event)" />
     </div>
 
+    <div class="global-action-pannel">
+        <button mat-flat-button color="warn" (click)="onAllStudentsDelete()">Ekranda olan şagirdləri sil</button>
+    </div>
+
     <!-- <div class="upload-file">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />

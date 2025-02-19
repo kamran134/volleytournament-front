@@ -44,7 +44,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
     styleUrl: './exams-list.component.scss'
 })
 export class ExamsListComponent implements OnInit {
-    constructor(private examService: ExamService, private dialog: MatDialog,) {}
+    constructor(private examService: ExamService, private dialog: MatDialog) {}
 
     displayedColumns: string[] = ['name', 'code', 'date', 'actions'];
 

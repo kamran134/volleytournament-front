@@ -19,6 +19,8 @@ import { MatOption, MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-schools-list',
@@ -57,7 +59,8 @@ export class SchoolsListComponent implements OnInit {
     constructor(
         private schoolService: SchoolService,
         private districtService: DistrictService,
-        private snackBar: MatSnackBar) {}
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog) {}
 
     onFileChange(event: Event): void {
         const input = event.target as HTMLInputElement;
@@ -142,5 +145,27 @@ export class SchoolsListComponent implements OnInit {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
         this.loadSchools();
+    }
+
+    onAllSchoolsDelete(): void {
+
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Bütün məktəbləri silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                const schoolIds = this.schools.map(s => s._id).join(",");
+                this.schoolService.deleteSchools(schoolIds).subscribe({
+                    next: (response) => {
+                        this.loadSchools();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
     }
 }

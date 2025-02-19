@@ -28,7 +28,7 @@ export class LoginComponent {
 
         this.authService.login(this.loginForm.getRawValue()).subscribe({
             next: (response) => {
-                this.authService.saveToken(response.token);
+                // this.authService.saveToken(response.token);
                 this.router.navigate(['/dashboard']);
             },
             error: (error) => {

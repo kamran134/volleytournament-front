@@ -35,7 +35,7 @@ export class RegisterComponent {
   
         this.authService.register(this.registerForm.getRawValue()).subscribe({
             next: (response) => {
-            this.authService.saveToken(response.token);
+            // this.authService.saveToken(response.token);
             this.router.navigate(['/dashboard']);
         },
         error: (err) => {

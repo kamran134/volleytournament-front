@@ -32,6 +32,17 @@ export class TeacherService {
         return this.http.get<TeacherData>(url);
     }
 
+    deleteTeacher(teacherId: string): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/teachers/${teacherId}`;
+        return this.http.delete(url);
+    }
+
+    deleteTeachers(teacherIds: string): Observable<any> {
+        console.log(teacherIds);
+        const url: string = `${this.configService.getApiUrl()}/teachers/delete/${teacherIds}`;
+        return this.http.delete(url);
+    }
+
     uploadFile(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);

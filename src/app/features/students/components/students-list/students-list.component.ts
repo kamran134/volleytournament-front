@@ -19,6 +19,8 @@ import { District, DistrictData } from '../../../../models/district.model';
 import { School, SchoolData } from '../../../../models/school.model';
 import { Teacher, TeacherData } from '../../../../models/teacher.model';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-students-list',
@@ -69,6 +71,7 @@ export class StudentsListComponent {
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -239,5 +242,26 @@ export class StudentsListComponent {
                 duration: 5000
             });
         }
+    }
+
+    onAllStudentsDelete(): void {
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Bütün şagirdləri silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                const studentIds = this.students.map(s => s._id).join(",");
+                this.studentService.deleteStudents(studentIds).subscribe({
+                    next: (response) => {
+                        this.loadStudents();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
     }
 }

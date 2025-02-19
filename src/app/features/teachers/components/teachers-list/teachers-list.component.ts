@@ -17,6 +17,8 @@ import { SchoolService } from '../../../schools/services/school.service';
 import { District, DistrictData } from '../../../../models/district.model';
 import { School, SchoolData } from '../../../../models/school.model';
 import { MatTableModule } from '@angular/material/table';
+import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-teachers-list',
@@ -57,7 +59,8 @@ export class TeachersListComponent implements OnInit {
         private teacherService: TeacherService,
         private districtService: DistrictService,
         private schoolService: SchoolService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) {}
 
     onFileChange(event: Event): void {
@@ -167,5 +170,26 @@ export class TeachersListComponent implements OnInit {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
         this.loadTeachers();
+    }
+
+    onAllTeachersDelete(): void {
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Bütün müəllimləri silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                const teacherIds = this.teachers.map(s => s._id).join(",");
+                this.teacherService.deleteTeachers(teacherIds).subscribe({
+                    next: (response) => {
+                        this.loadTeachers();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
     }
 }

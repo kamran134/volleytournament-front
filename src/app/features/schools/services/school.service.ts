@@ -32,6 +32,17 @@ export class SchoolService {
         return this.http.get<SchoolData>(url);
     }
 
+    deleteSchool(schoolId: string): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/schools/${schoolId}`;
+        return this.http.delete(url);
+    }
+
+    deleteSchools(schoolIds: string): Observable<any> {
+        console.log(schoolIds);
+        const url: string = `${this.configService.getApiUrl()}/schools/delete/${schoolIds}`;
+        return this.http.delete(url);
+    }
+
     uploadFile(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
