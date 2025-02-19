@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { importProvidersFrom } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -15,12 +15,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/material/core';
 import { CustomDateAdapter } from './utils/adapters/custom-date-adapter';
 import { CUSTOM_DATE_FORMATS } from './utils/custom-date-formats';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(routes), 
         provideClientHydration(),
-        provideHttpClient(),
+        provideHttpClient(withInterceptors([authInterceptor])),
         provideAnimationsAsync(),
         importProvidersFrom(
             BrowserAnimationsModule,

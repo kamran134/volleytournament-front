@@ -7,5 +7,9 @@ import { environment } from '../../environments/environment';
 export class ConfigService {
     getApiUrl(): string {
         return environment.apiUrl;
+    };
+
+    getAuthUrl(): string {
+        return environment.authUrl;
     }
 }
