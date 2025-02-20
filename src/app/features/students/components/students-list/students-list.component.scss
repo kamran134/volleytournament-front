@@ -1,3 +1,8 @@
+.scrollable-container {
+  max-height: 475px; /* или любая другая высота */
+  overflow-y: auto;
+}
+
 .clickable-row {
     cursor: pointer;
   }

@@ -30,7 +30,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
         MatSnackBarModule,
         MatIconModule,
         MatButtonModule,
-        MatPaginator,
+        // MatPaginator,
         MatFormFieldModule,
         FormsModule,
         MatOption,
@@ -52,9 +52,10 @@ export class StudentsListComponent {
     totalCount: number = 0;
     pageSize: number = 10;
     pageIndex: number = 0;
-    isLoading = false;
-    hasError = false;
-    errorMessage = '';
+    isLoading: boolean = false;
+    isLoadingMore: boolean = false;
+    hasError: boolean = false;
+    errorMessage: string = '';
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     selectedDistrictIds: string[] = [];
@@ -75,6 +76,7 @@ export class StudentsListComponent {
     ) {}
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.route.queryParams.subscribe({
             next: (params: Params) => {
                 this.pageSize = params['pageSize'] ? +params['pageSize'] : this.pageSize;
@@ -87,7 +89,6 @@ export class StudentsListComponent {
     }
 
     loadStudents(): void {
-        this.isLoading = true;
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -96,18 +97,19 @@ export class StudentsListComponent {
             teacherIds: this.selectedTeacherIds.join(",")
         };
 
-        this.isLoading = true;
-
         this.studentService.getStudents(params).subscribe({
             next: (data: StudentData) => {
-                this.students = data.data;
+                if (this.pageIndex === 0) this.students = data.data;
+                else this.students = [...this.students, ...data.data]
                 this.totalCount = data.totalCount;
                 this.isLoading = false;
+                this.isLoadingMore = false;
             },
             error: (error) => {
                 this.hasError = true;
                 this.errorMessage = error.message;
                 this.isLoading = false;
+                this.isLoadingMore = false;
             }
         });
     }
@@ -164,17 +166,23 @@ export class StudentsListComponent {
     }
 
     onDistrictSelectChanged(): void {
+        this.pageIndex = 0; // Сбрасываем страницу
+        this.students = []; // Очищаем список студентов
         this.loadSchools();
         this.loadTeachers();
         this.loadStudents();
     }
 
     onSchoolSelectChanged(): void {
+        this.pageIndex = 0; // Сбрасываем страницу
+        this.students = []; // Очищаем список студентов
         this.loadTeachers();
         this.loadStudents();
     }
 
     onTeacherSelectChanged(): void {
+        this.pageIndex = 0; // Сбрасываем страницу
+        this.students = []; // Очищаем список студентов
         this.loadStudents();
     }
 
@@ -195,6 +203,17 @@ export class StudentsListComponent {
         this.router.navigate([], navigationExtras).then(() => {
             this.loadStudents();
         });
+    }
+
+    onScroll(event: any): void {
+        const element = event.target;
+        if (element.scrollHeight - element.scrollTop <= element.clientHeight + 10) { // 10px - порог для загрузки
+            if (!this.isLoading && !this.isLoadingMore && this.students.length < this.totalCount) {
+                this.isLoadingMore = true;
+                this.pageIndex++;
+                this.loadStudents();
+            }
+        }
     }
 
     openStudentDetails(studentId: string): void {
