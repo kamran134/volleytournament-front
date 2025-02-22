@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, model, ModelSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { Student, StudentData } from '../../../../models/student.model';
@@ -19,6 +19,7 @@ import { District, DistrictData } from '../../../../models/district.model';
 import { School, SchoolData } from '../../../../models/school.model';
 import { Teacher, TeacherData } from '../../../../models/teacher.model';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 
@@ -30,7 +31,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
         MatSnackBarModule,
         MatIconModule,
         MatButtonModule,
-        // MatPaginator,
+        MatPaginator,
         MatFormFieldModule,
         FormsModule,
         MatOption,
@@ -38,6 +39,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
         MatTableModule,
         MatSelectModule,
         FormsModule,
+        MatCheckboxModule,
         ReactiveFormsModule
     ],
     templateUrl: './students-list.component.html',
@@ -52,6 +54,7 @@ export class StudentsListComponent {
     totalCount: number = 0;
     pageSize: number = 10;
     pageIndex: number = 0;
+    readonly checkedDeffective: ModelSignal<boolean> = model(false);
     isLoading: boolean = false;
     isLoadingMore: boolean = false;
     hasError: boolean = false;
@@ -94,7 +97,8 @@ export class StudentsListComponent {
             size: this.pageSize,
             districtIds: this.selectedDistrictIds.join(","),
             schoolIds: this.selectedSchoolIds.join(","),
-            teacherIds: this.selectedTeacherIds.join(",")
+            teacherIds: this.selectedTeacherIds.join(","),
+            defective: this.checkedDeffective()
         };
 
         this.studentService.getStudents(params).subscribe({
@@ -282,5 +286,9 @@ export class StudentsListComponent {
                 });
             }
         });
+    }
+
+    onCheckDefective(): void {
+        this.loadStudents();
     }
 }

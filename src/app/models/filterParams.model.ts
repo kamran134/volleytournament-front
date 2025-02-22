@@ -4,4 +4,5 @@ export interface FilterParams {
     districtIds?: string;
     schoolIds?: string;
     teacherIds?: string;
+    defective?: boolean;
 }

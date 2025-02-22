@@ -13,6 +13,9 @@ export class StudentService {
 
     getStudents(params: FilterParams): Observable<StudentData> {
         let url: string = `${this.configService.getApiUrl()}/students?page=${params.page}&size=${params.size}`;
+        if (params.defective) {
+            url = `${url}&defective=true`;
+        }
         if (params.districtIds && params.districtIds.length > 0) {
             url = `${url}&districtIds=${params.districtIds}`;
         }
