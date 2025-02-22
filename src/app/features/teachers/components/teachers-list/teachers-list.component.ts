@@ -61,6 +61,7 @@ export class TeachersListComponent implements OnInit {
     selectedSchoolIds: string[] = [];
     missingSchoolCodes: number[] = [];
     teacherCodesWithoutSchoolCodes: number[] = [];
+    incorrectTeacherCodes: number[] = [];
 
     constructor(
         private teacherService: TeacherService,
@@ -86,6 +87,7 @@ export class TeachersListComponent implements OnInit {
                     this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
                     this.missingSchoolCodes = response.missingSchoolCodes || [];
                     this.teacherCodesWithoutSchoolCodes = response.teacherCodesWithoutSchoolCodes || [];
+                    this.incorrectTeacherCodes = response.incorrectTeacherCodes || [];
                 },
                 error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', this.matSnackConfig)
             });

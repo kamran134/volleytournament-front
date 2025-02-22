@@ -61,7 +61,8 @@ export class ExamsListComponent implements OnInit {
             verticalPosition: 'top'
     }
     selectedDistrictIds: string[] = [];
-    studentsWithoutTeacher: string[] = [];
+    incorrectStudentCodes: number[] = [];
+    studentsWithoutTeacher: number[] = [];
 
     ngOnInit(): void {
         this.loadExams();
@@ -118,10 +119,9 @@ export class ExamsListComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log(result);
-            if (result && Array.isArray(result)) {
-                this.studentsWithoutTeacher = result.map((student: any) => student.code);
-            }
+            console.log('res', result);
+            this.incorrectStudentCodes = result.incorrectStudentCodes;
+            this.studentsWithoutTeacher = result.studentsWithoutTeacher;
         });
     }
 

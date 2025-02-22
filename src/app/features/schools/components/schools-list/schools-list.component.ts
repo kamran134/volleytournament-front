@@ -63,6 +63,7 @@ export class SchoolsListComponent implements OnInit {
     selectedDistrictIds: string[] = [];
     missingDistrictCodes: number[] = [];
     schoolCodesWithoutDistrictCodes: number[] = [];
+    incorrectSchoolCodes: number[] = [];
 
     constructor(
         private schoolService: SchoolService,
@@ -86,6 +87,7 @@ export class SchoolsListComponent implements OnInit {
                     this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
                     this.missingDistrictCodes = response.missingDistrictCodes || [];
                     this.schoolCodesWithoutDistrictCodes = response.schoolCodesWithoutDistrictCodes || [];
+                    this.incorrectSchoolCodes = response.incorrectSchoolCodes || [];
                 },
                 error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', this.matSnackConfig)
             });

@@ -48,8 +48,9 @@ export class ExamResultDialogComponent implements OnInit {
         if (this.file) {
             this.examService.uploadResults(this.file, this.data.exam._id).subscribe({
                 next: (response) => {
+                    const { incorrectStudentCodes, studentsWithoutTeacher } = response;
                     this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
-                    this.dialogRef.close(response.studentsWithoutTeacher);
+                    this.dialogRef.close({ incorrectStudentCodes, studentsWithoutTeacher });
                 },
                 error: (error: Error) => {
                     this.snackBar.open(`Fayl yüklənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);

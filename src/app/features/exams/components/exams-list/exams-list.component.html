@@ -67,6 +67,19 @@
             (page)="onPageChange($event)" />
     </div>
 
+    <div *ngIf="incorrectStudentCodes.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Kodları yalnış olan şagirdlər. (Şagird kodu 10 ədədli rəqəm olmalıdır)
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let code of incorrectStudentCodes">{{ code }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div *ngIf="studentsWithoutTeacher.length > 0">
         <mat-card appearance="outlined">
             <mat-card-header>
@@ -75,7 +88,7 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>
-                <p>{{ studentsWithoutTeacher.join(', ') }}</p>
+                <p *ngFor="let student of studentsWithoutTeacher">{{ student }}</p>
             </mat-card-content>
         </mat-card>
     </div>
