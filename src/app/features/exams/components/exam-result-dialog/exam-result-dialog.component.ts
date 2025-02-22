@@ -48,8 +48,8 @@ export class ExamResultDialogComponent implements OnInit {
         if (this.file) {
             this.examService.uploadResults(this.file, this.data.exam._id).subscribe({
                 next: (response) => {
-                    this.snackBar.open('Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
-                    this.dialogRef.close(response?.studentsWithoutTeacher);
+                    this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
+                    this.dialogRef.close(response.studentsWithoutTeacher);
                 },
                 error: (error: Error) => {
                     this.snackBar.open(`Fayl yüklənərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);
@@ -62,7 +62,7 @@ export class ExamResultDialogComponent implements OnInit {
         event.preventDefault();
         this.examService.deleteResults(this.data.exam._id).subscribe({
             next: (response) => {
-                this.snackBar.open('Nəticələr uğurla silindi', 'OK', this.matSnackConfig)
+                this.snackBar.open(response.message || 'Nəticələr uğurla silindi', 'OK', this.matSnackConfig)
             },
             error: (error: Error) => {
                 this.snackBar.open(`Nəticələr silinərkən xəta baş verdi!\n${error.error.message}`, 'Bağla', this.matSnackConfig);

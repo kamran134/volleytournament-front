@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Exam, ExamData } from '../../../models/exam.model';
 import { FilterParams } from '../../../models/filterParams.model';
 import { ExamResult } from '../../../models/examResult.model';
+import { ResponseFromBackend } from '../../../models/response.model';
 
 @Injectable({
     providedIn: 'root'
@@ -26,26 +27,26 @@ export class ExamService {
         return this.http.post<Exam>(url, exam);
     }
 
-    uploadResults(file: File, examId: string): Observable<any> {
+    uploadResults(file: File, examId: string): Observable<ResponseFromBackend> {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('examId', examId);
 
-        return this.http.post(`${this.configService.getApiUrl()}/student-results/upload`, formData);
+        return this.http.post<ResponseFromBackend>(`${this.configService.getApiUrl()}/student-results/upload`, formData);
     }
 
-    deleteResults(examId: string): Observable<any> {
+    deleteResults(examId: string): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/student-results/${examId}`;
-        return this.http.delete(url);
+        return this.http.delete<ResponseFromBackend>(url);
     }
 
-    deleteExam(examId: string): Observable<any> {
+    deleteExam(examId: string): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/exams/${examId}`;
-        return this.http.delete(url);
+        return this.http.delete<ResponseFromBackend>(url);
     }
 
-    deleteAllExams(): Observable<any> {
+    deleteAllExams(): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/exams`;
-        return this.http.delete(url);
+        return this.http.delete<ResponseFromBackend>(url);
     }
 }

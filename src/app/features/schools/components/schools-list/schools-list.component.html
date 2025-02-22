@@ -71,6 +71,32 @@
             (page)="onPageChange($event)" />
     </div>
 
+    <div *ngIf="missingDistrictCodes.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Bazada olmayan rayon kodları (rayonu bazada olmayan məktəblər yüklənmədi)
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let code of missingDistrictCodes">{{ code }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div *ngIf="schoolCodesWithoutDistrictCodes.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Faylda rayon kodu olmayan və yüklənməyən məktəblər
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let schoolCode of schoolCodesWithoutDistrictCodes">{{ schoolCode }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div class="upload-file">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />

@@ -3,14 +3,14 @@ import { Teacher, TeacherData } from '../../../../models/teacher.model';
 import { TeacherService } from '../../services/teacher.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FilterParams } from '../../../../models/filterParams.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatOption, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
@@ -19,6 +19,7 @@ import { School, SchoolData } from '../../../../models/school.model';
 import { MatTableModule } from '@angular/material/table';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-teachers-list',
@@ -33,6 +34,7 @@ import { MatDialog } from '@angular/material/dialog';
         MatFormFieldModule,
         MatTableModule,
         MatSelectModule,
+        MatCardModule,
         FormsModule,
         ReactiveFormsModule
     ],
@@ -50,10 +52,15 @@ export class TeachersListComponent implements OnInit {
     isLoading = false;
     hasError = false;
     errorMessage = '';
-    horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    verticalPosition: MatSnackBarVerticalPosition = 'top';
+    matSnackConfig: MatSnackBarConfig = {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+    }
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
+    missingSchoolCodes: number[] = [];
+    teacherCodesWithoutSchoolCodes: number[] = [];
 
     constructor(
         private teacherService: TeacherService,
@@ -75,24 +82,16 @@ export class TeachersListComponent implements OnInit {
 
         if (this.file) {
             this.teacherService.uploadFile(this.file).subscribe({
-                next: () => this.snackBar.open('Fayl uğurla yükləndi', 'OK', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                }),
-                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                })
+                next: (response) => {
+                    this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
+                    this.missingSchoolCodes = response.missingSchoolCodes || [];
+                    this.teacherCodesWithoutSchoolCodes = response.teacherCodesWithoutSchoolCodes || [];
+                },
+                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', this.matSnackConfig)
             });
         }
         else {
-            this.snackBar.open('Fayl seçilməyib', 'Bağla', {
-                horizontalPosition: this.horizontalPosition,
-                verticalPosition: this.verticalPosition,
-                duration: 5000
-            });
+            this.snackBar.open('Fayl seçilməyib', 'Bağla', this.matSnackConfig);
         }
     }
 

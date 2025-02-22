@@ -4,6 +4,7 @@ import { ConfigService } from '../../../services/config.service';
 import { Observable } from 'rxjs';
 import { SchoolData } from '../../../models/school.model';
 import { FilterParams } from '../../../models/filterParams.model';
+import { ResponseFromBackend } from '../../../models/response.model';
 
 @Injectable({
     providedIn: 'root'
@@ -43,10 +44,10 @@ export class SchoolService {
         return this.http.delete(url);
     }
 
-    uploadFile(file: File): Observable<any> {
+    uploadFile(file: File): Observable<ResponseFromBackend> {
         const formData = new FormData();
         formData.append('file', file);
 
-        return this.http.post(`${this.configService.getApiUrl()}/schools/upload`, formData);
+        return this.http.post<ResponseFromBackend>(`${this.configService.getApiUrl()}/schools/upload`, formData);
     }
 }

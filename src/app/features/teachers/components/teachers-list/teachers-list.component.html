@@ -91,6 +91,32 @@
         />
     </div>
 
+    <div *ngIf="missingSchoolCodes.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Bazada olmayan məktəb kodları (məktəbi bazada olmayan müəllimlər yüklənmədi)
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let schoolCode of missingSchoolCodes">{{ schoolCode }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div *ngIf="teacherCodesWithoutSchoolCodes.length > 0">
+        <mat-card appearance="outlined">
+            <mat-card-header>
+                <mat-card-title>
+                    Faylda məktəb kodu olmayan və yüklənməyən müəllimlər
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let teacherCode of teacherCodesWithoutSchoolCodes">{{ teacherCode }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div class="upload-file">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />

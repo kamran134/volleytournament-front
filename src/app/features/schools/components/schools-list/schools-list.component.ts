@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
     MatSnackBar,
+    MatSnackBarConfig,
     MatSnackBarHorizontalPosition,
     MatSnackBarModule,
     MatSnackBarVerticalPosition
@@ -21,6 +22,7 @@ import { DistrictService } from '../../../districts/services/district.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-schools-list',
@@ -36,6 +38,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
         MatTableModule,
         MatSelectModule,
         MatOption,
+        MatCardModule,
         FormsModule,
         ReactiveFormsModule
     ],
@@ -52,9 +55,14 @@ export class SchoolsListComponent implements OnInit {
     isLoading = false;
     hasError = false;
     errorMessage = '';
-    horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    verticalPosition: MatSnackBarVerticalPosition = 'top';
+    matSnackConfig: MatSnackBarConfig = {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+    }
     selectedDistrictIds: string[] = [];
+    missingDistrictCodes: number[] = [];
+    schoolCodesWithoutDistrictCodes: number[] = [];
 
     constructor(
         private schoolService: SchoolService,
@@ -74,24 +82,16 @@ export class SchoolsListComponent implements OnInit {
 
         if (this.file) {
             this.schoolService.uploadFile(this.file).subscribe({
-                next: (response) => this.snackBar.open('Fayl uğurla yükləndi', 'OK', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                }),
-                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                })
+                next: (response) => {
+                    this.snackBar.open(response.message || 'Fayl uğurla yükləndi', 'OK', this.matSnackConfig);
+                    this.missingDistrictCodes = response.missingDistrictCodes || [];
+                    this.schoolCodesWithoutDistrictCodes = response.schoolCodesWithoutDistrictCodes || [];
+                },
+                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', this.matSnackConfig)
             });
         }
         else {
-            this.snackBar.open('Fayl seçilməyib', 'Bağla', {
-                horizontalPosition: this.horizontalPosition,
-                verticalPosition: this.verticalPosition,
-                duration: 5000
-            });
+            this.snackBar.open('Fayl seçilməyib', 'Bağla', this.matSnackConfig);
         }
     }
 

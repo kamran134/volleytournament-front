@@ -55,12 +55,10 @@ export class ExamsListComponent implements OnInit {
     isLoading = false;
     hasError = false;
     errorMessage = '';
-    horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    verticalPosition: MatSnackBarVerticalPosition = 'top';
     matSnackConfig: MatSnackBarConfig = {
             duration: 5000,
-            horizontalPosition: this.horizontalPosition,
-            verticalPosition: this.verticalPosition
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
     }
     selectedDistrictIds: string[] = [];
     studentsWithoutTeacher: string[] = [];
