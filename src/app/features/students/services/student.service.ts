@@ -25,12 +25,24 @@ export class StudentService {
         if (params.teacherIds && params.teacherIds.length > 0) {
             url = `${url}&teacherIds=${params.teacherIds}`;
         }
+        if (params.grades && params.grades.length > 0) {
+            url = `${url}&grades=${params.grades}`;
+        }
+        if (params.examIds && params.examIds.length > 0) {
+            console.log('examIds: ', params.examIds)
+            url = `${url}&examIds=${params.examIds}`
+        }
         return this.http.get<StudentData>(url);
     }
 
     getStudentById(studentId: string): Observable<StudentWithResult> {
         let url: string = `${this.configService.getApiUrl()}/students/${studentId}`;
         return this.http.get<StudentWithResult>(url);
+    }
+
+    searchStudents(searchString: string): Observable<StudentData> {
+        let url: string = `${this.configService.getApiUrl()}/students/search/${searchString}`;
+        return this.http.get<StudentData>(url);
     }
 
     deleteStudent(studentId: string): Observable<any> {

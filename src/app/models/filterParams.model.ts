@@ -5,4 +5,6 @@ export interface FilterParams {
     schoolIds?: string;
     teacherIds?: string;
     defective?: boolean;
+    grades?: string;
+    examIds?: string;
 }

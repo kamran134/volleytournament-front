@@ -4,9 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { Student, StudentData } from '../../../../models/student.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { StudentService } from '../../services/student.service';
 import { FilterParams } from '../../../../models/filterParams.model';
@@ -22,6 +22,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { ExamService } from '../../../exams/services/exam.service';
+import { Exam } from '../../../../models/exam.model';
+import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-students-list',
@@ -38,6 +42,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
         RouterModule,
         MatTableModule,
         MatSelectModule,
+        MatInputModule,
         FormsModule,
         MatCheckboxModule,
         ReactiveFormsModule
@@ -51,6 +56,7 @@ export class StudentsListComponent {
     districts: District[] = [];
     schools: School[] = [];
     teachers: Teacher[] = [];
+    exams: Exam[] = [];
     totalCount: number = 0;
     pageSize: number = 10;
     pageIndex: number = 0;
@@ -64,7 +70,11 @@ export class StudentsListComponent {
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
-
+    selectedGrades: number[] = [];
+    selectedExamIds: string[] = [];
+    gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    searchString: string = '';
+    private searchTerms = new Subject<string>();
     displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district'];
 
     constructor(
@@ -72,6 +82,7 @@ export class StudentsListComponent {
         private districtService: DistrictService,
         private schoolService: SchoolService,
         private teacherService: TeacherService,
+        private examService: ExamService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -89,6 +100,41 @@ export class StudentsListComponent {
             error: (error) => { console.error(error); }
         });
         this.loadDistricts();
+        this.loadExams();
+        this.setupSearch();
+    }
+
+    setupSearch(): void {
+        this.searchTerms.pipe(
+            debounceTime(300), // Задержка 300 мс
+            distinctUntilChanged(), // Игнорировать повторяющиеся значения
+            switchMap((term: string) => {
+                if (term.length >= 3) {
+                    // Если введено 3 и более символов, выполняем поиск
+                    return this.studentService.searchStudents(term);
+                } else {
+                    // Если меньше 3 символов, возвращаем всех студентов
+                    return this.studentService.getStudents({
+                        page: this.pageIndex + 1,
+                        size: this.pageSize,
+                        districtIds: this.selectedDistrictIds.join(","),
+                        schoolIds: this.selectedSchoolIds.join(","),
+                        teacherIds: this.selectedTeacherIds.join(","),
+                        defective: this.checkedDeffective(),
+                        grades: this.selectedGrades.join(","),
+                        examIds: this.selectedExamIds.join(",")
+                    });
+                }
+            })
+        ).subscribe({
+            next: (response) => {
+                this.students = response.data;
+                this.totalCount = response.totalCount;
+            },
+            error: (error) => {
+                this.errorMessage = error.message;
+            }
+        });
     }
 
     loadStudents(): void {
@@ -98,16 +144,19 @@ export class StudentsListComponent {
             districtIds: this.selectedDistrictIds.join(","),
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
-            defective: this.checkedDeffective()
+            defective: this.checkedDeffective(),
+            grades: this.selectedGrades.join(","),
+            examIds: this.selectedExamIds.join(",")
         };
 
         this.studentService.getStudents(params).subscribe({
-            next: (data: StudentData) => {
-                if (this.pageIndex === 0) this.students = data.data;
-                else this.students = [...this.students, ...data.data]
-                this.totalCount = data.totalCount;
+            next: (response: StudentData) => {
+                this.students = response.data;
+                // if (this.pageIndex === 0) this.students = data.data;
+                // else this.students = [...this.students, ...data.data]
+                this.totalCount = response.totalCount;
                 this.isLoading = false;
-                this.isLoadingMore = false;
+                // this.isLoadingMore = false;
             },
             error: (error) => {
                 this.hasError = true;
@@ -169,6 +218,18 @@ export class StudentsListComponent {
             });
     }
 
+    loadExams(): void {
+        this.examService.getExams({ page: 0, size: 1000 })
+            .subscribe({
+                next: (response) => {
+                    this.exams = response.data
+                },
+                error: (err: any) => {
+                    this.errorMessage = ``;
+                }
+            });
+    }
+
     onDistrictSelectChanged(): void {
         this.pageIndex = 0; // Сбрасываем страницу
         this.students = []; // Очищаем список студентов
@@ -187,6 +248,18 @@ export class StudentsListComponent {
     onTeacherSelectChanged(): void {
         this.pageIndex = 0; // Сбрасываем страницу
         this.students = []; // Очищаем список студентов
+        this.loadStudents();
+    }
+
+    onGrageSelectChanged(): void {
+        this.pageIndex = 0;
+        this.students = [];
+        this.loadStudents();
+    }
+
+    onExamSelectChanged(): void {
+        this.pageIndex = 0;
+        this.students = [];
         this.loadStudents();
     }
 
@@ -290,5 +363,9 @@ export class StudentsListComponent {
 
     onCheckDefective(): void {
         this.loadStudents();
+    }
+
+    onSearchChange(): void {
+        this.searchTerms.next(this.searchString);
     }
 }

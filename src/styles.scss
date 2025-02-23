@@ -70,6 +70,15 @@ table {
     &__teachers {
         width: 550px;
     }
+    &__grades {
+        width: 100px;
+    }
+    &__exams {
+        width: 400px;
+    }
+    &__search {
+        width: 500px;
+    }
 }
 
 mat-form-field {
