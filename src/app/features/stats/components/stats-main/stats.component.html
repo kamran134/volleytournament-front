@@ -16,14 +16,26 @@
             <mat-datepicker-toggle matIconSuffix [for]="monthPicker"></mat-datepicker-toggle>
             <mat-datepicker #monthPicker
                 startView="multi-year"
-                (monthSelected)="updateMonth($event)"
+                (monthSelected)="updateMonth($event, monthPicker)"
                 panelClass="month-picker"></mat-datepicker>
+        </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="2">
+        <mat-form-field>
+            <mat-label>İmtahan seçin</mat-label>
+            <mat-select [(value)]="selectedExamId" (selectionChange)="onExamSelectChanged()">
+                <mat-option *ngFor="let exam of exams" [value]="exam._id">
+                    {{ exam.name }}
+                </mat-option>
+            </mat-select>
         </mat-form-field>
     </mat-grid-tile>
 </mat-grid-list>
 
     <!--<mat-grid-tile [colspan]="4" [rowspan]="2">-->
-<div class="stats-container">
+
+<div class="stats-container" *ngIf="loading">Statistika yüklənir...</div>
+<div class="stats-container" *ngIf="!loading">
     <mat-card class="student-card">
         <mat-card-title>{{(monthControl.value | monthName) + ' ayında inkişaf edən şagirdlər'}}</mat-card-title>
         <mat-card-content>

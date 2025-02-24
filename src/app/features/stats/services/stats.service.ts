@@ -24,4 +24,10 @@ export class StatsService {
         let url: string = `${this.configService.getApiUrl()}/stats?month=${month}`;
         return this.http.get<Stats>(url, {});
     }
+
+    getStatsByExam(examId: string): Observable<Stats> {
+        console.log('getStatsByExam', examId);
+        let url: string = `${this.configService.getApiUrl()}/stats/by-exam/${examId}`;
+        return this.http.get<Stats>(url, {});
+    }
 }
