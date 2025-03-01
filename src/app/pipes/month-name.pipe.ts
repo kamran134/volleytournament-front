@@ -17,7 +17,7 @@ export class MonthNamePipe implements PipeTransform {
         const month = date.getMonth();
         const year = date.getFullYear();
 
-        return `${year}. ${this.monthNamesAz[month]}`;
+        return `${this.monthNamesAz[month]}`;
     }
 
 }

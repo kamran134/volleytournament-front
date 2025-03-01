@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { StatsService } from '../../services/stats.service';
@@ -10,15 +10,18 @@ import { RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Stats } from '../../../../models/stats.model';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MonthNamePipe } from '../../../../pipes/month-name.pipe';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { Exam } from '../../../../models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
+import { StudentTableComponent } from "./student-table.component";
+import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
 
 @Component({
     selector: 'app-stats',
@@ -35,15 +38,21 @@ import { ExamService } from '../../../exams/services/exam.service';
         MatFormFieldModule,
         MatSelectModule,
         MatInputModule,
+        MatTabsModule,
+        MatSortModule,
+        MatSortHeader,
         CommonModule,
         ReactiveFormsModule,
         MonthNamePipe,
-        RouterModule
+        RouterModule,
+        StudentTableComponent
     ],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
 export class StatsComponent implements OnInit {
+    @ViewChild('teacherSort') teacherSort!: MatSort;
+    @ViewChild('schoolSort') schoolSort!: MatSort;
     monthControl = new FormControl(new Date());
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
@@ -52,17 +61,33 @@ export class StatsComponent implements OnInit {
     }
     loading: boolean = false;
     loading1: boolean = false;
-    stats: Stats = {};
-    columns: string[] = ["fullName", "district", "teacher", "score"];
+    stats: Stats = {
+        studentsOfMonth: [],
+        studentsOfMonthByRepublic: [],
+        developingStudents: [],
+        teachers: [],
+        schools: []
+    };
+    columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
+    teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
+    schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
     selectedExamId: string = '';
     exams: Exam[] = [];
     errorMessage: string = '';
+
+    teachersDataSource = new MatTableDataSource(this.stats.teachers);
+    schoolsDataSource = new MatTableDataSource(this.stats.schools);
 
     constructor(private statsService: StatsService, private snackBar: MatSnackBar, private examService: ExamService) {}
 
     ngOnInit(): void {
         this.loadExams();
         this.getStats();
+    }
+
+    ngAfterViewInit(): void {
+        this.teachersDataSource.sort = this.teacherSort;
+        this.schoolsDataSource.sort = this.schoolSort;
     }
 
     getStats(): void {
@@ -102,6 +127,44 @@ export class StatsComponent implements OnInit {
         });
     }
 
+    getTeachersStats(): void {
+        this.loading = true;
+        this.stats = {};
+
+        if (this.stats.teachers && this.stats.teachers.length > 0) return;
+
+        this.statsService.getTeacherStats().subscribe({
+            next: (response) => {
+                this.loading = false;
+                this.stats = {...this.stats, ...response};
+                this.teachersDataSource.data = this.stats.teachers || [];
+            },
+            error: (error: Error) => {
+                this.loading = false;
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
+    }
+
+    getSchoolsStats(): void {
+        this.loading = true;
+        this.stats = {};
+
+        if (this.stats.schools && this.stats.schools.length > 0) return;
+
+        this.statsService.getSchoolStats().subscribe({
+            next: (response) => {
+                this.loading = false;
+                this.stats = {...this.stats, ...response};
+                this.schoolsDataSource.data = this.stats.schools || [];
+            },
+            error: (error: Error) => {
+                this.loading = false;
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
+    }
+
     loadExams(): void {
         this.examService.getExams({ page: 0, size: 1000 })
             .subscribe({
@@ -133,6 +196,17 @@ export class StatsComponent implements OnInit {
         this.monthControl.setValue(selectedDate);
         datepicker.close();
         this.getStats();
+    }
+
+    onTabChange(event: any): void {
+        if (event.index === 0) {
+            this.getStats();
+        } else if (event.index === 1) {
+            console.log('stats', this.stats);
+            this.getTeachersStats();
+        } else {
+            this.getSchoolsStats();
+        }
     }
 
     onExamSelectChanged(): void {

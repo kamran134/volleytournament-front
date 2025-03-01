@@ -30,4 +30,14 @@ export class StatsService {
         let url: string = `${this.configService.getApiUrl()}/stats/by-exam/${examId}`;
         return this.http.get<Stats>(url, {});
     }
+
+    getTeacherStats(): Observable<Stats> {
+        let url: string = `${this.configService.getApiUrl()}/stats/teachers`;
+        return this.http.get<Stats>(url, {});
+    }
+
+    getSchoolStats(): Observable<Stats> {
+        let url: string = `${this.configService.getApiUrl()}/stats/schools`;
+        return this.http.get<Stats>(url, {});
+    }
 }
