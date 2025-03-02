@@ -15,26 +15,23 @@
     </div>
 
     <div class="filters" *ngIf="districts.length > 0">
-        <div>
-            <mat-form-field>
-                <mat-label>Rayonlar</mat-label>
-                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
-                    <mat-option *ngFor="let district of districts" [value]="district._id">
-                        {{ district.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div>
-            <mat-form-field>
-                <mat-label>Məktəblər</mat-label>
-                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
-                    <mat-option *ngFor="let school of schools" [value]="school._id">
-                        {{ school.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+        <mat-form-field class="filters__districts">
+            <mat-label>Rayonlar</mat-label>
+            <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
+                <mat-option *ngFor="let district of districts" [value]="district._id">
+                    {{ district.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field class="filters__schools">
+            <mat-label>Məktəblər</mat-label>
+            <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
+                <mat-option *ngFor="let school of schools" [value]="school._id">
+                    {{ school.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
     
     <div *ngIf="!isLoading && !hasError">

@@ -58,15 +58,21 @@ table {
 
 .filters {
     display: flex;
+    flex-wrap: wrap;
 
-    > div {
+    > mat-form-field {
         margin-right: $smallMargin;
     }
 
+    &__dates {
+        width: 300px;
+    }
+    &__districts {
+        width: 350px;
+    }
     &__schools {
         width: 550px;
     }
-
     &__teachers {
         width: 550px;
     }
@@ -79,6 +85,15 @@ table {
     &__search {
         width: 500px;
     }
+}
+
+.filter-field {
+    min-width: 250px;
+    max-width: 300px;
+    &:first-child {
+        margin-left: 0;
+    }
+    margin-left: 20px;
 }
 
 mat-form-field {

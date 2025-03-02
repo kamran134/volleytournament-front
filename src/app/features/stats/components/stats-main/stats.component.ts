@@ -22,6 +22,13 @@ import { Exam } from '../../../../models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
 import { StudentTableComponent } from "./student-table.component";
 import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
+import { District, DistrictData } from '../../../../models/district.model';
+import { School, SchoolData } from '../../../../models/school.model';
+import { Teacher, TeacherData } from '../../../../models/teacher.model';
+import { FilterParams } from '../../../../models/filterParams.model';
+import { TeacherService } from '../../../teachers/services/teacher.service';
+import { SchoolService } from '../../../schools/services/school.service';
+import { DistrictService } from '../../../districts/services/district.service';
 
 @Component({
     selector: 'app-stats',
@@ -71,18 +78,34 @@ export class StatsComponent implements OnInit {
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
     teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
     schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
+    selectedDistrictIds: string[] = [];
+    selectedSchoolIds: string[] = [];
+    selectedTeacherIds: string[] = [];
+    selectedGrades: number[] = [];
     selectedExamId: string = '';
+    districts: District[] = [];
+    schools: School[] = [];
+    teachers: Teacher[] = [];
     exams: Exam[] = [];
     errorMessage: string = '';
+    gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
 
-    constructor(private statsService: StatsService, private snackBar: MatSnackBar, private examService: ExamService) {}
+    constructor(
+        private statsService: StatsService,
+        private snackBar: MatSnackBar,
+        private examService: ExamService,
+        private districtService: DistrictService,
+        private schoolService: SchoolService,
+        private teacherService: TeacherService
+    ) {}
 
     ngOnInit(): void {
         this.loadExams();
-        this.getStats();
+        this.loadDistricts();
+        this.loadStudentsStats();
     }
 
     ngAfterViewInit(): void {
@@ -90,16 +113,23 @@ export class StatsComponent implements OnInit {
         this.schoolsDataSource.sort = this.schoolSort;
     }
 
-    getStats(): void {
+    loadStudentsStats(): void {
         this.loading = true;
         this.stats = {};
+
+        const params: FilterParams = {
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(","),
+            grades: this.selectedGrades.join(",")
+        };
 
         const selectedDate = this.monthControl.value;
         if (!selectedDate) return;
 
         const month = selectedDate.toISOString().slice(0, 7);
         
-        this.statsService.getStats(month).subscribe({
+        this.statsService.getStudentsStats(month, params).subscribe({
             next: (response) => {
                 this.loading = false;
                 this.stats = response;
@@ -111,7 +141,7 @@ export class StatsComponent implements OnInit {
         })
     }
 
-    getStatsByExam(): void {
+    loadStatsByExam(): void {
         this.loading = true;
         this.stats = {};
 
@@ -127,13 +157,18 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    getTeachersStats(): void {
+    loadTeachersStats(): void {
         this.loading = true;
         this.stats = {};
 
+        const params: FilterParams = {
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(",")
+        };
+
         if (this.stats.teachers && this.stats.teachers.length > 0) return;
 
-        this.statsService.getTeacherStats().subscribe({
+        this.statsService.getTeachersStats(params).subscribe({
             next: (response) => {
                 this.loading = false;
                 this.stats = {...this.stats, ...response};
@@ -146,13 +181,13 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    getSchoolsStats(): void {
+    loadSchoolsStats(): void {
         this.loading = true;
         this.stats = {};
 
         if (this.stats.schools && this.stats.schools.length > 0) return;
 
-        this.statsService.getSchoolStats().subscribe({
+        this.statsService.getSchoolsStats().subscribe({
             next: (response) => {
                 this.loading = false;
                 this.stats = {...this.stats, ...response};
@@ -163,6 +198,51 @@ export class StatsComponent implements OnInit {
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
+    }
+
+    loadTeachers(): void {
+        const params: FilterParams = {
+            schoolIds: this.selectedSchoolIds.join(",")
+        }
+
+        this.teacherService.getTeachersForFilter(params)
+            .subscribe({
+                next: (response: TeacherData) => {
+                    this.teachers = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            })
+
+    }
+
+    loadSchools(): void {
+        const params: FilterParams = {
+            districtIds: this.selectedDistrictIds.join(",")
+        }
+
+        this.schoolService.getSchoolsForFilter(params)
+            .subscribe({
+                next: (response: SchoolData) => {
+                    this.schools = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
+    }
+
+    loadDistricts(): void {
+        this.districtService.getDistricts()
+            .subscribe({
+                next: (response: DistrictData) => {
+                    this.districts = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
     }
 
     loadExams(): void {
@@ -195,21 +275,54 @@ export class StatsComponent implements OnInit {
         const selectedDate = new Date(event);
         this.monthControl.setValue(selectedDate);
         datepicker.close();
-        this.getStats();
+        this.loadStudentsStats();
     }
 
     onTabChange(event: any): void {
         if (event.index === 0) {
-            this.getStats();
+            this.loadStudentsStats();
         } else if (event.index === 1) {
-            console.log('stats', this.stats);
-            this.getTeachersStats();
+            this.loadTeachersStats();
         } else {
-            this.getSchoolsStats();
+            this.loadSchoolsStats();
         }
     }
 
+    onDistrictSelectChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadSchools();
+        this.loadTeachers();
+        this.loadStudentsStats();
+    }
+
+    onSchoolSelectChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadTeachers();
+        this.loadStudentsStats();
+    }
+
+    onTeacherSelectChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadStudentsStats();
+    }
+
+    onGrageSelectChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadStudentsStats();
+    }
+
     onExamSelectChanged(): void {
-        this.getStatsByExam();
+        this.loadStatsByExam();
+    }
+
+    onDistrictSelectForTeacherChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadSchools();
+        this.loadTeachersStats();
+    }
+
+    onSchoolSelectForTeacherChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadTeachersStats();
     }
 }

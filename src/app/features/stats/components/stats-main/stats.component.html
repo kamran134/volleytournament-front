@@ -5,36 +5,56 @@
     </button>
 </div>
 
-<mat-grid-list cols="4" rowHeight="50px">
-    <mat-grid-tile [colspan]="1" [rowspan]="2">
-        <mat-form-field>            
-            <mat-label>Ay seçin</mat-label>
-            <input matInput
-                [matDatepicker]="monthPicker"
-                [formControl]="monthControl"
-                [value]="monthControl.value | monthName" readonly="">
-            <mat-datepicker-toggle matIconSuffix [for]="monthPicker"></mat-datepicker-toggle>
-            <mat-datepicker #monthPicker
-                startView="multi-year"
-                (monthSelected)="updateMonth($event, monthPicker)"
-                panelClass="month-picker"></mat-datepicker>
-        </mat-form-field>
-    </mat-grid-tile>
-    <mat-grid-tile [colspan]="1" [rowspan]="2">
-        <mat-form-field>
-            <mat-label>İmtahan seçin</mat-label>
-            <mat-select [(value)]="selectedExamId" (selectionChange)="onExamSelectChanged()">
-                <mat-option *ngFor="let exam of exams" [value]="exam._id">
-                    {{ exam.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </mat-grid-tile>
-</mat-grid-list>
 
-    <!--<mat-grid-tile [colspan]="4" [rowspan]="2">-->
+
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Şagirdlər">
+        <div class="filters">
+            <mat-form-field class="filters__districts">
+                <mat-label>Ay seçin</mat-label>
+                <input matInput [matDatepicker]="monthPicker" [formControl]="monthControl"
+                    [value]="monthControl.value | monthName" readonly>
+                <mat-datepicker-toggle matIconSuffix [for]="monthPicker"></mat-datepicker-toggle>
+                <mat-datepicker #monthPicker startView="multi-year" (monthSelected)="updateMonth($event, monthPicker)"
+                    panelClass="month-picker"></mat-datepicker>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__districts">
+                <mat-label>Rayonlar</mat-label>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
+                    <mat-option *ngFor="let district of districts" [value]="district._id">{{ district.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__schools">
+                <mat-label>Məktəblər</mat-label>
+                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
+                    <mat-option *ngFor="let school of schools" [value]="school._id">{{ school.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__teachers">
+                <mat-label>Müəllimlər</mat-label>
+                <mat-select [(value)]="selectedTeacherIds" (selectionChange)="onTeacherSelectChanged()" multiple>
+                    <mat-option *ngFor="let teacher of teachers" [value]="teacher._id">{{ teacher.fullname }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__grades">
+                <mat-label>Sinif</mat-label>
+                <mat-select [(value)]="selectedGrades" (selectionChange)="onGrageSelectChanged()" multiple>
+                    <mat-option *ngFor="let grade of gradesOptions" [value]="grade">{{ grade }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__exams">
+                <mat-label>İmtahan seçin</mat-label>
+                <mat-select [(value)]="selectedExamId" (selectionChange)="onExamSelectChanged()">
+                    <mat-option *ngFor="let exam of exams" [value]="exam._id">{{ exam.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
         <div class="stats-container" *ngIf="!loading">
             <app-student-table
                 [title]="(monthControl.value | monthName) + ' ayında inkişaf edən şagirdlər'"
@@ -56,6 +76,25 @@
         </div>
     </mat-tab>
     <mat-tab label="Müəllimlər">
+        <div class="filters" *ngIf="districts.length > 0">
+            <mat-form-field class="filters__districts">
+                <mat-label>Rayonlar</mat-label>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
+                    <mat-option *ngFor="let district of districts" [value]="district._id">
+                        {{ district.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field class="filters__schools">
+                <mat-label>Məktəblər</mat-label>
+                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
+                    <mat-option *ngFor="let school of schools" [value]="school._id">
+                        {{ school.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
         <mat-card class="student-card">
             <mat-card-title>Müəllimlər</mat-card-title>
             <mat-card-content>
