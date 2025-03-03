@@ -115,3 +115,11 @@ mat-form-field {
     color:rgb(228, 73, 73);
     font-weight: 600;
 }
+
+.clickable-row {
+    cursor: pointer;
+  }
+  
+.clickable-row:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}

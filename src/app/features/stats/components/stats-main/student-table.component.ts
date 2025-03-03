@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 
@@ -14,4 +14,9 @@ export class StudentTableComponent {
     @Input() title: string = "";
     @Input() dataSource: any[] = [];
     @Input() columns: string[] = [];
+    @Output() rowClicked: EventEmitter<string> = new EventEmitter<string>();
+
+    onRowClick(studentId: string): void {
+        this.rowClicked.emit(studentId);
+    }
 }

@@ -2,11 +2,3 @@
   max-height: 475px; /* или любая другая высота */
   overflow-y: auto;
 }
-
-.clickable-row {
-    cursor: pointer;
-  }
-  
-.clickable-row:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-}

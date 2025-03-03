@@ -95,6 +95,12 @@ export class StudentsListComponent {
             next: (params: Params) => {
                 this.pageSize = params['pageSize'] ? +params['pageSize'] : this.pageSize;
                 this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : this.pageIndex;
+                this.selectedDistrictIds = params['districtIds'] ? params['districtIds'].split(',') : [];
+                this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
+                this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
+                this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
+                this.selectedExamIds = params['examIds'] ? params['examIds'].split(',') : [];
+                this.checkedDeffective.set(params['defective'] === 'true');
                 this.loadStudents();
             },
             error: (error) => { console.error(error); }
@@ -296,7 +302,14 @@ export class StudentsListComponent {
     openStudentDetails(studentId: string): void {
         const queryParams = {
             pageIndex: this.pageIndex,
-            pageSize: this.pageSize
+            pageSize: this.pageSize,
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(","),
+            grades: this.selectedGrades.join(","),
+            examIds: this.selectedExamIds.join(","),
+            defective: this.checkedDeffective(),
+            source: 'students'
         };
 
         const navigationExtras: NavigationExtras = {

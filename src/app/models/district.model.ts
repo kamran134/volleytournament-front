@@ -8,4 +8,7 @@ export interface District {
     name: string;
     code: number;
     region: string;
+    rate: number;
+    score: number;
+    averageScore: number;
 }

@@ -27,6 +27,8 @@ export class StudentDetailsComponent implements OnInit {
     student!: StudentWithResult | null;
     prevPageSize: number = 10;
     prevPageIndex: number = 0;
+    filterParams: any = {};
+    source: string = 'students';
 
     constructor(private studentService: StudentService, private route: ActivatedRoute) {}
 
@@ -39,6 +41,8 @@ export class StudentDetailsComponent implements OnInit {
         this.route.queryParams.subscribe((params: Params) => {
             this.prevPageSize = params['pageSize'] ? +params['pageSize'] : this.prevPageSize;
             this.prevPageIndex = params['pageIndex'] ? +params['pageIndex'] : this.prevPageIndex;
+            this.filterParams = params;
+            this.source = params['source'] || 'students'
         });
     }
 

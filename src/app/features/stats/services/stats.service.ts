@@ -50,13 +50,21 @@ export class StatsService {
             url = `${url}?districtIds=${params.districtIds}`;
         }
         if (params.schoolIds && params.schoolIds.length > 0) {
-            url = `${url}?schoolIds=${params.schoolIds}`;
+            url = `${url}&schoolIds=${params.schoolIds}`;
         }
         return this.http.get<Stats>(url, {});
     }
 
-    getSchoolsStats(): Observable<Stats> {
+    getSchoolsStats(params: FilterParams): Observable<Stats> {
         let url: string = `${this.configService.getApiUrl()}/stats/schools`;
+        if (params.districtIds && params.districtIds.length > 0) {
+            url = `${url}?districtIds=${params.districtIds}`;
+        }
+        return this.http.get<Stats>(url, {});
+    }
+
+    getDistrictsStats(): Observable<Stats> {
+        let url: string = `${this.configService.getApiUrl()}/stats/districts`;
         return this.http.get<Stats>(url, {});
     }
 }

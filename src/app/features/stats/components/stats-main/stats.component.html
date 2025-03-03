@@ -5,11 +5,9 @@
     </button>
 </div>
 
-
-
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Şagirdlər">
-        <div class="filters">
+        <div class="filters" *ngIf="districts.length > 0 && exams.length > 0 && !isloading">
             <mat-form-field class="filters__districts">
                 <mat-label>Ay seçin</mat-label>
                 <input matInput [matDatepicker]="monthPicker" [formControl]="monthControl"
@@ -55,23 +53,26 @@
             </mat-form-field>
         </div>
 
-        <div class="stats-container" *ngIf="!loading">
+        <div class="stats-container" *ngIf="!isloading">
             <app-student-table
-                [title]="(monthControl.value | monthName) + ' ayında inkişaf edən şagirdlər'"
+                [title]="(selectedMonth | monthName:false) + ' ayında inkişaf edən şagirdlər'"
                 [dataSource]="stats.developingStudents || []"
-                [columns]="columns">
+                [columns]="columns"
+                (rowClicked)="openStudentDetails($event)">
             </app-student-table>
         
             <app-student-table
-                [title]="(monthControl.value | monthName) + ' ayının şagirdləri'"
+                [title]="(selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [dataSource]="stats.studentsOfMonth || []"
-                [columns]="columns">
+                [columns]="columns"
+                (rowClicked)="openStudentDetails($event)">
             </app-student-table>
         
             <app-student-table
-                [title]="'Respublika üzrə ' + (monthControl.value | monthName) + ' ayının şagirdləri'"
+                [title]="'Respublika üzrə ' + (selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
-                [columns]="columns">
+                [columns]="columns"
+                (rowClicked)="openStudentDetails($event)">
             </app-student-table>
         </div>
     </mat-tab>
@@ -79,7 +80,7 @@
         <div class="filters" *ngIf="districts.length > 0">
             <mat-form-field class="filters__districts">
                 <mat-label>Rayonlar</mat-label>
-                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectForTeacherChanged()" multiple>
                     <mat-option *ngFor="let district of districts" [value]="district._id">
                         {{ district.name }}
                     </mat-option>
@@ -88,14 +89,15 @@
         
             <mat-form-field class="filters__schools">
                 <mat-label>Məktəblər</mat-label>
-                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
+                <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectForTeacherChanged()" multiple>
                     <mat-option *ngFor="let school of schools" [value]="school._id">
                         {{ school.name }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
-        <mat-card class="student-card">
+
+        <mat-card class="student-card" *ngIf="!isloading">
             <mat-card-title>Müəllimlər</mat-card-title>
             <mat-card-content>
                 <table mat-table [dataSource]="teachersDataSource" matSort="teachersSort" class="mat-elevation-z8">
@@ -136,7 +138,17 @@
           </mat-card>
     </mat-tab>
     <mat-tab label="Məktəblər">
-        <mat-card class="student-card">
+        <div class="filters" *ngIf="districts.length > 0">
+            <mat-form-field class="filters__districts">
+                <mat-label>Rayonlar</mat-label>
+                <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectForSchoolChanged()" multiple>
+                    <mat-option *ngFor="let district of districts" [value]="district._id">
+                        {{ district.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <mat-card class="student-card" *ngIf="!isloading">
             <mat-card-title>Məktəblər</mat-card-title>
             <mat-card-content>
                 <table mat-table [dataSource]="schoolsDataSource" class="mat-elevation-z8">
@@ -167,19 +179,50 @@
 
                     <tr mat-header-row *matHeaderRowDef="schoolColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: schoolColumns;"></tr>
-              </table>
+                </table>
             </mat-card-content>
-          </mat-card>
+        </mat-card>
+    </mat-tab>
+    <mat-tab label="Rayonlar">
+        <mat-card class="student-card" *ngIf="!isloading">
+            <mat-card-title>Rayonlar</mat-card-title>
+            <mat-card-content>
+                <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8">
+                    <ng-container matColumnDef="code">
+                        <th mat-header-cell *matHeaderCellDef> Rayon kodu </th>
+                        <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Adı </th>
+                    <td mat-cell *matCellDef="let result"> {{ result.name }} </td>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="score">
+                    <th mat-header-cell *matHeaderCellDef> Ümumi balı </th>
+                    <td mat-cell *matCellDef="let result"> {{ result.score }} </td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="averageScore">
+                        <th mat-header-cell *matHeaderCellDef> Orta balı </th>
+                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | number:'1.2-2' }} </td>
+                    </ng-container>
+                    
+                    <tr mat-header-row *matHeaderRowDef="districtColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: districtColumns;"></tr>
+                </table>
+            </mat-card-content>
+        </mat-card>
     </mat-tab>
 </mat-tab-group>
-<div class="stats-container" *ngIf="loading">Statistika yüklənir...</div>
+<div class="stats-container" *ngIf="isloading">Statistika yüklənir...</div>
 
     
     <!--</mat-grid-tile>-->
 <mat-grid-list cols="4" rowHeight="100px">
     <mat-grid-tile [colspan]="2" [rowspan]="1">
         <div class="statistics-action">
-            <button mat-raised-button (click)="updateStats()"><mat-icon>update</mat-icon> {{loading1 ? 'Yenilənir...' : 'Statistikanı yenilə'}}</button>
+            <button mat-raised-button (click)="updateStats()"><mat-icon>update</mat-icon> {{isUpdating ? 'Yenilənir...' : 'Statistikanı yenilə'}}</button>
         </div>
     </mat-grid-tile>
 </mat-grid-list>

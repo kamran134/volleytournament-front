@@ -6,7 +6,7 @@ import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/mate
 import { Error } from '../../../../models/error.model';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Stats } from '../../../../models/stats.model';
 import { MatCardModule } from '@angular/material/card';
@@ -66,18 +66,21 @@ export class StatsComponent implements OnInit {
         horizontalPosition: 'center',
         verticalPosition: 'top'
     }
-    loading: boolean = false;
-    loading1: boolean = false;
+    isloading: boolean = false;
+    isUpdating: boolean = false;
     stats: Stats = {
         studentsOfMonth: [],
         studentsOfMonthByRepublic: [],
         developingStudents: [],
         teachers: [],
-        schools: []
+        schools: [],
+        districts: []
     };
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
     teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
     schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
+    districtColumns: string[] = ['code', 'name', 'averageScore', 'score'];
+    selectedMonth: string = '';
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
@@ -92,6 +95,7 @@ export class StatsComponent implements OnInit {
 
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
+    districtsDataSource = new MatTableDataSource(this.districts);
 
     constructor(
         private statsService: StatsService,
@@ -99,13 +103,24 @@ export class StatsComponent implements OnInit {
         private examService: ExamService,
         private districtService: DistrictService,
         private schoolService: SchoolService,
-        private teacherService: TeacherService
+        private teacherService: TeacherService,
+        private router: Router,
+        private route: ActivatedRoute,
     ) {}
 
     ngOnInit(): void {
         this.loadExams();
         this.loadDistricts();
-        this.loadStudentsStats();
+        this.route.queryParams.subscribe((params: Params) => {
+            this.selectedDistrictIds = params['districtIds'] ? params['districtIds'].split(',') : [];
+            this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
+            this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
+            this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
+            this.selectedExamId = params['examId'] || '';
+            this.selectedMonth = params['month'] || '';
+            // Trigger data loading after applying filters
+            this.loadStudentsStats();
+        });
     }
 
     ngAfterViewInit(): void {
@@ -114,7 +129,7 @@ export class StatsComponent implements OnInit {
     }
 
     loadStudentsStats(): void {
-        this.loading = true;
+        this.isloading = true;
         this.stats = {};
 
         const params: FilterParams = {
@@ -124,41 +139,41 @@ export class StatsComponent implements OnInit {
             grades: this.selectedGrades.join(",")
         };
 
-        const selectedDate = this.monthControl.value;
-        if (!selectedDate) return;
+        // const selectedDate = this.monthControl.value;
+        // if (!selectedDate) return;
 
-        const month = selectedDate.toISOString().slice(0, 7);
+        // const month = selectedDate.toISOString().slice(0, 7);
         
-        this.statsService.getStudentsStats(month, params).subscribe({
+        this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {
-                this.loading = false;
+                this.isloading = false;
                 this.stats = response;
             },
             error: (error: Error) => {
-                this.loading = false;
+                this.isloading = false;
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         })
     }
 
     loadStatsByExam(): void {
-        this.loading = true;
+        this.isloading = true;
         this.stats = {};
 
         this.statsService.getStatsByExam(this.selectedExamId).subscribe({
             next: (response) => {
-                this.loading = false;
+                this.isloading = false;
                 this.stats = response;
             },
             error: (error: Error) => {
-                this.loading = false;
+                this.isloading = false;
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
     }
 
     loadTeachersStats(): void {
-        this.loading = true;
+        this.isloading = true;
         this.stats = {};
 
         const params: FilterParams = {
@@ -170,31 +185,54 @@ export class StatsComponent implements OnInit {
 
         this.statsService.getTeachersStats(params).subscribe({
             next: (response) => {
-                this.loading = false;
+                this.isloading = false;
                 this.stats = {...this.stats, ...response};
                 this.teachersDataSource.data = this.stats.teachers || [];
             },
             error: (error: Error) => {
-                this.loading = false;
+                this.isloading = false;
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
     }
 
     loadSchoolsStats(): void {
-        this.loading = true;
+        this.isloading = true;
         this.stats = {};
+
+        const params: FilterParams = {
+            districtIds: this.selectedDistrictIds.join(",")
+        };
 
         if (this.stats.schools && this.stats.schools.length > 0) return;
 
-        this.statsService.getSchoolsStats().subscribe({
+        this.statsService.getSchoolsStats(params).subscribe({
             next: (response) => {
-                this.loading = false;
+                this.isloading = false;
                 this.stats = {...this.stats, ...response};
                 this.schoolsDataSource.data = this.stats.schools || [];
             },
             error: (error: Error) => {
-                this.loading = false;
+                this.isloading = false;
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
+    }
+
+    loadDistrictsStats(): void {
+        this.isloading = true;
+        this.stats = {};
+
+        if (this.stats.districts && this.stats.districts.length > 0) return;
+
+        this.statsService.getDistrictsStats().subscribe({
+            next: (response) => {
+                this.isloading = false;
+                this.stats = {...this.stats, ...response};
+                this.districtsDataSource.data = this.stats.districts || [];
+            },
+            error: (error: Error) => {
+                this.isloading = false;
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         });
@@ -258,14 +296,14 @@ export class StatsComponent implements OnInit {
     }
 
     updateStats(): void {
-        this.loading1 = true;
+        this.isUpdating = true;
         this.statsService.updateStats().subscribe({
             next: (response) => {
-                this.loading1 = false;
+                this.isUpdating = false;
                 this.snackBar.open('Statistika yeniləndi', 'OK', this.matSnackConfig);
             },
             error: (error: Error) => {
-                this.loading1 = false;
+                this.isUpdating = false;
                 this.snackBar.open(`${error.error.message}`, 'Bağla', this.matSnackConfig);
             }
         });
@@ -274,6 +312,9 @@ export class StatsComponent implements OnInit {
     updateMonth(event: any, datepicker: MatDatepicker<Date>) {
         const selectedDate = new Date(event);
         this.monthControl.setValue(selectedDate);
+        
+        if (!this.monthControl.value) return;
+        this.selectedMonth = selectedDate.toISOString().slice(0, 7);
         datepicker.close();
         this.loadStudentsStats();
     }
@@ -283,8 +324,10 @@ export class StatsComponent implements OnInit {
             this.loadStudentsStats();
         } else if (event.index === 1) {
             this.loadTeachersStats();
-        } else {
+        } else if (event.index === 2) {
             this.loadSchoolsStats();
+        } else if (event.index === 3) {
+            this.loadDistrictsStats();
         }
     }
 
@@ -324,5 +367,34 @@ export class StatsComponent implements OnInit {
     onSchoolSelectForTeacherChanged(): void {
         this.stats = {}; // Очищаем список студентов
         this.loadTeachersStats();
+    }
+
+    onDistrictSelectForSchoolChanged(): void {
+        this.stats = {}; // Очищаем список студентов
+        this.loadSchoolsStats();
+    }
+
+    openStudentDetails(studentId: string): void {
+        const selectedDate = this.monthControl.value;
+        if (!selectedDate) return;
+
+        const month = selectedDate.toISOString().slice(0, 7);
+
+        const queryParams = {
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(","),
+            grades: this.selectedGrades.join(","),
+            examId: this.selectedExamId,
+            month,
+            source: 'stats'
+        };
+    
+        const navigationExtras: NavigationExtras = {
+            queryParams: queryParams,
+            replaceUrl: true
+        };
+    
+        this.router.navigate(['/students', studentId], navigationExtras);
     }
 }

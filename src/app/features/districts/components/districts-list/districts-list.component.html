@@ -27,15 +27,24 @@
 
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>
-                    Rayonun adı
+                    Adı
                 </th>
                 <td mat-cell *matCellDef="let exam">
                     {{ exam.name }}
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="['code', 'name']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['code', 'name'];"></tr>
+            <ng-container matColumnDef="rate">
+                <th mat-header-cell *matHeaderCellDef>
+                    Əmsalı (İmtahan sayı)
+                </th>
+                <td mat-cell *matCellDef="let exam">
+                    {{ exam.rate }}
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['code', 'name', 'rate']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'rate'];"></tr>
         </table>
     </div>
 

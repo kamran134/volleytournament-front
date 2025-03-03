@@ -1,7 +1,7 @@
 <div class="breadcrumbs">
-    <button mat-fab extended routerLink="/students" [queryParams]="{ pageSize: prevPageSize, pageIndex: prevPageIndex}">
+    <button mat-fab extended [routerLink]="source === 'stats' ? '/stats' : '/students'" [queryParams]="filterParams">
         <mat-icon>people</mat-icon>
-        Şagirdlər
+        {{ source === 'stats' ? 'Reytinq' : 'Şagirdlər' }}
     </button>
 </div>
 
