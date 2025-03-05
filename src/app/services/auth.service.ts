@@ -14,30 +14,36 @@ export class AuthService {
     private platformId = inject(PLATFORM_ID);
 
     private authStatus = new BehaviorSubject<boolean>(this.hasToken());
+    private userRole: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('role') ? localStorage.getItem('role') : '';
 
     get isLoggedIn$(): Observable<boolean> {
         return this.authStatus.asObservable();
     }
 
+    getRole(): string | null {
+        return this.userRole;
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.userRole === 'admin' || this.userRole === 'superadmin';
+    }
+
     private hasToken(): boolean {
         return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token');
     }
-    // private hasToken(): boolean {
-    //     if (isPlatformBrowser(this.platformId)) {
-    //         return document.cookie.split(';').some(item => item.trim().startsWith('token='));
-    //     }
-    //     return false;
-    // }
 
     login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-        return this.http.post<{ token: string }>(`${this.configService.getAuthUrl()}/login`, credentials, { withCredentials: true }).pipe(
-        //return this.http.post<void>(`${this.configService.getAuthUrl()}/login`, credentials, { withCredentials: true }).pipe(
-            tap (response => {
-                // console.log('resp', response);
-                localStorage.setItem('token', response.token);
-                this.authStatus.next(true);
-                // this.router.navigate(['/admin']);
-            })
+        return this.http.post<{ token: string, role: string, message: string }>(
+            `${this.configService.getAuthUrl()}/login`,
+            credentials, 
+            { withCredentials: true }).pipe(
+                tap (response => {
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('role', response.role);
+                    this.userRole = response.role;
+                    this.authStatus.next(true);
+                    // this.router.navigate(['/admin']);
+                })
         );
     }
 
@@ -53,6 +59,8 @@ export class AuthService {
 
     logout() {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        this.userRole = null;
         this.authStatus.next(false);
         this.router.navigate(['/login']);
     }

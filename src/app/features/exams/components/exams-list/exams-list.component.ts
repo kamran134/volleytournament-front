@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-    MatSnackBarConfig,
-    MatSnackBarHorizontalPosition,
-    MatSnackBarModule,
-    MatSnackBarVerticalPosition
-} from '@angular/material/snack-bar';
+import { MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';

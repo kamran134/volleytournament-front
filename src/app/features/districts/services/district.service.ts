@@ -18,6 +18,11 @@ export class DistrictService {
 
     addDistrict(district: {name: string, code: number}): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/districts`;
-        return this.http.post<ResponseFromBackend>(url, district);
+        return this.http.post<ResponseFromBackend>(url, district, { withCredentials: true });
+    }
+
+    deleteDistrict(districtId: string): Observable<ResponseFromBackend> {
+        const url: string = `${this.configService.getApiUrl()}/districts/${districtId}`;
+        return this.http.delete<ResponseFromBackend>(url, { withCredentials: true });
     }
 }

@@ -11,6 +11,8 @@ import { DistrictAddDialogComponent } from '../district-add-dialog/district-add-
 import { ResponseFromBackend } from '../../../../models/response.model';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
+import { AuthService } from '../../../../services/auth.service';
+import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-districts-list',
@@ -31,10 +33,19 @@ export class DistrictsListComponent implements OnInit {
         verticalPosition: 'top'
     }
 
-    constructor(private dialog: MatDialog, private districtService: DistrictService, private snackBar: MatSnackBar) {}
+    constructor(
+        private dialog: MatDialog,
+        private authService: AuthService,
+        private districtService: DistrictService,
+        private snackBar: MatSnackBar
+    ) {}
 
     ngOnInit(): void {
         this.loadDistricts();
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
     }
 
     openAddDistrictDialog(): void {
@@ -74,5 +85,27 @@ export class DistrictsListComponent implements OnInit {
                     this.errorMessage = `Error fetching districts:  ${err.message}`;
                 }
             });
+    }
+
+    onDistrictDelete(event: Event, district: District): void {
+        event.stopPropagation();
+        
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Rayonu silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.districtService.deleteDistrict(district._id).subscribe({
+                    next: (data) => {
+                        this.loadDistricts();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
     }
 }

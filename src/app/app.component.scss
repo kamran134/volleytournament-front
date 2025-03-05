@@ -1,8 +1,19 @@
 * {
-    padding: 20px;
+    padding: 12px;
+    header {
+        padding: 0;
+    }
 
-    .title {
-        text-align: center;
+    .header {
+        &__title {
+            text-align: center;
+        }
+
+        &__settings {
+            display: flex;
+            justify-content: end;
+            align-items: center;
+        }
     }
 }
 
@@ -11,3 +22,17 @@
         padding: 0;
     }
 }
+
+mat-icon {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+}
+
+.mat-internal-form-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

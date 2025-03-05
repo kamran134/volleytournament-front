@@ -24,7 +24,7 @@ export class ExamService {
 
     addExam(exam: {name: string, code: number, date: Date}): Observable<Exam> {
         const url: string = `${this.configService.getApiUrl()}/exams`;
-        return this.http.post<Exam>(url, exam);
+        return this.http.post<Exam>(url, exam, { withCredentials: true });
     }
 
     uploadResults(file: File, examId: string): Observable<ResponseFromBackend> {
@@ -32,21 +32,21 @@ export class ExamService {
         formData.append('file', file);
         formData.append('examId', examId);
 
-        return this.http.post<ResponseFromBackend>(`${this.configService.getApiUrl()}/student-results/upload`, formData);
+        return this.http.post<ResponseFromBackend>(`${this.configService.getApiUrl()}/student-results/upload`, formData, { withCredentials: true });
     }
 
     deleteResults(examId: string): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/student-results/${examId}`;
-        return this.http.delete<ResponseFromBackend>(url);
+        return this.http.delete<ResponseFromBackend>(url, { withCredentials: true });
     }
 
     deleteExam(examId: string): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/exams/${examId}`;
-        return this.http.delete<ResponseFromBackend>(url);
+        return this.http.delete<ResponseFromBackend>(url, { withCredentials: true });
     }
 
     deleteAllExams(): Observable<ResponseFromBackend> {
         const url: string = `${this.configService.getApiUrl()}/exams`;
-        return this.http.delete<ResponseFromBackend>(url);
+        return this.http.delete<ResponseFromBackend>(url, { withCredentials: true });
     }
 }

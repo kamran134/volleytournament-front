@@ -47,19 +47,19 @@ export class StudentService {
 
     deleteStudent(studentId: string): Observable<any> {
         const url: string = `${this.configService.getApiUrl()}/students/${studentId}`;
-        return this.http.delete(url);
+        return this.http.delete(url, { withCredentials: true });
     }
 
     deleteStudents(studentIds: string): Observable<any> {
         console.log(studentIds);
         const url: string = `${this.configService.getApiUrl()}/students/delete/${studentIds}`;
-        return this.http.delete(url);
+        return this.http.delete(url, { withCredentials: true });
     }
 
     uploadFile(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
 
-        return this.http.post(`${this.configService.getApiUrl()}/students/upload`, formData);
+        return this.http.post(`${this.configService.getApiUrl()}/students/upload`, formData, { withCredentials: true });
     }
 }

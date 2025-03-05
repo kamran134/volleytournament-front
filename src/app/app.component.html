@@ -1,11 +1,16 @@
-<main class='main'>
-    <div class="header">
-        <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">Tünd tema</mat-slide-toggle>
-    </div>
-    <div class='content'>
-        <div class='title'><h1>{{ title }}</h1></div>
+<header>
+    <div class="header__settings">
         <div>
-            <router-outlet></router-outlet>
+            <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">
+                <mat-icon [svgIcon]="darkMode ? 'dark_mode' : 'light_mode'" [@rotateAnimation]="animationState"></mat-icon>
+            </mat-slide-toggle>
+        </div>
+        <div>
+            <button mat-flat-button (click)="logInOut()">{{ isAuthorized() ? 'Sistemdən çıxış' : 'Sistemə giriş' }}</button>
         </div>
     </div>
-</main>
+    <div class='header__title'><h1>{{ title }}</h1></div>
+    <div>
+        <router-outlet></router-outlet>
+    </div>
+</header>
