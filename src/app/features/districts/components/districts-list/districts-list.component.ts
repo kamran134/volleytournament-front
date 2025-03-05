@@ -103,6 +103,7 @@ export class DistrictsListComponent implements OnInit {
                     },
                     error: (error) => {
                         console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                     }
                 });
             }

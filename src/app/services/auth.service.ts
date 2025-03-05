@@ -61,14 +61,20 @@ export class AuthService {
         }
     }
 
-    logout() {
-        if (isPlatformBrowser(this.platformId)) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('role');    
-        }
-        this.userRole = null;
-        this.authStatus.next(false);
-        this.router.navigate(['/login']);
+    logout(): void {
+        this.http.post(`${this.configService.getAuthUrl()}/logout`, {}, { withCredentials: true })
+            .pipe(
+                tap(() => {
+                    if (isPlatformBrowser(this.platformId)) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('role');    
+                    }
+                    this.userRole = null;
+                    this.authStatus.next(false);
+                    this.router.navigate(['/login']);
+                })
+            )
+            .subscribe();
     }
 
     getToken(): string | null {
