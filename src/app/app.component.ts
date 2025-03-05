@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
     }
 
     isAuthorized(): boolean {
-        return this.authService.getRole() !== '' || this.authService.getRole() !== null;
+        return this.authService.getRole() !== '' && this.authService.getRole() !== null;
     }
 
     darkModeToogleChanged(): void {
@@ -82,8 +82,9 @@ export class AppComponent implements OnInit {
     logInOut(): void {
         if (this.isAuthorized())
             this.authService.logout();
-        else {
+        else 
             this.router.navigate(['/login']);
-        }
+
+        console.log(this.isAuthorized());
     }
 }

@@ -29,6 +29,7 @@ import { FilterParams } from '../../../../models/filterParams.model';
 import { TeacherService } from '../../../teachers/services/teacher.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { DistrictService } from '../../../districts/services/district.service';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
     selector: 'app-stats',
@@ -104,6 +105,7 @@ export class StatsComponent implements OnInit {
         private districtService: DistrictService,
         private schoolService: SchoolService,
         private teacherService: TeacherService,
+        private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute,
     ) {}
@@ -118,9 +120,12 @@ export class StatsComponent implements OnInit {
             this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
             this.selectedExamId = params['examId'] || '';
             this.selectedMonth = params['month'] || '';
-            // Trigger data loading after applying filters
             this.loadStudentsStats();
         });
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
     }
 
     ngAfterViewInit(): void {
@@ -138,11 +143,6 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(",")
         };
-
-        // const selectedDate = this.monthControl.value;
-        // if (!selectedDate) return;
-
-        // const month = selectedDate.toISOString().slice(0, 7);
         
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {

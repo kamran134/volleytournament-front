@@ -48,7 +48,7 @@
                     {{ '' }}
                 </th>
                 <td mat-cell *matCellDef="let exam">
-                    <button mat-raised-button color="warn" (click)="onExamDelete($event, exam)"><mat-icon>delete</mat-icon>sil</button>
+                    <button mat-raised-button color="warn" *ngIf="isAdminOrSuperAdmin()" (click)="onExamDelete($event, exam)"><mat-icon>delete</mat-icon>sil</button>
                 </td>
             </ng-container>
 
@@ -93,7 +93,7 @@
         </mat-card>
     </div>
 
-    <div class="global-action-pannel">
+    <div class="global-action-pannel" *ngIf="isAdminOrSuperAdmin()">
         <button mat-flat-button extended (click)="openAddExamDialog()">
             <mat-icon>add</mat-icon>
             İmtahan əlavə et

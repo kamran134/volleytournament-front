@@ -17,6 +17,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
 import { MatCardModule } from '@angular/material/card';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
     selector: 'app-exams-list',
@@ -39,7 +40,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
     styleUrl: './exams-list.component.scss'
 })
 export class ExamsListComponent implements OnInit {
-    constructor(private examService: ExamService, private dialog: MatDialog) {}
+    constructor(private examService: ExamService, private authService: AuthService, private dialog: MatDialog) {}
 
     displayedColumns: string[] = ['name', 'code', 'date', 'actions'];
 
@@ -61,6 +62,10 @@ export class ExamsListComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadExams();
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
     }
 
     loadExams(): void {

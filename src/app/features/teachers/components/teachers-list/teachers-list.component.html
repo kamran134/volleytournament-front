@@ -127,7 +127,7 @@
         </mat-card>
     </div>
 
-    <div class="upload-file">
+    <div class="upload-file" *ngIf="isAdminOrSuperAdmin()">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />
             <button mat-flat-button extended (click)="fileInput.click()">
@@ -144,7 +144,7 @@
         </form>
     </div>
 
-    <div class="global-action-pannel">
+    <div class="global-action-pannel" *ngIf="isAdminOrSuperAdmin()">
         <button mat-flat-button color="warn" (click)="onAllTeachersDelete()">Ekranda olan müəllimləri sil</button>
     </div>
 </div>

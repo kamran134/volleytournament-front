@@ -219,7 +219,7 @@
 
     
     <!--</mat-grid-tile>-->
-<mat-grid-list cols="4" rowHeight="100px">
+<mat-grid-list cols="4" rowHeight="100px" *ngIf="isAdminOrSuperAdmin()">
     <mat-grid-tile [colspan]="2" [rowspan]="1">
         <div class="statistics-action">
             <button mat-raised-button (click)="updateStats()"><mat-icon>update</mat-icon> {{isUpdating ? 'Yenilənir...' : 'Statistikanı yenilə'}}</button>

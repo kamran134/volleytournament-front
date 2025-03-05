@@ -26,6 +26,7 @@ import { ExamService } from '../../../exams/services/exam.service';
 import { Exam } from '../../../../models/exam.model';
 import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
     selector: 'app-students-list',
@@ -83,6 +84,7 @@ export class StudentsListComponent {
         private schoolService: SchoolService,
         private teacherService: TeacherService,
         private examService: ExamService,
+        private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -108,6 +110,10 @@ export class StudentsListComponent {
         this.loadDistricts();
         this.loadExams();
         this.setupSearch();
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
     }
 
     setupSearch(): void {

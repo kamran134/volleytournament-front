@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 import { MatCardModule } from '@angular/material/card';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
     selector: 'app-schools-list',
@@ -68,6 +69,7 @@ export class SchoolsListComponent implements OnInit {
     constructor(
         private schoolService: SchoolService,
         private districtService: DistrictService,
+        private authService: AuthService,
         private snackBar: MatSnackBar,
         private dialog: MatDialog) {}
 
@@ -104,6 +106,10 @@ export class SchoolsListComponent implements OnInit {
     ngOnInit(): void {
         this.loadDistricts();
         this.loadSchools();
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
     }
 
     loadSchools(): void {

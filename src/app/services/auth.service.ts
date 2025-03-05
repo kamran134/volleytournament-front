@@ -28,6 +28,10 @@ export class AuthService {
         return this.userRole === 'admin' || this.userRole === 'superadmin';
     }
 
+    get isAuthorized(): boolean {
+        return this.authStatus.getValue();
+    }
+
     private hasToken(): boolean {
         return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token');
     }
@@ -58,8 +62,10 @@ export class AuthService {
     }
 
     logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');    
+        }
         this.userRole = null;
         this.authStatus.next(false);
         this.router.navigate(['/login']);
