@@ -165,7 +165,51 @@
             (page)="onPageChange($event)" />
     </div>
 
+    <div *ngIf="repairingResults">
+        <mat-card appearance="outlined" *ngIf="(repairingResults.repairedStudents || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Məlumatları tam və ya qismən bərpa olunan şagirdlərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let student of repairingResults.repairedStudents">{{ student }}</p>
+            </mat-card-content>
+        </mat-card>
+        <mat-card appearance="outlined" *ngIf="(repairingResults.studentsWithoutDistrict || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Rayonları tapılmayan şagirdlərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let student of repairingResults.studentsWithoutDistrict">{{ student }}</p>
+            </mat-card-content>
+        </mat-card>
+        <mat-card appearance="outlined" *ngIf="(repairingResults.studentsWithoutSchool || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Məktəbləri tapılmayan şagirdlərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let student of repairingResults.studentsWithoutSchool">{{ student }}</p>
+            </mat-card-content>
+        </mat-card>
+        <mat-card appearance="outlined" *ngIf="(repairingResults.studentsWithoutTeacher || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Müəllimləri tapılmayan şagirdlərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let student of repairingResults.studentsWithoutTeacher">{{ student }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div class="global-action-pannel" *ngIf="isAdminOrSuperAdmin()">
+        <button mat-flat-button (click)="onStudentsRepair()">{{ isLoading ? 'Yenilənir...' : 'Qüsurları düzəlt' }}</button>
         <button mat-flat-button color="warn" (click)="onAllStudentsDelete()">Ekranda olan şagirdləri sil</button>
     </div>
 </div>

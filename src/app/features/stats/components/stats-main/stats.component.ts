@@ -30,6 +30,9 @@ import { TeacherService } from '../../../teachers/services/teacher.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { DistrictService } from '../../../districts/services/district.service';
 import { AuthService } from '../../../../services/auth.service';
+import { Student } from '../../../../models/student.model';
+import { StudentService } from '../../../students/services/student.service';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-stats',
@@ -45,6 +48,7 @@ import { AuthService } from '../../../../services/auth.service';
         MatDatepickerModule,
         MatFormFieldModule,
         MatSelectModule,
+        MatPaginatorModule,
         MatInputModule,
         MatTabsModule,
         MatSortModule,
@@ -75,13 +79,14 @@ export class StatsComponent implements OnInit {
         developingStudents: [],
         teachers: [],
         schools: [],
-        districts: []
+        districts: [],
+        studentsRating: []
     };
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
     teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
     schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
     districtColumns: string[] = ['code', 'name', 'averageScore', 'score'];
-    selectedMonth: string = '';
+    selectedMonth: string = new Date().getMonth() + '-' + new Date().getFullYear();
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
@@ -90,24 +95,29 @@ export class StatsComponent implements OnInit {
     districts: District[] = [];
     schools: School[] = [];
     teachers: Teacher[] = [];
+    students: Student[] = [];
+    totalCount: number = 0;
+    pageSize: number = 10;
+    pageIndex: number = 0;
     exams: Exam[] = [];
     errorMessage: string = '';
     gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-
+    studentsDisplayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'];
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
     districtsDataSource = new MatTableDataSource(this.districts);
 
     constructor(
+        private authService: AuthService,
         private statsService: StatsService,
-        private snackBar: MatSnackBar,
-        private examService: ExamService,
         private districtService: DistrictService,
         private schoolService: SchoolService,
         private teacherService: TeacherService,
-        private authService: AuthService,
+        private studentService: StudentService,
+        private examService: ExamService,
         private router: Router,
         private route: ActivatedRoute,
+        private snackBar: MatSnackBar,
     ) {}
 
     ngOnInit(): void {
@@ -119,8 +129,9 @@ export class StatsComponent implements OnInit {
             this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
             this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
             this.selectedExamId = params['examId'] || '';
-            this.selectedMonth = params['month'] || '';
+            this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + new Date().getMonth();
             this.loadStudentsStats();
+            this.loadAllStudentsStats();
         });
     }
 
@@ -154,6 +165,31 @@ export class StatsComponent implements OnInit {
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
             }
         })
+    }
+
+    loadAllStudentsStats(): void {
+        this.isloading = true;
+
+        const params: FilterParams = {
+            page: this.pageIndex + 1,
+            size: this.pageSize,
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(","),
+            grades: this.selectedGrades.join(",")
+        };
+
+        this.studentService.getStudentsForStats(params).subscribe({
+            next: (response) => {
+                this.isloading = false;
+                this.students = response.data;
+                this.totalCount = response.totalCount;
+            },
+            error: (error: Error) => {
+                this.isloading = false;
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
     }
 
     loadStatsByExam(): void {
@@ -238,6 +274,9 @@ export class StatsComponent implements OnInit {
         });
     }
 
+
+    // FILTERS LOADING
+
     loadTeachers(): void {
         const params: FilterParams = {
             schoolIds: this.selectedSchoolIds.join(",")
@@ -294,6 +333,9 @@ export class StatsComponent implements OnInit {
                 }
             });
     }
+
+
+    // Button Handlers
 
     updateStats(): void {
         this.isUpdating = true;
@@ -396,5 +438,28 @@ export class StatsComponent implements OnInit {
         };
     
         this.router.navigate(['/students', studentId], navigationExtras);
+    }
+
+    onPageChange(event: PageEvent): void {
+        this.pageIndex = event.pageIndex;
+        this.pageSize = event.pageSize;
+
+        const queryParams = {
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize,
+            districtIds: this.selectedDistrictIds.join(","),
+            schoolIds: this.selectedSchoolIds.join(","),
+            teacherIds: this.selectedTeacherIds.join(","),
+            grades: this.selectedGrades.join(",")
+        };
+
+        const navigationExtras: NavigationExtras = {
+            queryParams,
+            replaceUrl: true
+        }
+
+        this.router.navigate([], navigationExtras).then(() => {
+            this.loadAllStudentsStats();
+        });
     }
 }

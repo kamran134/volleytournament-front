@@ -6,6 +6,7 @@ import { Teacher } from "./teacher.model";
 export interface Stats {
     studentsOfMonth?: Student[];
     studentsOfMonthByRepublic?: Student[];
+    studentsRating?: Student[];
     developingStudents?: Student[];
     teachers?: Teacher[];
     schools?: School[];

@@ -8,6 +8,14 @@ export interface StudentData {
     totalCount: number;
 }
 
+export interface RepairingResults {
+    message?: string,
+    repairedStudents?: string[],
+    studentsWithoutDistrict?: string[],
+    studentsWithoutSchool?: string[],
+    studentsWithoutTeacher?: string[]
+}
+
 export interface StudentWithResultData {
     data: StudentWithResult;
 }
@@ -24,6 +32,7 @@ export interface Student {
     district: District;
     status?: string;
     score?: number;
+    averageScore?: number;
 }
 
 export interface StudentWithResult {

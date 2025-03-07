@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, model, ModelSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { Student, StudentData } from '../../../../models/student.model';
+import { RepairingResults, Student, StudentData } from '../../../../models/student.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StudentService } from '../../services/student.service';
 import { FilterParams } from '../../../../models/filterParams.model';
 import { MatTableModule } from '@angular/material/table';
@@ -27,6 +27,7 @@ import { Exam } from '../../../../models/exam.model';
 import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-students-list',
@@ -38,6 +39,7 @@ import { AuthService } from '../../../../services/auth.service';
         MatButtonModule,
         MatPaginator,
         MatFormFieldModule,
+        MatCardModule,
         FormsModule,
         MatOption,
         RouterModule,
@@ -66,8 +68,11 @@ export class StudentsListComponent {
     isLoadingMore: boolean = false;
     hasError: boolean = false;
     errorMessage: string = '';
-    horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    verticalPosition: MatSnackBarVerticalPosition = 'top';
+    matSnackConfig: MatSnackBarConfig = {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+    }
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
@@ -77,18 +82,19 @@ export class StudentsListComponent {
     searchString: string = '';
     private searchTerms = new Subject<string>();
     displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district'];
+    repairingResults: RepairingResults = {};
 
     constructor(
+        private authService: AuthService,
         private studentService: StudentService,
         private districtService: DistrictService,
         private schoolService: SchoolService,
         private teacherService: TeacherService,
         private examService: ExamService,
-        private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute,
-        private snackBar: MatSnackBar,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit(): void {
@@ -164,11 +170,8 @@ export class StudentsListComponent {
         this.studentService.getStudents(params).subscribe({
             next: (response: StudentData) => {
                 this.students = response.data;
-                // if (this.pageIndex === 0) this.students = data.data;
-                // else this.students = [...this.students, ...data.data]
                 this.totalCount = response.totalCount;
                 this.isLoading = false;
-                // this.isLoadingMore = false;
             },
             error: (error) => {
                 this.hasError = true;
@@ -338,24 +341,12 @@ export class StudentsListComponent {
 
         if (this.file) {
             this.studentService.uploadFile(this.file).subscribe({
-                next: () => this.snackBar.open('Fayl uğurla yükləndi', 'OK', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                }),
-                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', {
-                    horizontalPosition: this.horizontalPosition,
-                    verticalPosition: this.verticalPosition,
-                    duration: 5000
-                })
+                next: () => this.snackBar.open('Fayl uğurla yükləndi', 'OK', this.matSnackConfig),
+                error: (err) => this.snackBar.open(`Fayl yüklənməsində xəta!\n${err.message}`, 'Bağla', this.matSnackConfig)
             });
         }
         else {
-            this.snackBar.open('Fayl seçilməyib', 'Bağla', {
-                horizontalPosition: this.horizontalPosition,
-                verticalPosition: this.verticalPosition,
-                duration: 5000
-            });
+            this.snackBar.open('Fayl seçilməyib', 'Bağla', this.matSnackConfig);
         }
     }
 
@@ -371,13 +362,31 @@ export class StudentsListComponent {
                 this.studentService.deleteStudents(studentIds).subscribe({
                     next: (response) => {
                         this.loadStudents();
+                        this.snackBar.open(response.message, 'OK', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                     }
                 });
             }
         });
+    }
+
+    onStudentsRepair(): void {
+        this.isLoading = true;
+        this.studentService.repairStudents().subscribe({
+            next: (response) => {
+                this.repairingResults = response;
+                this.snackBar.open(response.message || '', 'OK', this.matSnackConfig);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error(error);
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                this.isLoading = false;
+            }
+        })
     }
 
     onCheckDefective(): void {
