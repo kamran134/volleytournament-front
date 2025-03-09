@@ -386,7 +386,7 @@ export class StudentsListComponent {
                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                 this.isLoading = false;
             }
-        })
+        });
     }
 
     onCheckDefective(): void {

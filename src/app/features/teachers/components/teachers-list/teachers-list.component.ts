@@ -21,6 +21,7 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../../services/auth.service';
+import { RepairingResults } from '../../../../models/student.model';
 
 @Component({
     selector: 'app-teachers-list',
@@ -63,6 +64,7 @@ export class TeachersListComponent implements OnInit {
     missingSchoolCodes: number[] = [];
     teacherCodesWithoutSchoolCodes: number[] = [];
     incorrectTeacherCodes: number[] = [];
+    repairingResults: RepairingResults = {};
 
     constructor(
         private teacherService: TeacherService,
@@ -177,6 +179,22 @@ export class TeachersListComponent implements OnInit {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
         this.loadTeachers();
+    }
+
+    onTeachersRepair(): void {
+        this.isLoading = true;
+        this.teacherService.repairTeachers().subscribe({
+            next: (response) => {
+                this.repairingResults = response;
+                this.snackBar.open(response.message || '', 'OK', this.matSnackConfig);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error(error);
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                this.isLoading = false;
+            }
+        });
     }
 
     onAllTeachersDelete(): void {

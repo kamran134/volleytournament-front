@@ -13,7 +13,10 @@ export interface RepairingResults {
     repairedStudents?: string[],
     studentsWithoutDistrict?: string[],
     studentsWithoutSchool?: string[],
-    studentsWithoutTeacher?: string[]
+    studentsWithoutTeacher?: string[],
+    repairedTeachers?: string[],
+    teachersWithoutDistrict?: string[],
+    teachersWithoutSchool?: string[]
 }
 
 export interface StudentWithResultData {

@@ -82,6 +82,7 @@ export class StatsComponent implements OnInit {
         districts: [],
         studentsRating: []
     };
+    selectedTab: string = 'students';
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
     teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
     schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
@@ -131,7 +132,6 @@ export class StatsComponent implements OnInit {
             this.selectedExamId = params['examId'] || '';
             this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + new Date().getMonth();
             this.loadStudentsStats();
-            this.loadAllStudentsStats();
         });
     }
 
@@ -282,7 +282,9 @@ export class StatsComponent implements OnInit {
             schoolIds: this.selectedSchoolIds.join(",")
         }
 
-        this.teacherService.getTeachersForFilter(params)
+        if (this.selectedTab === 'allTeachers') {
+            console.log('params', params);
+            this.teacherService.getTeachers(params)
             .subscribe({
                 next: (response: TeacherData) => {
                     this.teachers = response.data;
@@ -290,8 +292,18 @@ export class StatsComponent implements OnInit {
                 error: (error: Error) => {
                     this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                 }
-            })
-
+            });
+        } else {
+            this.teacherService.getTeachersForFilter(params)
+            .subscribe({
+                next: (response: TeacherData) => {
+                    this.teachers = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
+        }
     }
 
     loadSchools(): void {
@@ -299,7 +311,8 @@ export class StatsComponent implements OnInit {
             districtIds: this.selectedDistrictIds.join(",")
         }
 
-        this.schoolService.getSchoolsForFilter(params)
+        if (this.selectedTab === 'allSchool') {
+            this.schoolService.getSchools(params)
             .subscribe({
                 next: (response: SchoolData) => {
                     this.schools = response.data;
@@ -308,18 +321,29 @@ export class StatsComponent implements OnInit {
                     this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                 }
             });
-    }
-
-    loadDistricts(): void {
-        this.districtService.getDistricts()
+        } else {
+            this.schoolService.getSchoolsForFilter(params)
             .subscribe({
-                next: (response: DistrictData) => {
-                    this.districts = response.data;
+                next: (response: SchoolData) => {
+                    this.schools = response.data;
                 },
                 error: (error: Error) => {
                     this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                 }
             });
+        }
+    }
+
+    loadDistricts(): void {
+        this.districtService.getDistricts()
+        .subscribe({
+            next: (response: DistrictData) => {
+                this.districts = response.data;
+            },
+            error: (error: Error) => {
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
     }
 
     loadExams(): void {
@@ -363,21 +387,38 @@ export class StatsComponent implements OnInit {
 
     onTabChange(event: any): void {
         if (event.index === 0) {
+            this.selectedTab = 'students';
             this.loadStudentsStats();
         } else if (event.index === 1) {
-            this.loadTeachersStats();
+            this.selectedTab = 'allStudents';
+            this.loadAllStudentsStats();
         } else if (event.index === 2) {
-            this.loadSchoolsStats();
+            this.selectedTab = 'allTeachers';
+            this.loadTeachersStats();
         } else if (event.index === 3) {
+            this.selectedTab = 'allSchools'
+            this.loadSchoolsStats();
+        } else if (event.index === 4) {
+            this.selectedTab = 'allDistricts'
             this.loadDistrictsStats();
         }
     }
 
     onDistrictSelectChanged(): void {
         this.stats = {}; // Очищаем список студентов
-        this.loadSchools();
-        this.loadTeachers();
-        this.loadStudentsStats();
+        console.log('tab: ', this.selectedTab);
+        if (this.selectedTab === 'students' || this.selectedTab === 'allStudents') {
+            this.loadSchools();
+            this.loadTeachers();
+            this.loadStudentsStats();
+        }
+        else if (this.selectedTab === 'allTeachers') {
+            this.loadSchools();
+            this.loadTeachers();
+        }
+        else if (this.selectedTab === 'allSchools') {
+            this.loadSchools();
+        }
     }
 
     onSchoolSelectChanged(): void {
@@ -398,22 +439,6 @@ export class StatsComponent implements OnInit {
 
     onExamSelectChanged(): void {
         this.loadStatsByExam();
-    }
-
-    onDistrictSelectForTeacherChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        this.loadSchools();
-        this.loadTeachersStats();
-    }
-
-    onSchoolSelectForTeacherChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        this.loadTeachersStats();
-    }
-
-    onDistrictSelectForSchoolChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        this.loadSchoolsStats();
     }
 
     openStudentDetails(studentId: string): void {

@@ -1,3 +1,4 @@
+import { District } from "./district.model";
 import { School } from "./school.model";
 
 export interface TeacherData {
@@ -10,4 +11,5 @@ export interface Teacher {
     fullname: string;
     code: number;
     school: School;
+    district: District;
 }
