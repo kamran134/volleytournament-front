@@ -44,7 +44,7 @@ export class StatsService {
     }
 
     getTeachersStats(params: FilterParams): Observable<Stats> {
-        let url: string = `${this.configService.getApiUrl()}/stats/teachers`;
+        let url: string = `${this.configService.getApiUrl()}/teachers`;
         if (params.districtIds && params.districtIds.length > 0) {
             url = `${url}?districtIds=${params.districtIds}`;
         }

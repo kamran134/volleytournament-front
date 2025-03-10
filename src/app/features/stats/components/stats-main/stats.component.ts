@@ -232,29 +232,6 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    loadSchoolsStats(): void {
-        this.isloading = true;
-        this.stats = {};
-
-        const params: FilterParams = {
-            districtIds: this.selectedDistrictIds.join(",")
-        };
-
-        if (this.stats.schools && this.stats.schools.length > 0) return;
-
-        this.statsService.getSchoolsStats(params).subscribe({
-            next: (response) => {
-                this.isloading = false;
-                this.stats = {...this.stats, ...response};
-                this.schoolsDataSource.data = this.stats.schools || [];
-            },
-            error: (error: Error) => {
-                this.isloading = false;
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-    }
-
     loadDistrictsStats(): void {
         this.isloading = true;
         this.stats = {};
@@ -279,15 +256,19 @@ export class StatsComponent implements OnInit {
 
     loadTeachers(): void {
         const params: FilterParams = {
-            schoolIds: this.selectedSchoolIds.join(",")
+            page: this.pageIndex + 1,
+            size: this.pageSize,
+            schoolIds: this.selectedSchoolIds.join(","),
+            districtIds: this.selectedDistrictIds.join(",")
         }
 
         if (this.selectedTab === 'allTeachers') {
-            console.log('params', params);
             this.teacherService.getTeachers(params)
             .subscribe({
                 next: (response: TeacherData) => {
-                    this.teachers = response.data;
+                    // this.teachers = response.data;
+                    this.stats = { ...this.stats, teachers: response.data };
+                    this.totalCount = response.totalCount;
                 },
                 error: (error: Error) => {
                     this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
@@ -394,10 +375,10 @@ export class StatsComponent implements OnInit {
             this.loadAllStudentsStats();
         } else if (event.index === 2) {
             this.selectedTab = 'allTeachers';
-            this.loadTeachersStats();
+            this.loadTeachers();
         } else if (event.index === 3) {
             this.selectedTab = 'allSchools'
-            this.loadSchoolsStats();
+            this.loadSchools();
         } else if (event.index === 4) {
             this.selectedTab = 'allDistricts'
             this.loadDistrictsStats();
@@ -406,7 +387,6 @@ export class StatsComponent implements OnInit {
 
     onDistrictSelectChanged(): void {
         this.stats = {}; // Очищаем список студентов
-        console.log('tab: ', this.selectedTab);
         if (this.selectedTab === 'students' || this.selectedTab === 'allStudents') {
             this.loadSchools();
             this.loadTeachers();
@@ -423,6 +403,7 @@ export class StatsComponent implements OnInit {
 
     onSchoolSelectChanged(): void {
         this.stats = {}; // Очищаем список студентов
+        
         this.loadTeachers();
         this.loadStudentsStats();
     }
@@ -469,22 +450,29 @@ export class StatsComponent implements OnInit {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
 
-        const queryParams = {
-            pageIndex: this.pageIndex,
-            pageSize: this.pageSize,
-            districtIds: this.selectedDistrictIds.join(","),
-            schoolIds: this.selectedSchoolIds.join(","),
-            teacherIds: this.selectedTeacherIds.join(","),
-            grades: this.selectedGrades.join(",")
-        };
+        if (this.selectedTab === 'allStudents') {
 
-        const navigationExtras: NavigationExtras = {
-            queryParams,
-            replaceUrl: true
+        }
+        else if (this.selectedTab === 'allTeachers') {
+            this.loadTeachers();
         }
 
-        this.router.navigate([], navigationExtras).then(() => {
-            this.loadAllStudentsStats();
-        });
+        // const queryParams = {
+        //     pageIndex: this.pageIndex,
+        //     pageSize: this.pageSize,
+        //     districtIds: this.selectedDistrictIds.join(","),
+        //     schoolIds: this.selectedSchoolIds.join(","),
+        //     teacherIds: this.selectedTeacherIds.join(","),
+        //     grades: this.selectedGrades.join(",")
+        // };
+
+        // const navigationExtras: NavigationExtras = {
+        //     queryParams,
+        //     replaceUrl: true
+        // }
+
+        // this.router.navigate([], navigationExtras).then(() => {
+        //     this.loadAllStudentsStats();
+        // });
     }
 }

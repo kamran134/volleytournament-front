@@ -188,7 +188,7 @@
         <mat-card class="student-card" *ngIf="!isloading">
             <mat-card-title>Müəllimlər</mat-card-title>
             <mat-card-content>
-                <table mat-table [dataSource]="teachersDataSource" matSort="teachersSort" class="mat-elevation-z8">
+                <table mat-table [dataSource]="stats.teachers || []" matSort="teachersSort" class="mat-elevation-z8">
                     <ng-container matColumnDef="code">
                         <th mat-header-cell *matHeaderCellDef> Müəllimin kodu </th>
                         <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
@@ -216,14 +216,25 @@
                     
                     <ng-container matColumnDef="district">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header=""> Rayonu </th>
-                        <td mat-cell *matCellDef="let result"> {{ ((result.school || '').district || '').name }} </td>
+                        <td mat-cell *matCellDef="let result"> {{ (result.district || '').name }} </td>
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="teacherColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: teacherColumns;"></tr>
               </table>
             </mat-card-content>
-          </mat-card>
+            
+            <div *ngIf="!isloading && stats.teachers && stats.teachers.length > 0">
+                <mat-paginator
+                    [length]="totalCount"
+                    [pageIndex]="pageIndex"
+                    [showFirstLastButtons]="true"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="[5, 10, 20, 50, 100, 1000]"
+                    (page)="onPageChange($event)"
+                />
+            </div>
+        </mat-card>
     </mat-tab>
     <mat-tab label="İlin məktəbləri">
         <mat-card class="student-card" *ngIf="!isloading">
