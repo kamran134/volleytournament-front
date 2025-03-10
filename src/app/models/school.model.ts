@@ -12,4 +12,6 @@ export interface School {
     code: number;
     districtCode: number;
     district: District;
+    score?: number;
+    averageScore?: number;
 }

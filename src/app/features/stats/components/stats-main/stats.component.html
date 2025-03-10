@@ -5,80 +5,61 @@
     </button>
 </div>
 
-<div class="filters">
-    <mat-form-field class="filters__districts" *ngIf="selectedTab === 'students'">
-        <mat-label>Ay seçin</mat-label>
-        <input matInput [matDatepicker]="monthPicker" [formControl]="monthControl"
-            [value]="monthControl.value | monthName" readonly>
-        <mat-datepicker-toggle matIconSuffix [for]="monthPicker"></mat-datepicker-toggle>
-        <mat-datepicker #monthPicker startView="multi-year" (monthSelected)="updateMonth($event, monthPicker)"
-            panelClass="month-picker"></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field class="filters__districts" *ngIf="selectedTab !== 'allDistricts'">
-        <mat-label>Rayonlar</mat-label>
-        <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
-            <mat-option *ngFor="let district of districts" [value]="district._id">{{ district.name }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="filters__schools" *ngIf="['students', 'allStudents', 'allTeachers'].includes(selectedTab)">
-        <mat-label>Məktəblər</mat-label>
-        <mat-select [(value)]="selectedSchoolIds" (selectionChange)="onSchoolSelectChanged()" multiple>
-            <mat-option *ngFor="let school of schools" [value]="school._id">{{ school.name }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="filters__teachers" *ngIf="['students', 'allStudents'].includes(selectedTab)">
-        <mat-label>Müəllimlər</mat-label>
-        <mat-select [(value)]="selectedTeacherIds" (selectionChange)="onTeacherSelectChanged()" multiple>
-            <mat-option *ngFor="let teacher of teachers" [value]="teacher._id">{{ teacher.fullname }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="filters__grades" *ngIf="['students', 'allStudents'].includes(selectedTab)">
-        <mat-label>Sinif</mat-label>
-        <mat-select [(value)]="selectedGrades" (selectionChange)="onGrageSelectChanged()" multiple>
-            <mat-option *ngFor="let grade of gradesOptions" [value]="grade">{{ grade }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="filters__exams" *ngIf="['students', 'allStudents'].includes(selectedTab)">
-        <mat-label>İmtahan seçin</mat-label>
-        <mat-select [(value)]="selectedExamId" (selectionChange)="onExamSelectChanged()">
-            <mat-option *ngFor="let exam of exams" [value]="exam._id">{{ exam.name }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
+<app-stats-filters
+  [selectedTab]="selectedTab"
+  [districts]="districts"
+  [schools]="schools"
+  [teachers]="teachers"
+  [exams]="exams"
+  [gradesOptions]="gradesOptions"
+  [monthControl]="monthControl"
+  [selectedDistrictIds]="selectedDistrictIds"
+  [selectedSchoolIds]="selectedSchoolIds"
+  [selectedTeacherIds]="selectedTeacherIds"
+  [selectedGrades]="selectedGrades"
+  [selectedExamId]="selectedExamId"
+  (monthUpdated)="updateMonth($event)"
+  (districtChanged)="onDistrictSelectChanged($event)"
+  (schoolChanged)="onSchoolSelectChanged($event)"
+  (teacherChanged)="onTeacherSelectChanged($event)"
+  (gradeChanged)="onGradeSelectChanged($event)"
+  (examChanged)="onExamSelectChanged($event)"
+></app-stats-filters>
 
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Ayın şagirdləri">
         <div class="stats-container" *ngIf="!isloading">
-            <app-student-table
+            <app-student-rating-table
                 [title]="(selectedMonth | monthName:false) + ' ayında inkişaf edən şagirdlər'"
+                [tableName]="'developingStudents'"
                 [dataSource]="stats.developingStudents || []"
                 [columns]="columns"
+                (excelExport)="exportToExcel('developingStudents')"
                 (rowClicked)="openStudentDetails($event)">
-            </app-student-table>
+            </app-student-rating-table>
         
-            <app-student-table
+            <app-student-rating-table
                 [title]="(selectedMonth | monthName:false) + ' ayının şagirdləri'"
+                [tableName]="'studentsOfMonth'"
                 [dataSource]="stats.studentsOfMonth || []"
                 [columns]="columns"
+                (excelExport)="exportToExcel('studentsOfMonth')"
                 (rowClicked)="openStudentDetails($event)">
-            </app-student-table>
+            </app-student-rating-table>
         
-            <app-student-table
+            <app-student-rating-table
                 [title]="'Respublika üzrə ' + (selectedMonth | monthName:false) + ' ayının şagirdləri'"
+                [tableName]="'studentsOfMonthByRepublic'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
                 [columns]="columns"
+                (excelExport)="exportToExcel('studentsOfMonthByRepublic')"
                 (rowClicked)="openStudentDetails($event)">
-            </app-student-table>
+            </app-student-rating-table>
         </div>
     </mat-tab>
     <mat-tab label="İlin şagirdləri">
         <div *ngIf="!isloading">
-            <table mat-table [dataSource]="students" class="mat-elevation-z8">
+            <table mat-table [dataSource]="stats.students || []" class="mat-elevation-z8">
                 <ng-container matColumnDef="code">
                     <th mat-header-cell *matHeaderCellDef>
                         Şagirdin kodu
@@ -174,14 +155,18 @@
             </table>
         </div>
 
-        <div *ngIf="!isloading && students && students.length > 0" >
+        <div *ngIf="!isloading && stats.students && stats.students.length > 0" >
             <mat-paginator
-                [length]="totalCount"
+                [length]="totalCounts.allStudentsTotalCount"
                 [pageIndex]="pageIndex"
                 [showFirstLastButtons]="true"
                 [pageSize]="pageSize"
                 [pageSizeOptions]="[20, 50, 1000]"
                 (page)="onPageChange($event)" />
+        </div>
+
+        <div *ngIf="!isloading && stats.students && stats.students.length > 0">
+            <button mat-raised-button (click)="exportToExcel('allStudents')"><mat-icon>file_download</mat-icon> Excel-ə eksport et</button>
         </div>
     </mat-tab>
     <mat-tab label="İlin müəllimləri">
@@ -201,12 +186,12 @@
             
                     <ng-container matColumnDef="score">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header=""> Ümumi balı </th>
-                    <td mat-cell *matCellDef="let result"> {{ result.score }} </td>
+                    <td mat-cell *matCellDef="let result"> {{ result.score | roundNumber }} </td>
                     </ng-container>
         
                     <ng-container matColumnDef="averageScore">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header=""> Orta balı </th>
-                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | number:'1.2-2' }} </td>
+                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
                     </ng-container>
         
                     <ng-container matColumnDef="school">
@@ -234,13 +219,17 @@
                     (page)="onPageChange($event)"
                 />
             </div>
+
+            <div *ngIf="!isloading && stats.teachers && stats.teachers.length > 0">
+                <button mat-raised-button (click)="exportToExcel('allTeachers')"><mat-icon>file_download</mat-icon> Excel-ə eksport et</button>
+            </div>
         </mat-card>
     </mat-tab>
     <mat-tab label="İlin məktəbləri">
         <mat-card class="student-card" *ngIf="!isloading">
             <mat-card-title>Məktəblər</mat-card-title>
             <mat-card-content>
-                <table mat-table [dataSource]="schoolsDataSource" class="mat-elevation-z8">
+                <table mat-table [dataSource]="stats.schools || []" class="mat-elevation-z8">
                     <ng-container matColumnDef="code">
                         <th mat-header-cell *matHeaderCellDef> Məktəbin kodu </th>
                         <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
@@ -258,7 +247,7 @@
         
                     <ng-container matColumnDef="averageScore">
                         <th mat-header-cell *matHeaderCellDef> Orta balı </th>
-                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | number:'1.2-2' }} </td>
+                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
                     </ng-container>
                     
                     <ng-container matColumnDef="district">
@@ -270,6 +259,21 @@
                     <tr mat-row *matRowDef="let row; columns: schoolColumns;"></tr>
                 </table>
             </mat-card-content>
+
+            <div *ngIf="!isloading && stats.schools && stats.schools.length > 0">
+                <mat-paginator
+                    [length]="totalCount"
+                    [pageIndex]="pageIndex"
+                    [showFirstLastButtons]="true"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="[5, 10, 20, 50, 100, 1000]"
+                    (page)="onPageChange($event)"
+                />
+            </div>
+
+            <div *ngIf="!isloading && stats.schools && stats.schools.length > 0">
+                <button mat-raised-button (click)="exportToExcel('allSchools')"><mat-icon>file_download</mat-icon> Excel-ə eksport et</button>
+            </div>
         </mat-card>
     </mat-tab>
     <mat-tab label="İlin rayonları">
@@ -294,20 +298,22 @@
         
                     <ng-container matColumnDef="averageScore">
                         <th mat-header-cell *matHeaderCellDef> Orta balı </th>
-                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | number:'1.2-2' }} </td>
+                        <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
                     </ng-container>
                     
                     <tr mat-header-row *matHeaderRowDef="districtColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: districtColumns;"></tr>
                 </table>
+
+                <div *ngIf="!isloading && stats.districts && stats.districts.length > 0">
+                    <button mat-raised-button (click)="exportToExcel('allDistricts')"><mat-icon>file_download</mat-icon> Excel-ə eksport et</button>
+                </div>
             </mat-card-content>
         </mat-card>
     </mat-tab>
 </mat-tab-group>
 <div class="stats-container" *ngIf="isloading">Statistika yüklənir...</div>
 
-    
-    <!--</mat-grid-tile>-->
 <mat-grid-list cols="4" rowHeight="100px" *ngIf="isAdminOrSuperAdmin()">
     <mat-grid-tile [colspan]="2" [rowspan]="1">
         <div class="statistics-action">

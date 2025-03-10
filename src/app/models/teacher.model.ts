@@ -12,4 +12,6 @@ export interface Teacher {
     code: number;
     school: School;
     district: District;
+    score?: number;
+    averageScore?: number;
 }

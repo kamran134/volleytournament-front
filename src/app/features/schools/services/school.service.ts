@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { SchoolData } from '../../../models/school.model';
 import { FilterParams } from '../../../models/filterParams.model';
 import { ResponseFromBackend } from '../../../models/response.model';
+import { RepairingResults } from '../../../models/student.model';
 
 @Injectable({
     providedIn: 'root'
@@ -42,6 +43,11 @@ export class SchoolService {
         console.log(schoolIds);
         const url: string = `${this.configService.getApiUrl()}/schools/delete/${schoolIds}`;
         return this.http.delete(url, { withCredentials: true });
+    }
+
+    repairSchools(): Observable<RepairingResults> {
+        const url: string = `${this.configService.getApiUrl()}/schools/repair`;
+        return this.http.get<RepairingResults>(url, { withCredentials: true });
     }
 
     uploadFile(file: File): Observable<ResponseFromBackend> {

@@ -33,32 +33,40 @@ import { AuthService } from '../../../../services/auth.service';
 import { Student } from '../../../../models/student.model';
 import { StudentService } from '../../../students/services/student.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { StatsFiltersComponent } from "../stats-filters/stats-filters.component";
+import { RoundNumberPipe } from '../../../../pipes/round-number.pipe';
+import { StatsPagination } from '../../../../models/pagination.model';
+import * as XLSX from 'xlsx';
+import { StudentRatingTableComponent } from '../student-rating-table/student-rating-table.component';
+import { ExamResult } from '../../../../models/examResult.model';
 
 @Component({
     selector: 'app-stats',
     standalone: true,
     imports: [
-        MatGridListModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        MatIconModule,
-        MatProgressSpinnerModule,
-        MatCardModule,
-        MatTableModule,
-        MatDatepickerModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatPaginatorModule,
-        MatInputModule,
-        MatTabsModule,
-        MatSortModule,
-        MatSortHeader,
-        CommonModule,
-        ReactiveFormsModule,
-        MonthNamePipe,
-        RouterModule,
-        StudentTableComponent
-    ],
+    MatGridListModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatTableModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatTabsModule,
+    MatSortModule,
+    MatSortHeader,
+    CommonModule,
+    ReactiveFormsModule,
+    MonthNamePipe,
+    RouterModule,
+    StudentRatingTableComponent,
+    StatsFiltersComponent,
+    RoundNumberPipe
+],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
@@ -77,12 +85,20 @@ export class StatsComponent implements OnInit {
         studentsOfMonth: [],
         studentsOfMonthByRepublic: [],
         developingStudents: [],
+        students: [],
         teachers: [],
         schools: [],
         districts: [],
         studentsRating: []
     };
-    selectedTab: string = 'students';
+    totalCounts: StatsPagination = {
+        studentsTotalCount: 0,
+        allStudentsTotalCount: 0,
+        allTeachersTotalCount: 0,
+        allSchoolsTotalCount: 0,
+        allDistrictsTotalCount: 0
+    };
+    selectedTab: 'students' | 'allStudents' | 'allTeachers' | 'allSchools' | 'allDistricts' = 'students';
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
     teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
     schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
@@ -158,7 +174,7 @@ export class StatsComponent implements OnInit {
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.stats = response;
+                this.stats = {...response};
             },
             error: (error: Error) => {
                 this.isloading = false;
@@ -168,8 +184,6 @@ export class StatsComponent implements OnInit {
     }
 
     loadAllStudentsStats(): void {
-        this.isloading = true;
-
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -182,8 +196,8 @@ export class StatsComponent implements OnInit {
         this.studentService.getStudentsForStats(params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.students = response.data;
-                this.totalCount = response.totalCount;
+                this.stats.students = response.data;
+                this.totalCounts.allStudentsTotalCount = response.totalCount;
             },
             error: (error: Error) => {
                 this.isloading = false;
@@ -200,30 +214,6 @@ export class StatsComponent implements OnInit {
             next: (response) => {
                 this.isloading = false;
                 this.stats = response;
-            },
-            error: (error: Error) => {
-                this.isloading = false;
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-    }
-
-    loadTeachersStats(): void {
-        this.isloading = true;
-        this.stats = {};
-
-        const params: FilterParams = {
-            districtIds: this.selectedDistrictIds.join(","),
-            schoolIds: this.selectedSchoolIds.join(",")
-        };
-
-        if (this.stats.teachers && this.stats.teachers.length > 0) return;
-
-        this.statsService.getTeachersStats(params).subscribe({
-            next: (response) => {
-                this.isloading = false;
-                this.stats = {...this.stats, ...response};
-                this.teachersDataSource.data = this.stats.teachers || [];
             },
             error: (error: Error) => {
                 this.isloading = false;
@@ -251,9 +241,6 @@ export class StatsComponent implements OnInit {
         });
     }
 
-
-    // FILTERS LOADING
-
     loadTeachers(): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
@@ -266,7 +253,6 @@ export class StatsComponent implements OnInit {
             this.teacherService.getTeachers(params)
             .subscribe({
                 next: (response: TeacherData) => {
-                    // this.teachers = response.data;
                     this.stats = { ...this.stats, teachers: response.data };
                     this.totalCount = response.totalCount;
                 },
@@ -289,14 +275,17 @@ export class StatsComponent implements OnInit {
 
     loadSchools(): void {
         const params: FilterParams = {
+            page: this.pageIndex + 1,
+            size: this.pageSize,
             districtIds: this.selectedDistrictIds.join(",")
         }
 
-        if (this.selectedTab === 'allSchool') {
+        if (this.selectedTab === 'allSchools') {
             this.schoolService.getSchools(params)
             .subscribe({
                 next: (response: SchoolData) => {
-                    this.schools = response.data;
+                    this.stats = { ...this.stats, schools: response.data };
+                    this.totalCount = response.totalCount;
                 },
                 error: (error: Error) => {
                     this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
@@ -329,14 +318,14 @@ export class StatsComponent implements OnInit {
 
     loadExams(): void {
         this.examService.getExams({ page: 0, size: 1000 })
-            .subscribe({
-                next: (response) => {
-                    this.exams = response.data
-                },
-                error: (err: any) => {
-                    this.errorMessage = '';
-                }
-            });
+        .subscribe({
+            next: (response) => {
+                this.exams = response.data
+            },
+            error: (err: any) => {
+                this.errorMessage = '';
+            }
+        });
     }
 
 
@@ -356,13 +345,8 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    updateMonth(event: any, datepicker: MatDatepicker<Date>) {
-        const selectedDate = new Date(event);
-        this.monthControl.setValue(selectedDate);
-        
-        if (!this.monthControl.value) return;
-        this.selectedMonth = selectedDate.toISOString().slice(0, 7);
-        datepicker.close();
+    updateMonth(month: string) {
+        this.selectedMonth = month;
         this.loadStudentsStats();
     }
 
@@ -385,12 +369,17 @@ export class StatsComponent implements OnInit {
         }
     }
 
-    onDistrictSelectChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        if (this.selectedTab === 'students' || this.selectedTab === 'allStudents') {
+    onDistrictSelectChanged(districtIds: string[]) {
+        this.selectedDistrictIds = districtIds;
+        if (this.selectedTab === 'students') {
             this.loadSchools();
             this.loadTeachers();
             this.loadStudentsStats();
+        }
+        else if (this.selectedTab === 'allStudents') {
+            this.loadSchools();
+            this.loadTeachers();
+            this.loadAllStudentsStats();
         }
         else if (this.selectedTab === 'allTeachers') {
             this.loadSchools();
@@ -401,24 +390,33 @@ export class StatsComponent implements OnInit {
         }
     }
 
-    onSchoolSelectChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        
-        this.loadTeachers();
+    onSchoolSelectChanged(schoolIds: string[]) {
+        this.selectedSchoolIds = schoolIds;
+        if (this.selectedTab === 'students') {
+            this.loadTeachers();
+            this.loadStudentsStats();
+        }
+        else if (this.selectedTab === 'allStudents') {
+            this.loadTeachers();
+            this.loadAllStudentsStats();
+        }
+        else if (this.selectedTab === 'allTeachers') {
+            this.loadTeachers();
+        }
+    }
+
+    onTeacherSelectChanged(teacherIds: string[]) {
+        this.selectedTeacherIds = teacherIds;
         this.loadStudentsStats();
     }
 
-    onTeacherSelectChanged(): void {
-        this.stats = {}; // Очищаем список студентов
+    onGradeSelectChanged(grades: number[]) {
+        this.selectedGrades = grades;
         this.loadStudentsStats();
     }
 
-    onGrageSelectChanged(): void {
-        this.stats = {}; // Очищаем список студентов
-        this.loadStudentsStats();
-    }
-
-    onExamSelectChanged(): void {
+    onExamSelectChanged(examId: string) {
+        this.selectedExamId = examId;
         this.loadStatsByExam();
     }
 
@@ -451,28 +449,149 @@ export class StatsComponent implements OnInit {
         this.pageSize = event.pageSize;
 
         if (this.selectedTab === 'allStudents') {
-
+            this.loadAllStudentsStats();
         }
         else if (this.selectedTab === 'allTeachers') {
             this.loadTeachers();
         }
+        else if (this.selectedTab === 'allSchools') {
+            this.loadSchools();
+        }
+    }
 
-        // const queryParams = {
-        //     pageIndex: this.pageIndex,
-        //     pageSize: this.pageSize,
-        //     districtIds: this.selectedDistrictIds.join(","),
-        //     schoolIds: this.selectedSchoolIds.join(","),
-        //     teacherIds: this.selectedTeacherIds.join(","),
-        //     grades: this.selectedGrades.join(",")
-        // };
+    exportToExcel(tableName: 'developingStudents' | 'studentsOfMonth' | 'studentsOfMonthByRepublic' | 'allStudents' | 'allTeachers' | 'allSchools' | 'allDistricts') {
+        const workbook = XLSX.utils.book_new();
+        let sheetName: string = '';
+        let result: XLSX.WorkSheet = {};
 
-        // const navigationExtras: NavigationExtras = {
-        //     queryParams,
-        //     replaceUrl: true
-        // }
+        switch (tableName) {
+            case 'developingStudents': {
+                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.developingStudents || []));
+                sheetName = `İE şagirdlər (${this.selectedMonth})`;
+                break;
+            }
+            case 'studentsOfMonth': {
+                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.studentsOfMonth || []));
+                sheetName = `AŞ (${this.selectedMonth})`;
+                break;
+            }
+            case 'studentsOfMonthByRepublic': {
+                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.studentsOfMonthByRepublic || []));
+                sheetName = `AŞ respublika üzrə (${this.selectedMonth})`;
+                break;
+            }
+            case 'allStudents': {
+                result = XLSX.utils.json_to_sheet(this.formatAllStudentData(this.stats.students || []));
+                sheetName = 'İlin şagirdləri';
+                break;
+            }
+            case 'allTeachers': {
+                result = XLSX.utils.json_to_sheet(this.formatTeacherData(this.stats.teachers || []));
+                sheetName = 'İlin müəllimləri';
+                break;
+            }
+            case 'allSchools': {
+                result = XLSX.utils.json_to_sheet(this.formatSchoolData(this.stats.schools || []));
+                sheetName = 'İlin məktəbləri';
+                break;
+            }
+            case 'allDistricts': {
+                result = XLSX.utils.json_to_sheet(this.formatDistrictData(this.stats.districts || []));
+                sheetName = 'İlin rayonları';
+                break;
+            }
+        }
 
-        // this.router.navigate([], navigationExtras).then(() => {
-        //     this.loadAllStudentsStats();
-        // });
+        this.formatHeaders(result);
+        XLSX.utils.book_append_sheet(workbook, result, sheetName);
+        XLSX.writeFile(workbook, `${sheetName}.xlsx`);
+    }
+
+    private formatStudentData(students: ExamResult[]): any[] {
+        console.log('student', students[0])
+        return students.map(result => ({
+            'Şagirdin kodu': (result.student || {}).code,
+            'Soyadı': (result.student || {}).lastName,
+            'Adı': (result.student || {}).firstName,
+            'Atasının adı': (result.student || {}).middleName,
+            'Sinifi': (result.student || {}).grade,
+            'Müəllimi': (result.student || {}).teacher?.fullname || 'Müəllim tapılmadı',
+            'Məktəbi': (result.student || {}).school?.name || 'Məktəb tapılmadı',
+            'Rayonu': (result.student || {}).district?.name || 'Rayon tapılmadı',
+            'Balı': result.totalScore
+        }));
+    }
+
+    private formatAllStudentData(students: Student[]): any[] {
+        console.log('student', students[0])
+        return students.map(student => ({
+            'Şagirdin kodu': student.code,
+            'Soyadı': student.lastName,
+            'Adı': student.firstName,
+            'Atasının adı': student.middleName,
+            'Sinifi': student.grade,
+            'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
+            'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
+            'Rayonu': student.district?.name || 'Rayon tapılmadı',
+            'Ümumi balı': student.score || 0,
+            'Orta balı': student.averageScore || 0,
+        }));
+    }
+
+    // Форматирование данных для учителей
+    private formatTeacherData(teachers: Teacher[]): any[] {
+        return teachers.map(teacher => ({
+            'Müəllimin kodu': teacher.code,
+            'Soyadı, adı, ata adı': teacher.fullname,
+            'Məktəbi': teacher.school?.name || '',
+            'Rayonu': teacher.district?.name || '',
+            'Ümumi balı': teacher.score,
+            'Orta balı': teacher.averageScore,
+        }));
+    }
+
+    // Форматирование данных для школ
+    private formatSchoolData(schools: School[]): any[] {
+        return schools.map(school => ({
+            'Məktəbin kodu': school.code,
+            'Adı': school.name,
+            'Rayonu': school.district?.name || '',
+            'Ümumi balı': school.score,
+            'Orta balı': school.averageScore,
+        }));
+    }
+
+    // Форматирование данных для районов
+    private formatDistrictData(districts: District[]): any[] {
+        return districts.map(district => ({
+            'Rayon kodu': district.code,
+            'Adı': district.name,
+            'Ümumi balı': district.score,
+            'Orta balı': district.averageScore,
+        }));
+    }
+
+    private formatHeaders(ws: XLSX.WorkSheet) {
+        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1'); // Получаем диапазон данных
+        const headerRow = 0; // Первая строка — это заголовки
+    
+        for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
+        if (!ws[cellAddress]) continue;
+            // Применяем стили к заголовкам
+            ws[cellAddress].s = {
+                font: {
+                    bold: true, // Жирный шрифт
+                    sz: 14,     // Размер шрифта (14 — чуть больше стандартного)
+                },
+                alignment: {
+                    horizontal: 'center', // Выравнивание по центру (опционально)
+                },
+            };
+        }
+    
+        // Устанавливаем высоту строки заголовков (опционально)
+        if (!ws['!rows']) ws['!rows'] = [];
+        ws['!rows'][headerRow] = { hpt: 20 }; // Высота строки в пунктах
     }
 }

@@ -9,14 +9,16 @@ export interface StudentData {
 }
 
 export interface RepairingResults {
-    message?: string,
-    repairedStudents?: string[],
-    studentsWithoutDistrict?: string[],
-    studentsWithoutSchool?: string[],
-    studentsWithoutTeacher?: string[],
-    repairedTeachers?: string[],
-    teachersWithoutDistrict?: string[],
-    teachersWithoutSchool?: string[]
+    message?: string;
+    repairedStudents?: string[];
+    studentsWithoutDistrict?: string[];
+    studentsWithoutSchool?: string[];
+    studentsWithoutTeacher?: string[];
+    repairedTeachers?: string[];
+    teachersWithoutDistrict?: string[];
+    teachersWithoutSchool?: string[];
+    repairedSchools?: string[];
+    schoolsWithoutDistrict?: string[];
 }
 
 export interface StudentWithResultData {

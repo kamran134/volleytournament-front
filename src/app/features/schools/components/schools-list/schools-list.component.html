@@ -52,7 +52,7 @@
                     Məktəbin yerləşdiyi rayon
                 </th>
                 <td mat-cell *matCellDef="let school">
-                    {{ school.district.name }}
+                    {{ (school.district || '').name }}
                 </td>
             </ng-container>
 
@@ -110,6 +110,29 @@
         </mat-card>
     </div>
 
+    <div *ngIf="repairingResults">
+        <mat-card appearance="outlined" *ngIf="(repairingResults.repairedSchools || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Məlumatları tam və ya qismən bərpa olunan məktəblərin kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let school of repairingResults.repairedSchools">{{ school }}</p>
+            </mat-card-content>
+        </mat-card>
+        <mat-card appearance="outlined" *ngIf="(repairingResults.schoolsWithoutDistrict || []).length > 0">
+            <mat-card-header>
+                <mat-card-title>
+                    Rayonları tapılmayan məktəb kodları
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p *ngFor="let school of repairingResults.schoolsWithoutDistrict">{{ school }}</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
     <div class="upload-file" *ngIf="isAdminOrSuperAdmin()">
         <form (submit)="onSubmit($event)" enctype="multipart/form-data">
             <input type="file" style="display: none;" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" required />
@@ -130,6 +153,7 @@
     </div>
 
     <div class="global-action-pannel" *ngIf="isAdminOrSuperAdmin()">
+        <button mat-flat-button (click)="onSchoolsRepair()">{{ isLoading ? 'Yenilənir...' : 'Qüsurları düzəlt' }}</button>
         <button mat-flat-button color="warn" (click)="onAllSchoolsDelete()">Ekranda olan məktəbləri sil</button>
     </div>
 </div>
