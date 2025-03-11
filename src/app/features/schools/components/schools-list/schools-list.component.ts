@@ -6,9 +6,7 @@ import { RouterModule } from '@angular/router';
 import {
     MatSnackBar,
     MatSnackBarConfig,
-    MatSnackBarHorizontalPosition,
-    MatSnackBarModule,
-    MatSnackBarVerticalPosition
+    MatSnackBarModule
 } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,7 +50,7 @@ export class SchoolsListComponent implements OnInit {
     schools: School[] = [];
     districts: District[] = [];
     totalCount: number = 0;
-    pageSize: number = 10;
+    pageSize: number = 100;
     pageIndex: number = 0;
     isLoading = false;
     hasError = false;

@@ -61,7 +61,7 @@ export class StudentsListComponent {
     teachers: Teacher[] = [];
     exams: Exam[] = [];
     totalCount: number = 0;
-    pageSize: number = 10;
+    pageSize: number = 100;
     pageIndex: number = 0;
     readonly checkedDeffective: ModelSignal<boolean> = model(false);
     isLoading: boolean = false;

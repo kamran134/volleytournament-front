@@ -49,7 +49,7 @@ export class TeachersListComponent implements OnInit {
     districts: District[] = [];
     schools: School[] = [];
     totalCount: number = 0;
-    pageSize: number = 10;
+    pageSize: number = 100;
     pageIndex: number = 0;
     isLoading = false;
     hasError = false;

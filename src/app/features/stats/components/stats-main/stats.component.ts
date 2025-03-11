@@ -114,7 +114,7 @@ export class StatsComponent implements OnInit {
     teachers: Teacher[] = [];
     students: Student[] = [];
     totalCount: number = 0;
-    pageSize: number = 10;
+    pageSize: number = 100;
     pageIndex: number = 0;
     exams: Exam[] = [];
     errorMessage: string = '';
