@@ -81,7 +81,7 @@ export class StudentsListComponent {
     gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     searchString: string = '';
     private searchTerms = new Subject<string>();
-    displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district'];
+    displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'actions'];
     repairingResults: RepairingResults = {};
 
     constructor(
@@ -348,6 +348,29 @@ export class StudentsListComponent {
         else {
             this.snackBar.open('Fayl seçilməyib', 'Bağla', this.matSnackConfig);
         }
+    }
+
+    onStudentDelete(event: Event, studentId: string): void {
+        event.stopPropagation();
+        
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Şagirdi silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.studentService.deleteStudent(studentId).subscribe({
+                    next: (data) => {
+                        this.loadStudents();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
     }
 
     onAllStudentsDelete(): void {

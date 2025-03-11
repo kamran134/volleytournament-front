@@ -147,6 +147,15 @@
                     </td>
                 </ng-container>
     
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>
+                        {{ '' }}
+                    </th>
+                    <td mat-cell *matCellDef="let student">
+                        <button mat-raised-button color="warn" *ngIf="isAdminOrSuperAdmin()" (click)="onStudentDelete($event, student._id)"><mat-icon>delete</mat-icon>sil</button>
+                    </td>
+                </ng-container>
+
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row" (click)="openStudentDetails(row._id)"></tr>
             </table>
@@ -161,7 +170,7 @@
             [pageIndex]="pageIndex"
             [showFirstLastButtons]="true"
             [pageSize]="pageSize"
-            [pageSizeOptions]="[20, 50, 1000]"
+            [pageSizeOptions]="[100, 1000]"
             (page)="onPageChange($event)" />
     </div>
 
