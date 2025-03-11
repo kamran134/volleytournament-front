@@ -130,9 +130,9 @@ export class TeachersListComponent implements OnInit {
         this.isLoading = true;
         this.teacherService.getTeachers(params)
             .subscribe({
-                next: (data: TeacherData) => {
-                    this.teachers = data.data.filter(d => d.school != null);
-                    this.totalCount = data.totalCount
+                next: (response: TeacherData) => {
+                    this.teachers = response.data;
+                    this.totalCount = response.totalCount
                     this.isLoading = false;
                 },
                 error: (err: any) => {
