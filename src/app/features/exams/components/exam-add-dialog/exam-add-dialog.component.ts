@@ -36,7 +36,6 @@ export class ExamAddDialogComponent {
     }
 
     onSave(): void {
-        // this.data.date = moment(this.data.date.value).toDate();
         this.dialogRef.close(this.data);
     }
 

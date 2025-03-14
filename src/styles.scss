@@ -124,17 +124,7 @@ mat-form-field {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-// .mdc-switch__track {
-//     &::after {
-//         background-color: #4285B4 !important;
-//     }
-// }
-
-// .mdc-switch__handle {
-//     &::before {
-//         background-color: aliceblue !important;
-//     }
-//     &::after {
-//         background-color: #4285B4 !important;
-//     }
-// }
+.mat-edit-button {
+    background-color: rgb(231, 107, 19) !important;
+    margin-right: 15px;
+}

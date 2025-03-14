@@ -119,7 +119,6 @@ export class ExamsListComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('res', result);
             this.incorrectStudentCodes = result.incorrectStudentCodes;
             this.studentsWithoutTeacher = result.studentsWithoutTeacher;
         });

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../../../services/config.service';
 import { Observable } from 'rxjs';
-import { TeacherData } from '../../../models/teacher.model';
+import { Teacher, TeacherData } from '../../../models/teacher.model';
 import { FilterParams } from '../../../models/filterParams.model';
 import { ResponseFromBackend } from '../../../models/response.model';
 import { RepairingResults } from '../../../models/student.model';
@@ -34,6 +34,11 @@ export class TeacherService {
             url = `${url}?schoolIds=${params.schoolIds}`;
         }
         return this.http.get<TeacherData>(url);
+    }
+
+    updateTeacher(teacher: Teacher): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/teachers/${teacher._id}`;
+        return this.http.put(url, teacher, { withCredentials: true });
     }
 
     deleteTeacher(teacherId: string): Observable<any> {
