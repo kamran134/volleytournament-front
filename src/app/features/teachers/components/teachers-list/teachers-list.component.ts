@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../../services/auth.service';
 import { RepairingResults } from '../../../../models/student.model';
+import { TeacherEditingDialogComponent } from '../teacher-editing/teacher-editing-dialog.component';
 
 @Component({
     selector: 'app-teachers-list',
@@ -64,6 +65,7 @@ export class TeachersListComponent implements OnInit {
     missingSchoolCodes: number[] = [];
     teacherCodesWithoutSchoolCodes: number[] = [];
     incorrectTeacherCodes: number[] = [];
+    displayedColumns: string[] = ['schoolCode', 'code', 'fullname', 'district', 'actions'];
     repairingResults: RepairingResults = {};
 
     constructor(
@@ -212,6 +214,52 @@ export class TeachersListComponent implements OnInit {
                     },
                     error: (error) => {
                         console.error(error);
+                    }
+                });
+            }
+        });
+    }
+
+    onTeacherDelete(event: Event, studentId: string): void {
+        event.stopPropagation();
+        
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Müəllimi silmək istədiyinizdən əminsiniz mi?\n\n DİQQƏT!\nMüəllim silinərkən onun BÜTÜN şagirdləri də silinəcək!' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.teacherService.deleteTeacher(studentId).subscribe({
+                    next: (data) => {
+                        this.loadTeachers();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
+    onTeacherUpdate(event: Event, teacher: Teacher): void {
+        event.stopPropagation();
+
+        const dialogRef = this.dialog.open(TeacherEditingDialogComponent, {
+            width: '1000px',
+            data: { teacher }
+        });
+
+        dialogRef.afterClosed().subscribe((result: Teacher) => {
+            if (result) {
+                this.teacherService.updateTeacher(result).subscribe({
+                    next: () => {
+                        this.loadTeachers();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
                     }
                 });
             }
