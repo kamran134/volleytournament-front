@@ -28,6 +28,7 @@ import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } fr
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../../services/auth.service';
 import { MatCardModule } from '@angular/material/card';
+import { StudentEditingDialogComponent } from '../student-editing/student-editing-dialog.component';
 
 @Component({
     selector: 'app-students-list',
@@ -348,6 +349,29 @@ export class StudentsListComponent {
         else {
             this.snackBar.open('Fayl seçilməyib', 'Bağla', this.matSnackConfig);
         }
+    }
+
+    onStudentUpdate(event: Event, student: Student): void {
+        event.stopPropagation();
+
+        const dialogRef = this.dialog.open(StudentEditingDialogComponent, {
+            width: '1000px',
+            data: { student }
+        });
+
+        dialogRef.afterClosed().subscribe((result: Student) => {
+            if (result) {
+                this.studentService.updateStudent(result).subscribe({
+                    next: () => {
+                        this.loadStudents();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
     }
 
     onStudentDelete(event: Event, studentId: string): void {

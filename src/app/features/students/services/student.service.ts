@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../../../services/config.service';
 import { FilterParams } from '../../../models/filterParams.model';
-import { RepairingResults, StudentData, StudentWithResult } from '../../../models/student.model';
+import { RepairingResults, Student, StudentData, StudentWithResult } from '../../../models/student.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -67,6 +67,11 @@ export class StudentService {
     searchStudents(searchString: string): Observable<StudentData> {
         let url: string = `${this.configService.getApiUrl()}/students/search/${searchString}`;
         return this.http.get<StudentData>(url);
+    }
+
+    updateStudent(student: Student): Observable<StudentWithResult> {
+        const url: string = `${this.configService.getApiUrl()}/students/${student._id}`;
+        return this.http.put<StudentWithResult>(url, student, { withCredentials: true });
     }
 
     deleteStudent(studentId: string): Observable<any> {
