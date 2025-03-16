@@ -15,3 +15,11 @@ export interface School {
     score?: number;
     averageScore?: number;
 }
+
+export interface SchoolForCreation {
+    name: string;
+    address: string;
+    code: number;
+    districtCode?: number;
+    district?: District;
+}

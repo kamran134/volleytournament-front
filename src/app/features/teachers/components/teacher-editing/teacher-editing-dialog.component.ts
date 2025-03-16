@@ -1,11 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
-import { Teacher } from '../../../../models/teacher.model';
+import { Teacher, TeacherForCreation } from '../../../../models/teacher.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { TeacherService } from '../../services/teacher.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { DistrictService } from '../../../districts/services/district.service';
 import { District } from '../../../../models/district.model';
@@ -39,13 +38,19 @@ export class TeacherEditingDialogComponent implements OnInit{
     
     constructor(
         public dialogRef: MatDialogRef<TeacherEditingDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { teacher: Teacher },
+        @Inject(MAT_DIALOG_DATA) public data: { teacher: Teacher | TeacherForCreation, isEditing: boolean },
         private districtService: DistrictService,
         private schoolService: SchoolService
     ) { }
 
     ngOnInit(): void {
         this.loadDistricts();
+        if (!this.data.isEditing) {
+            this.data.teacher = {
+                fullname: '',
+                code: 0,
+            };
+        }
     }
 
     loadDistricts(): void {

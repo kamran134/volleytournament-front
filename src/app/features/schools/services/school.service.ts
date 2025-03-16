@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../../../services/config.service';
 import { Observable } from 'rxjs';
-import { SchoolData } from '../../../models/school.model';
+import { School, SchoolData } from '../../../models/school.model';
 import { FilterParams } from '../../../models/filterParams.model';
 import { ResponseFromBackend } from '../../../models/response.model';
 import { RepairingResults } from '../../../models/student.model';
@@ -32,6 +32,16 @@ export class SchoolService {
             url = `${url}?districtIds=${params.districtIds}`;
         }
         return this.http.get<SchoolData>(url);
+    }
+
+    createSchool(school: School): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/schools`;
+        return this.http.post(url, school, { withCredentials: true });
+    }
+
+    updateSchool(school: School): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/schools/${school._id}`;
+        return this.http.put(url, school, { withCredentials: true });
     }
 
     deleteSchool(schoolId: string): Observable<any> {

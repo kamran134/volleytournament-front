@@ -15,3 +15,10 @@ export interface Teacher {
     score?: number;
     averageScore?: number;
 }
+
+export interface TeacherForCreation {
+    fullname: string;
+    code: number;
+    school?: School;
+    district?: District;
+}

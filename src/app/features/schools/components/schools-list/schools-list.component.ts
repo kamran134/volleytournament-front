@@ -23,6 +23,9 @@ import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dial
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../../services/auth.service';
 import { RepairingResults } from '../../../../models/student.model';
+import { SchoolEditingDialogComponent } from '../../school-editing/school-editing-dialog.component';
+import { ResponseFromBackend } from '../../../../models/response.model';
+import { SnackBarService } from '../../../commonComponents/services/snack-bar.service';
 
 @Component({
     selector: 'app-schools-list',
@@ -65,13 +68,21 @@ export class SchoolsListComponent implements OnInit {
     schoolCodesWithoutDistrictCodes: number[] = [];
     incorrectSchoolCodes: number[] = [];
     repairingResults: RepairingResults = {};
+    displayedColumns: string[] = ['code', 'name', 'district', 'actions'];
 
     constructor(
         private schoolService: SchoolService,
         private districtService: DistrictService,
         private authService: AuthService,
         private snackBar: MatSnackBar,
-        private dialog: MatDialog) {}
+        private dialog: MatDialog,
+        private snackBarService: SnackBarService
+    ) {}
+
+    ngOnInit(): void {
+        this.loadDistricts();
+        this.loadSchools();
+    }
 
     onFileChange(event: Event): void {
         const input = event.target as HTMLInputElement;
@@ -80,7 +91,7 @@ export class SchoolsListComponent implements OnInit {
         }
     }
 
-    onSubmit(event: Event): void {
+    onFileUpload(event: Event): void {
         event.preventDefault();
 
         if (this.file) {
@@ -103,11 +114,6 @@ export class SchoolsListComponent implements OnInit {
         this.loadSchools()
     }
 
-    ngOnInit(): void {
-        this.loadDistricts();
-        this.loadSchools();
-    }
-
     isAdminOrSuperAdmin(): boolean {
         return this.authService.isAdminOrSuperAdmin();
     }
@@ -121,32 +127,32 @@ export class SchoolsListComponent implements OnInit {
         
         this.isLoading = true;
         this.schoolService.getSchools(params)
-            .subscribe({
-                next: (data: SchoolData) => {
-                    this.schools = data.data;
-                    this.totalCount = data.totalCount;
-                    this.isLoading = false;
-                },
-                error: (err: any) => {
-                    this.isLoading = false;
-                    this.hasError = true;
-                    this.errorMessage = `Error fetching schools: ${err.message}`;
-                }
-            });
+        .subscribe({
+            next: (data: SchoolData) => {
+                this.schools = data.data;
+                this.totalCount = data.totalCount;
+                this.isLoading = false;
+            },
+            error: (err: any) => {
+                this.isLoading = false;
+                this.hasError = true;
+                this.errorMessage = `Error fetching schools: ${err.message}`;
+            }
+        });
     }
 
     loadDistricts(): void {
         this.districtService.getDistricts()
-            .subscribe({
-                next: (response: DistrictData) => {
-                    this.districts = response.data;
-                },
-                error: (err: any) => {
-                    this.isLoading = false;
-                    this.hasError = true;
-                    this.errorMessage = `Error fetching districts: ${err.message};`
-                }
-            });
+        .subscribe({
+            next: (response: DistrictData) => {
+                this.districts = response.data;
+            },
+            error: (err: any) => {
+                this.isLoading = false;
+                this.hasError = true;
+                this.errorMessage = `Error fetching districts: ${err.message};`
+            }
+        });
     }
 
     onPageChange(event: PageEvent): void {
@@ -172,7 +178,6 @@ export class SchoolsListComponent implements OnInit {
     }
 
     onAllSchoolsDelete(): void {
-
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
             data: { title: 'Silinməyə razılıq', text: 'Bütün məktəbləri silmək istədiyinizdən əminsiniz mi?' }
@@ -184,6 +189,79 @@ export class SchoolsListComponent implements OnInit {
                 this.schoolService.deleteSchools(schoolIds).subscribe({
                     next: (response) => {
                         this.loadSchools();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                    }
+                });
+            }
+        });
+    }
+
+    onSchoolCreate(): void {
+        const dialogRef = this.dialog.open(SchoolEditingDialogComponent, {
+            width: '1000px',
+            data: {
+                school: null,
+                isEditing: false
+            }
+        });
+        
+        dialogRef.afterClosed().subscribe((result: School) => {
+            if (result) {
+                this.schoolService.createSchool(result).subscribe({
+                    next: (response: ResponseFromBackend) => {
+                        this.schools = [...this.schools, response.data];
+                        // this.snackBarService.show(response.message || 'Məktəb uğurla yaradıldı', 'success');
+                        this.snackBar.open(response.message || 'Məktəb uğurla yaradıldı', 'Bağla', this.matSnackConfig);
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
+    onSchoolUpdate(event: Event, school: School): void {
+        event.stopPropagation();
+        
+        const dialogRef = this.dialog.open(SchoolEditingDialogComponent, {
+            width: '1000px',
+            data: { school, isEditing: true }
+        });
+
+        dialogRef.afterClosed().subscribe((result: School) => {
+            if (result) {
+                this.schoolService.updateSchool(result).subscribe({
+                    next: (response) => {
+                        const index = this.schools.findIndex(s => s._id === result._id);
+                        this.schools[index] = result;
+                        this.snackBar.open(response.message || 'Məktəb uğurla yeniləndi', 'Bağla', this.matSnackConfig);
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
+    onSchoolDelete(event: Event, schoolId: string): void {
+        event.stopPropagation();
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Məktəbi silmək istədiyinizdən əminsiniz mi?\nDİQQƏT! Məktəb silinərkən ona bağlı müəllimlər, şagirdlər və onların nəticələri də silinəcək!' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.schoolService.deleteSchool(schoolId).subscribe({
+                    next: (response) => {
+                        this.schools = this.schools.filter(s => s._id !== schoolId);
+                        this.snackBar.open(response.message || 'Məktəb uğurla silindi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);

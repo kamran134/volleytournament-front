@@ -36,6 +36,11 @@ export class TeacherService {
         return this.http.get<TeacherData>(url);
     }
 
+    createTeacher(teacher: Teacher): Observable<any> {
+        const url: string = `${this.configService.getApiUrl()}/teachers`;
+        return this.http.post(url, teacher, { withCredentials: true });
+    }
+
     updateTeacher(teacher: Teacher): Observable<any> {
         const url: string = `${this.configService.getApiUrl()}/teachers/${teacher._id}`;
         return this.http.put(url, teacher, { withCredentials: true });

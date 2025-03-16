@@ -111,6 +111,13 @@
         </mat-card>
     </div>
 
+    <div *ngIf="isAdminOrSuperAdmin()">
+        <button mat-flat-button class="add-button" (click)="onTeacherCreate()">
+            <mat-icon>add</mat-icon>
+            Yeni müəllim əlavə et
+        </button>
+    </div>
+
     <div *ngIf="missingSchoolCodes.length > 0">
         <mat-card appearance="outlined">
             <mat-card-header>

@@ -3,7 +3,7 @@ import { Teacher, TeacherData } from '../../../../models/teacher.model';
 import { TeacherService } from '../../services/teacher.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FilterParams } from '../../../../models/filterParams.model';
@@ -23,6 +23,7 @@ import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../../services/auth.service';
 import { RepairingResults } from '../../../../models/student.model';
 import { TeacherEditingDialogComponent } from '../teacher-editing/teacher-editing-dialog.component';
+import { ResponseFromBackend } from '../../../../models/response.model';
 
 @Component({
     selector: 'app-teachers-list',
@@ -220,19 +221,21 @@ export class TeachersListComponent implements OnInit {
         });
     }
 
-    onTeacherDelete(event: Event, studentId: string): void {
-        event.stopPropagation();
-        
-        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-            width: '350px',
-            data: { title: 'Silinməyə razılıq', text: 'Müəllimi silmək istədiyinizdən əminsiniz mi?\n\n DİQQƏT!\nMüəllim silinərkən onun BÜTÜN şagirdləri də silinəcək!' }
+    onTeacherCreate(): void {
+        const dialogRef = this.dialog.open(TeacherEditingDialogComponent, {
+            width: '1000px',
+            data: {
+                teacher: null,
+                isEditing: false
+            }
         });
-
-        confirmRef.afterClosed().subscribe((result: boolean) => {
+        
+        dialogRef.afterClosed().subscribe((result: Teacher) => {
             if (result) {
-                this.teacherService.deleteTeacher(studentId).subscribe({
-                    next: (data) => {
-                        this.loadTeachers();
+                this.teacherService.createTeacher(result).subscribe({
+                    next: (response: ResponseFromBackend) => {
+                        this.teachers = [...this.teachers, response.data];
+                        this.snackBar.open(response.message || 'Müəllim uğurla yaradıldı', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -248,14 +251,16 @@ export class TeachersListComponent implements OnInit {
 
         const dialogRef = this.dialog.open(TeacherEditingDialogComponent, {
             width: '1000px',
-            data: { teacher }
+            data: { teacher, isEditing: true }
         });
 
         dialogRef.afterClosed().subscribe((result: Teacher) => {
             if (result) {
                 this.teacherService.updateTeacher(result).subscribe({
-                    next: () => {
-                        this.loadTeachers();
+                    next: (response) => {
+                        const index = this.teachers.findIndex(s => s._id === result._id);
+                        this.teachers[index] = response.data;
+                        this.snackBar.open(response.message || 'Müəllim uğurla yeniləndi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -265,4 +270,28 @@ export class TeachersListComponent implements OnInit {
             }
         });
     }
+
+    onTeacherDelete(event: Event, studentId: string): void {
+        event.stopPropagation();
+        
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Müəllimi silmək istədiyinizdən əminsiniz mi?\n\n DİQQƏT!\nMüəllim silinərkən onun BÜTÜN şagirdləri də silinəcək!' }
+        });
+
+        confirmRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.teacherService.deleteTeacher(studentId).subscribe({
+                    next: (response) => {
+                        this.teachers = this.teachers.filter(s => s._id !== studentId);
+                        this.snackBar.open(response.message || 'Müəllim uğurla silindi', 'Bağla', this.matSnackConfig);
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }    
 }
