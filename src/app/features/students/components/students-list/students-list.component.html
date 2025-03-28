@@ -164,7 +164,6 @@
         <div *ngIf="isLoadingMore">Yüklənir...</div>
     <!-- </div> -->
     
-
     <div *ngIf="!isLoading && !hasError && students && students.length > 0" >
         <mat-paginator
             [length]="totalCount"
@@ -173,6 +172,13 @@
             [pageSize]="pageSize"
             [pageSizeOptions]="[100, 1000]"
             (page)="onPageChange($event)" />
+    </div>
+
+    <div *ngIf="isAdminOrSuperAdmin()">
+        <button mat-flat-button extended (click)="onStudentCreate()">
+            <mat-icon>add</mat-icon>
+            Yeni şagird əlavə et
+        </button>
     </div>
 
     <div *ngIf="repairingResults">

@@ -351,6 +351,27 @@ export class StudentsListComponent {
         }
     }
 
+    onStudentCreate(): void {
+        const dialogRef = this.dialog.open(StudentEditingDialogComponent, {
+            width: '1000px',
+            data: { student: {}, isEditing: false }
+        });
+
+        dialogRef.afterClosed().subscribe((result: Student) => {
+            if (result) {
+                this.studentService.createStudent(result).subscribe({
+                    next: () => {
+                        this.loadStudents();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
     onStudentUpdate(event: Event, student: Student): void {
         event.stopPropagation();
 

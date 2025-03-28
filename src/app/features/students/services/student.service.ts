@@ -69,6 +69,11 @@ export class StudentService {
         return this.http.get<StudentData>(url);
     }
 
+    createStudent(student: Student): Observable<StudentWithResult> {
+        const url: string = `${this.configService.getApiUrl()}/students`;
+        return this.http.post<StudentWithResult>(url, student, { withCredentials: true });
+    }
+
     updateStudent(student: Student): Observable<StudentWithResult> {
         const url: string = `${this.configService.getApiUrl()}/students/${student._id}`;
         return this.http.put<StudentWithResult>(url, student, { withCredentials: true });

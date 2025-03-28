@@ -44,7 +44,7 @@ export class StudentEditingDialogComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<StudentEditingDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { student: Student },
+        @Inject(MAT_DIALOG_DATA) public data: { student: Student, isEditing: boolean },
         private districtService: DistrictService,
         private schoolService: SchoolService,
         private teacherService: TeacherService
