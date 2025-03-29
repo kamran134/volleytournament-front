@@ -3,42 +3,42 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { StatsService } from '../../services/stats.service';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Error } from '../../../../models/error.model';
+import { Error } from '../../../../core/models/error.model';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Stats } from '../../../../models/stats.model';
+import { Stats } from '../../../../core/models/stats.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MonthNamePipe } from '../../../../pipes/month-name.pipe';
+import { MonthNamePipe } from '../../../../shared/pipes/month-name.pipe';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Exam } from '../../../../models/exam.model';
+import { Exam } from '../../../../core/models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
 import { StudentTableComponent } from "./student-table.component";
 import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
-import { District, DistrictData } from '../../../../models/district.model';
-import { School, SchoolData } from '../../../../models/school.model';
-import { Teacher, TeacherData } from '../../../../models/teacher.model';
-import { FilterParams } from '../../../../models/filterParams.model';
+import { District, DistrictData } from '../../../../core/models/district.model';
+import { School, SchoolData } from '../../../../core/models/school.model';
+import { Teacher, TeacherData } from '../../../../core/models/teacher.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 import { TeacherService } from '../../../teachers/services/teacher.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { DistrictService } from '../../../districts/services/district.service';
-import { AuthService } from '../../../../services/auth.service';
-import { Student } from '../../../../models/student.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Student } from '../../../../core/models/student.model';
 import { StudentService } from '../../../students/services/student.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { StatsFiltersComponent } from "../stats-filters/stats-filters.component";
-import { RoundNumberPipe } from '../../../../pipes/round-number.pipe';
-import { StatsPagination } from '../../../../models/pagination.model';
+import { RoundNumberPipe } from '../../../../shared/pipes/round-number.pipe';
+import { StatsPagination } from '../../../../core/models/pagination.model';
 import * as XLSX from 'xlsx';
 import { StudentRatingTableComponent } from '../student-rating-table/student-rating-table.component';
-import { ExamResult } from '../../../../models/examResult.model';
+import { ExamResult } from '../../../../core/models/examResult.model';
 
 @Component({
     selector: 'app-stats',
@@ -100,9 +100,9 @@ export class StatsComponent implements OnInit {
     };
     selectedTab: 'students' | 'allStudents' | 'allTeachers' | 'allSchools' | 'allDistricts' = 'students';
     columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
-    teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'averageScore', 'score'];
-    schoolColumns: string[] = ['code', 'name', 'district', 'averageScore', 'score'];
-    districtColumns: string[] = ['code', 'name', 'averageScore', 'score'];
+    teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'score'];
+    schoolColumns: string[] = ['code', 'name', 'district', 'score'];
+    districtColumns: string[] = ['code', 'name', 'score'];
     selectedMonth: string = new Date().getMonth() + '-' + new Date().getFullYear();
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
@@ -119,7 +119,7 @@ export class StatsComponent implements OnInit {
     exams: Exam[] = [];
     errorMessage: string = '';
     gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    studentsDisplayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'];
+    studentsDisplayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score'];
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
     districtsDataSource = new MatTableDataSource(this.districts);
@@ -508,7 +508,6 @@ export class StatsComponent implements OnInit {
     }
 
     private formatStudentData(students: ExamResult[]): any[] {
-        console.log('student', students[0])
         return students.map(result => ({
             'Şagirdin kodu': (result.student || {}).code,
             'Soyadı': (result.student || {}).lastName,
@@ -523,7 +522,6 @@ export class StatsComponent implements OnInit {
     }
 
     private formatAllStudentData(students: Student[]): any[] {
-        console.log('student', students[0])
         return students.map(student => ({
             'Şagirdin kodu': student.code,
             'Soyadı': student.lastName,

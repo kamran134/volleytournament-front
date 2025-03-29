@@ -1,34 +1,35 @@
 import { CommonModule } from '@angular/common';
-import { Component, model, ModelSignal } from '@angular/core';
+import { AfterViewInit, Component, model, ModelSignal, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { RepairingResults, Student, StudentData } from '../../../../models/student.model';
+import { MatIconModule } from '@angular/material/icon';
+import { RepairingResults, Student, StudentData } from '../../../../core/models/student.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StudentService } from '../../services/student.service';
-import { FilterParams } from '../../../../models/filterParams.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, NavigationExtras, Params, Router, RouterModule } from '@angular/router';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { TeacherService } from '../../../teachers/services/teacher.service';
-import { District, DistrictData } from '../../../../models/district.model';
-import { School, SchoolData } from '../../../../models/school.model';
-import { Teacher, TeacherData } from '../../../../models/teacher.model';
+import { District, DistrictData } from '../../../../core/models/district.model';
+import { School, SchoolData } from '../../../../core/models/school.model';
+import { Teacher, TeacherData } from '../../../../core/models/teacher.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 import { ExamService } from '../../../exams/services/exam.service';
-import { Exam } from '../../../../models/exam.model';
-import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap } from 'rxjs';
+import { Exam } from '../../../../core/models/exam.model';
+import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { StudentEditingDialogComponent } from '../student-editing/student-editing-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 
 @Component({
     selector: 'app-students-list',
@@ -41,6 +42,7 @@ import { StudentEditingDialogComponent } from '../student-editing/student-editin
         MatPaginator,
         MatFormFieldModule,
         MatCardModule,
+        MatSortModule,
         FormsModule,
         MatOption,
         RouterModule,
@@ -54,7 +56,7 @@ import { StudentEditingDialogComponent } from '../student-editing/student-editin
     templateUrl: './students-list.component.html',
     styleUrl: './students-list.component.scss'
 })
-export class StudentsListComponent {
+export class StudentsListComponent implements OnInit, AfterViewInit {
     file: File | null = null;
     students: Student[] = [];
     districts: District[] = [];
@@ -84,6 +86,8 @@ export class StudentsListComponent {
     private searchTerms = new Subject<string>();
     displayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'actions'];
     repairingResults: RepairingResults = {};
+
+    @ViewChild(MatSort) sort!: MatSort;
 
     constructor(
         private authService: AuthService,
@@ -117,6 +121,13 @@ export class StudentsListComponent {
         this.loadDistricts();
         this.loadExams();
         this.setupSearch();
+    }
+
+    ngAfterViewInit(): void {
+        // this.sort.sortChange.subscribe(() => {
+        //     this.pageIndex = 0;
+        //     this.loadStudents();
+        // });
     }
 
     isAdminOrSuperAdmin(): boolean {
@@ -156,7 +167,7 @@ export class StudentsListComponent {
         });
     }
 
-    loadStudents(): void {
+    loadStudents(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -165,7 +176,9 @@ export class StudentsListComponent {
             teacherIds: this.selectedTeacherIds.join(","),
             defective: this.checkedDeffective(),
             grades: this.selectedGrades.join(","),
-            examIds: this.selectedExamIds.join(",")
+            examIds: this.selectedExamIds.join(","),
+            sortColumn: sortActive || 'code',
+            sortDirection: sortDirection || 'asc'
         };
 
         this.studentService.getStudents(params).subscribe({
@@ -279,6 +292,24 @@ export class StudentsListComponent {
         this.loadStudents();
     }
 
+    onSortChange(sortState: Sort): void {
+        this.pageIndex = 0; // Сбрасываем страницу
+        this.students = []; // Очищаем список студентов
+        if (sortState.direction) {
+            // Sıralama tətbiq olunub
+            console.log('Sıralama sütunu:', sortState.active);
+            console.log('Sıralama istiqaməti:', sortState.direction);
+    
+            // Sıralanmış məlumatları backend-dən almaq üçün loadStudents metodunu çağırın
+            this.loadStudents(sortState.active, sortState.direction);
+        } else {
+            // Sıralama təmizlənib (başlanğıc vəziyyətə qayıdılıb)
+            this.loadStudents();
+        }
+
+    }
+
+
     onPageChange(event: PageEvent): void {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
@@ -372,9 +403,7 @@ export class StudentsListComponent {
         });
     }
 
-    onStudentUpdate(event: Event, student: Student): void {
-        event.stopPropagation();
-
+    onStudentUpdate(student: Student): void {
         const dialogRef = this.dialog.open(StudentEditingDialogComponent, {
             width: '1000px',
             data: { student }
@@ -395,9 +424,7 @@ export class StudentsListComponent {
         });
     }
 
-    onStudentDelete(event: Event, studentId: string): void {
-        event.stopPropagation();
-        
+    onStudentDelete(studentId: string): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
             data: { title: 'Silinməyə razılıq', text: 'Şagirdi silmək istədiyinizdən əminsiniz mi?' }

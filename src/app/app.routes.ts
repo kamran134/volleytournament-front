@@ -8,7 +8,7 @@ import { StatsComponent } from './features/stats/components/stats-main/stats.com
 import { StudentsListComponent } from './features/students/components/students-list/students-list.component';
 import { StudentDetailsComponent } from './features/students/components/student-details/student-details.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { authGuard } from './guards/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { RegisterComponent } from './features/auth/register/register/register.component';
 

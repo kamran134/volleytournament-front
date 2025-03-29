@@ -7,8 +7,8 @@ import { MatDatepicker, MatDatepickerModule, MatDatepickerToggle } from '@angula
 import { DateAdapter, MAT_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import moment, { Moment } from 'moment';
 import { MatInputModule } from '@angular/material/input';
-import { CustomDateAdapter } from '../../../../utils/adapters/custom-date-adapter';
-import { CUSTOM_DATE_FORMATS } from '../../../../utils/custom-date-formats';
+import { CustomDateAdapter } from '../../../../core/adapters/custom-date-adapter';
+import { CUSTOM_DATE_FORMATS } from '../../../../core/services/custom-date-formats';
 
 @Component({
     selector: 'app-exam-add-dialog',

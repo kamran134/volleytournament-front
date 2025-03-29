@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from '../../../services/config.service';
+import { ConfigService } from '../../../core/services/config.service';
 import { Observable } from 'rxjs';
-import { Stats } from '../../../models/stats.model';
-import { FilterParams } from '../../../models/filterParams.model';
+import { Stats } from '../../../core/models/stats.model';
+import { FilterParams } from '../../../core/models/filterParams.model';
 
 @Injectable({
     providedIn: 'root'

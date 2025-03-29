@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Teacher, TeacherData } from '../../../../models/teacher.model';
+import { Teacher, TeacherData } from '../../../../core/models/teacher.model';
 import { TeacherService } from '../../services/teacher.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { FilterParams } from '../../../../models/filterParams.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,16 +14,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
-import { District, DistrictData } from '../../../../models/district.model';
-import { School, SchoolData } from '../../../../models/school.model';
+import { District, DistrictData } from '../../../../core/models/district.model';
+import { School, SchoolData } from '../../../../core/models/school.model';
 import { MatTableModule } from '@angular/material/table';
-import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
-import { AuthService } from '../../../../services/auth.service';
-import { RepairingResults } from '../../../../models/student.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { RepairingResults } from '../../../../core/models/student.model';
 import { TeacherEditingDialogComponent } from '../teacher-editing/teacher-editing-dialog.component';
-import { ResponseFromBackend } from '../../../../models/response.model';
+import { ResponseFromBackend } from '../../../../core/models/response.model';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { TableColumn } from '../../../../shared/models/tableColumn.model';
+import { TableComponent } from '../../../../shared/components/table/table.component';
 
 @Component({
     selector: 'app-teachers-list',
@@ -40,7 +42,8 @@ import { ResponseFromBackend } from '../../../../models/response.model';
         MatSelectModule,
         MatCardModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TableComponent
     ],
     templateUrl: './teachers-list.component.html',
     styleUrl: './teachers-list.component.scss'
@@ -66,8 +69,14 @@ export class TeachersListComponent implements OnInit {
     missingSchoolCodes: number[] = [];
     teacherCodesWithoutSchoolCodes: number[] = [];
     incorrectTeacherCodes: number[] = [];
-    displayedColumns: string[] = ['schoolCode', 'code', 'fullname', 'district', 'actions'];
     repairingResults: RepairingResults = {};
+    columns: TableColumn[] = [
+        { key: 'code', title: 'Müəllimənin kodu' },
+        { key: 'fullname', title: 'Soyadı, adı və ata adı' },
+        { key: 'school', title: 'Məktəbi', valueFormatter: (teacher: Teacher) => (teacher.school || '').name },
+        { key: 'district', title: 'Rayonu', valueFormatter: (teacher: Teacher) => (teacher.district || '').name }
+    ];
+    actions = { edit: true, delete: true };
 
     constructor(
         private teacherService: TeacherService,
@@ -246,9 +255,7 @@ export class TeachersListComponent implements OnInit {
         });
     }
 
-    onTeacherUpdate(event: Event, teacher: Teacher): void {
-        event.stopPropagation();
-
+    onTeacherUpdate(teacher: Teacher): void {
         const dialogRef = this.dialog.open(TeacherEditingDialogComponent, {
             width: '1000px',
             data: { teacher, isEditing: true }
@@ -271,9 +278,7 @@ export class TeachersListComponent implements OnInit {
         });
     }
 
-    onTeacherDelete(event: Event, studentId: string): void {
-        event.stopPropagation();
-        
+    onTeacherDelete(studentId: string): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
             data: { title: 'Silinməyə razılıq', text: 'Müəllimi silmək istədiyinizdən əminsiniz mi?\n\n DİQQƏT!\nMüəllim silinərkən onun BÜTÜN şagirdləri də silinəcək!' }

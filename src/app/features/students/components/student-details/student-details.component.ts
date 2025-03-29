@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from '../../services/student.service';
 import { ActivatedRoute, Params, RouterModule } from '@angular/router';
-import { StudentWithResult } from '../../../../models/student.model';
-import { Error } from '../../../../models/error.model';
+import { StudentWithResult } from '../../../../core/models/student.model';
+import { Error } from '../../../../core/models/error.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider'; 
 import { MatTableModule } from '@angular/material/table';

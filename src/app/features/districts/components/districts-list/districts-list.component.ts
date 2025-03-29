@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { District, DistrictData } from '../../../../models/district.model';
+import { District, DistrictData } from '../../../../core/models/district.model';
 import { DistrictService } from '../../services/district.service';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,11 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog } from '@angular/material/dialog';
 import { DistrictAddDialogComponent } from '../district-add-dialog/district-add-dialog.component';
-import { ResponseFromBackend } from '../../../../models/response.model';
+import { ResponseFromBackend } from '../../../../core/models/response.model';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
-import { AuthService } from '../../../../services/auth.service';
-import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-districts-list',

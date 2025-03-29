@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from '../../../services/config.service';
-import { FilterParams } from '../../../models/filterParams.model';
-import { RepairingResults, Student, StudentData, StudentWithResult } from '../../../models/student.model';
+import { ConfigService } from '../../../core/services/config.service';
+import { FilterParams } from '../../../core/models/filterParams.model';
+import { RepairingResults, Student, StudentData, StudentWithResult } from '../../../core/models/student.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -29,8 +29,10 @@ export class StudentService {
             url = `${url}&grades=${params.grades}`;
         }
         if (params.examIds && params.examIds.length > 0) {
-            console.log('examIds: ', params.examIds)
             url = `${url}&examIds=${params.examIds}`
+        }
+        if (params.sortColumn && params.sortDirection) {
+            url = `${url}&sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
         }
         return this.http.get<StudentData>(url);
     }

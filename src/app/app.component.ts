@@ -6,7 +6,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './core/services/auth.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -24,7 +24,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     ]
 })
 export class AppComponent implements OnInit {
-    title: string = 'Şagirdlərin qiymətləndirilmə sistemi';
+    title: string = 'İbtidai Siniflərin İnkişaf Metodikası';
     darkMode: boolean = false;
     animationState: string = 'default';
 

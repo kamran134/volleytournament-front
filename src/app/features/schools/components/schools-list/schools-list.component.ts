@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { School, SchoolData } from '../../../../models/school.model';
+import { School, SchoolData } from '../../../../core/models/school.model';
 import { SchoolService } from '../../services/school.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -11,20 +11,20 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { FilterParams } from '../../../../models/filterParams.model';
-import { District, DistrictData } from '../../../../models/district.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
+import { District, DistrictData } from '../../../../core/models/district.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DistrictService } from '../../../districts/services/district.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { MatCardModule } from '@angular/material/card';
-import { AuthService } from '../../../../services/auth.service';
-import { RepairingResults } from '../../../../models/student.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { RepairingResults } from '../../../../core/models/student.model';
 import { SchoolEditingDialogComponent } from '../../school-editing/school-editing-dialog.component';
-import { ResponseFromBackend } from '../../../../models/response.model';
+import { ResponseFromBackend } from '../../../../core/models/response.model';
 import { SnackBarService } from '../../../commonComponents/services/snack-bar.service';
 
 @Component({

@@ -7,4 +7,6 @@ export interface FilterParams {
     defective?: boolean;
     grades?: string;
     examIds?: string;
+    sortColumn?: string;
+    sortDirection?: string;
 }

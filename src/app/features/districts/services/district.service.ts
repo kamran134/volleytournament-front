@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { District, DistrictData } from '../../../models/district.model';
-import { ConfigService } from '../../../services/config.service';
-import { ResponseFromBackend } from '../../../models/response.model';
+import { DistrictData } from '../../../core/models/district.model';
+import { ConfigService } from '../../../core/services/config.service';
+import { ResponseFromBackend } from '../../../core/models/response.model';
 
 @Injectable({
     providedIn: 'root'

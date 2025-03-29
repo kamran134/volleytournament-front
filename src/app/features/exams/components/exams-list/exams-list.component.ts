@@ -8,16 +8,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ExamService } from '../../services/exam.service';
-import { FilterParams } from '../../../../models/filterParams.model';
-import { Exam, ExamData } from '../../../../models/exam.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
+import { Exam, ExamData } from '../../../../core/models/exam.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ExamAddDialogComponent } from '../exam-add-dialog/exam-add-dialog.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ExamResultDialogComponent } from '../exam-result-dialog/exam-result-dialog.component';
 import { MatCardModule } from '@angular/material/card';
-import { ConfirmDialogComponent } from '../../../../layouts/dialogs/confirm-dialog/confirm-dialog.component';
-import { AuthService } from '../../../../services/auth.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
     selector: 'app-exams-list',

@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MomentDateFormatPipe } from '../../../../pipes/moment-date-format.pipe';
+import { MomentDateFormatPipe } from '../../../../shared/pipes/moment-date-format.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { ExamService } from '../../services/exam.service';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { Error } from '../../../../models/error.model';
+import { Error } from '../../../../core/models/error.model';
 
 @Component({
     selector: 'app-exam-result-dialog',

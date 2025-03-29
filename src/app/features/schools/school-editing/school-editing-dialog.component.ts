@@ -7,10 +7,10 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { District } from '../../../models/district.model';
+import { District } from '../../../core/models/district.model';
 import { DistrictService } from '../../districts/services/district.service';
 import { SchoolService } from '../services/school.service';
-import { School, SchoolForCreation } from '../../../models/school.model';
+import { School, SchoolForCreation } from '../../../core/models/school.model';
 
 @Component({
     selector: 'app-school-editing-dialog',

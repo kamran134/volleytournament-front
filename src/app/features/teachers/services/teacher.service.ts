@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ConfigService } from '../../../services/config.service';
+import { ConfigService } from '../../../core/services/config.service';
 import { Observable } from 'rxjs';
-import { Teacher, TeacherData } from '../../../models/teacher.model';
-import { FilterParams } from '../../../models/filterParams.model';
-import { ResponseFromBackend } from '../../../models/response.model';
-import { RepairingResults } from '../../../models/student.model';
+import { Teacher, TeacherData } from '../../../core/models/teacher.model';
+import { FilterParams } from '../../../core/models/filterParams.model';
+import { ResponseFromBackend } from '../../../core/models/response.model';
+import { RepairingResults } from '../../../core/models/student.model';
 
 @Injectable({
     providedIn: 'root'

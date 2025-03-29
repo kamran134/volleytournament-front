@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
-import { Teacher, TeacherForCreation } from '../../../../models/teacher.model';
+import { Teacher, TeacherForCreation } from '../../../../core/models/teacher.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { SchoolService } from '../../../schools/services/school.service';
 import { DistrictService } from '../../../districts/services/district.service';
-import { District } from '../../../../models/district.model';
-import { School } from '../../../../models/school.model';
+import { District } from '../../../../core/models/district.model';
+import { School } from '../../../../core/models/school.model';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';

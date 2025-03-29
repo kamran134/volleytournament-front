@@ -7,10 +7,10 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { District } from '../../../../models/district.model';
-import { School } from '../../../../models/school.model';
-import { Student } from '../../../../models/student.model';
-import { Teacher } from '../../../../models/teacher.model';
+import { District } from '../../../../core/models/district.model';
+import { School } from '../../../../core/models/school.model';
+import { Student } from '../../../../core/models/student.model';
+import { Teacher } from '../../../../core/models/teacher.model';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { TeacherService } from '../../../teachers/services/teacher.service';

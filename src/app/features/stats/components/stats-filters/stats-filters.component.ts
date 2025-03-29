@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
-import { District } from '../../../../models/district.model';
-import { School } from '../../../../models/school.model';
-import { Teacher } from '../../../../models/teacher.model';
-import { Exam } from '../../../../models/exam.model';
+import { District } from '../../../../core/models/district.model';
+import { School } from '../../../../core/models/school.model';
+import { Teacher } from '../../../../core/models/teacher.model';
+import { Exam } from '../../../../core/models/exam.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MonthNamePipe } from '../../../../pipes/month-name.pipe';
+import { MonthNamePipe } from '../../../../shared/pipes/month-name.pipe';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';

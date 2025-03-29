@@ -13,9 +13,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/material/core';
-import { CustomDateAdapter } from './utils/adapters/custom-date-adapter';
-import { CUSTOM_DATE_FORMATS } from './utils/custom-date-formats';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { CustomDateAdapter } from './core/adapters/custom-date-adapter';
+import { CUSTOM_DATE_FORMATS } from './core/services/custom-date-formats';
 
 export const appConfig: ApplicationConfig = {
     providers: [
