@@ -60,8 +60,10 @@ export class StudentService {
             url = `${url}&grades=${params.grades}`;
         }
         if (params.examIds && params.examIds.length > 0) {
-            console.log('examIds: ', params.examIds)
             url = `${url}&examIds=${params.examIds}`
+        }
+        if (params.sortColumn && params.sortDirection) {
+            url = `${url}&sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
         }
         return this.http.get<StudentData>(url);
     }

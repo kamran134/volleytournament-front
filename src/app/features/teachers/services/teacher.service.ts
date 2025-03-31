@@ -23,8 +23,9 @@ export class TeacherService {
         if (params.schoolIds && params.schoolIds.length > 0) {
             url = `${url}&schoolIds=${params.schoolIds}`;
         }
-
-        console.log('params', params);
+        if (params.sortColumn && params.sortDirection) {
+            url = `${url}&sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
+        }
         return this.http.get<TeacherData>(url);
     }
 

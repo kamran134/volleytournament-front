@@ -21,7 +21,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Exam } from '../../../../core/models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
 import { StudentTableComponent } from "./student-table.component";
-import { MatSort, MatSortHeader, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortHeader, MatSortModule, Sort } from '@angular/material/sort';
 import { District, DistrictData } from '../../../../core/models/district.model';
 import { School, SchoolData } from '../../../../core/models/school.model';
 import { Teacher, TeacherData } from '../../../../core/models/teacher.model';
@@ -73,6 +73,7 @@ import { ExamResult } from '../../../../core/models/examResult.model';
 export class StatsComponent implements OnInit {
     @ViewChild('teacherSort') teacherSort!: MatSort;
     @ViewChild('schoolSort') schoolSort!: MatSort;
+    @ViewChild('studentSort') studentSort!: MatSort;
     monthControl = new FormControl(new Date());
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
@@ -120,6 +121,7 @@ export class StatsComponent implements OnInit {
     errorMessage: string = '';
     gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     studentsDisplayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score'];
+    studentsDataSource = new MatTableDataSource(this.stats.students);
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
     districtsDataSource = new MatTableDataSource(this.districts);
@@ -156,8 +158,14 @@ export class StatsComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        this.teachersDataSource.sort = this.teacherSort;
-        this.schoolsDataSource.sort = this.schoolSort;
+        console.log('ngAfterViewInit called');
+        console.log('studentSort:', this.studentSort);
+        console.log('teacherSort:', this.teacherSort);
+        console.log('schoolSort:', this.schoolSort);
+
+        // this.studentsDataSource.sort = this.studentSort;
+        // this.teachersDataSource.sort = this.teacherSort;
+        // this.schoolsDataSource.sort = this.schoolSort;
     }
 
     loadStudentsStats(): void {
@@ -183,14 +191,16 @@ export class StatsComponent implements OnInit {
         })
     }
 
-    loadAllStudentsStats(): void {
+    loadAllStudentsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
             districtIds: this.selectedDistrictIds.join(","),
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
-            grades: this.selectedGrades.join(",")
+            grades: this.selectedGrades.join(","),
+            sortColumn: sortActive || 'averageScore',
+            sortDirection: sortDirection || 'desc'
         };
 
         this.studentService.getStudentsForStats(params).subscribe({
@@ -241,12 +251,14 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    loadTeachers(): void {
+    loadTeachers(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
             schoolIds: this.selectedSchoolIds.join(","),
-            districtIds: this.selectedDistrictIds.join(",")
+            districtIds: this.selectedDistrictIds.join(","),
+            sortColumn: sortActive || 'averageScore',
+            sortDirection: sortDirection || 'desc'
         }
 
         if (this.selectedTab === 'allTeachers') {
@@ -273,11 +285,13 @@ export class StatsComponent implements OnInit {
         }
     }
 
-    loadSchools(): void {
+    loadSchools(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
-            districtIds: this.selectedDistrictIds.join(",")
+            districtIds: this.selectedDistrictIds.join(","),
+            sortColumn: sortActive || 'averageScore',
+            sortDirection: sortDirection || 'desc',
         }
 
         if (this.selectedTab === 'allSchools') {
@@ -456,6 +470,33 @@ export class StatsComponent implements OnInit {
         }
         else if (this.selectedTab === 'allSchools') {
             this.loadSchools();
+        }
+    }
+
+    onSortChange(sortState: Sort): void {
+        this.pageIndex = 0; // Сбрасываем страницу
+        console.log('меня блять вызвали!');
+        if (sortState.direction) {
+            console.log(sortState.active, sortState.direction);
+            if (this.selectedTab === 'allStudents') {
+                this.loadAllStudentsStats(sortState.active, sortState.direction);
+            }
+            else if (this.selectedTab === 'allTeachers') {
+                this.loadTeachers(sortState.active, sortState.direction);
+            }
+            else if (this.selectedTab === 'allSchools') {
+                this.loadSchools(sortState.active, sortState.direction);
+            }
+        } else {
+            if (this.selectedTab === 'allStudents') {
+                this.loadAllStudentsStats();
+            }
+            else if (this.selectedTab === 'allTeachers') {
+                this.loadTeachers();
+            }
+            else if (this.selectedTab === 'allSchools') {
+                this.loadSchools();
+            }
         }
     }
 

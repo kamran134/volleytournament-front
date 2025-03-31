@@ -23,6 +23,9 @@ export class SchoolService {
         } else if (params.districtIds) {
             url = `${url}&districtIds=${params.districtIds}`;
         }
+        if (params.sortColumn && params.sortDirection) {
+            url = `${url}&sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
+        }
         return this.http.get<SchoolData>(url);
     }
 

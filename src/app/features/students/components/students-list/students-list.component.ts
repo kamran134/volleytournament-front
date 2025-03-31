@@ -306,7 +306,6 @@ export class StudentsListComponent implements OnInit, AfterViewInit {
             // Sıralama təmizlənib (başlanğıc vəziyyətə qayıdılıb)
             this.loadStudents();
         }
-
     }
 
 
