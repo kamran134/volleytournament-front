@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/mate
 import { MatTableModule } from '@angular/material/table';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 
 @Component({
     selector: 'app-districts-list',
@@ -73,7 +74,13 @@ export class DistrictsListComponent implements OnInit {
 
     loadDistricts(): void {
         this.isLoading = true;
-        this.districtService.getDistricts()
+        const params: FilterParams = {
+            page: 1,
+            size: 1000,
+            sortColumn: 'name',
+            sortDirection: 'asc'
+        }
+        this.districtService.getDistricts(params)
             .subscribe({
                 next: (response: DistrictData) => {
                     this.districts = response.data;

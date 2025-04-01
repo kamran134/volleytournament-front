@@ -62,7 +62,7 @@ export class StatsService {
         return this.http.get<Stats>(url, {});
     }
 
-    getDistrictsStats(): Observable<Stats> {
+    getDistrictsStats(params: FilterParams): Observable<Stats> {
         let url: string = `${this.configService.getApiUrl()}/stats/districts`;
         return this.http.get<Stats>(url, {});
     }

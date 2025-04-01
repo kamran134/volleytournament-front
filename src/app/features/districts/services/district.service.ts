@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { DistrictData } from '../../../core/models/district.model';
 import { ConfigService } from '../../../core/services/config.service';
 import { ResponseFromBackend } from '../../../core/models/response.model';
+import { FilterParams } from '../../../core/models/filterParams.model';
 
 @Injectable({
     providedIn: 'root'
@@ -11,8 +12,11 @@ import { ResponseFromBackend } from '../../../core/models/response.model';
 export class DistrictService {
     constructor(private http: HttpClient, private configService: ConfigService) {}
 
-    getDistricts(): Observable<DistrictData> {
-        const url: string = `${this.configService.getApiUrl()}/districts`;
+    getDistricts(params: FilterParams): Observable<DistrictData> {
+        let url: string = `${this.configService.getApiUrl()}/districts`;
+        if (params.sortColumn && params.sortDirection) {
+            url = `${url}?sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
+        }
         return this.http.get<DistrictData>(url);
     }
 

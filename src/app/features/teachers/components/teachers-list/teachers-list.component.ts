@@ -174,7 +174,14 @@ export class TeachersListComponent implements OnInit {
     }
 
     loadDistricts(): void {
-        this.districtService.getDistricts()
+        const params: FilterParams = {
+            page: 1,
+            size: 1000,
+            sortColumn: 'name',
+            sortDirection: 'asc'
+        }
+
+        this.districtService.getDistricts(params)
             .subscribe({
                 next: (response: DistrictData) => {
                     this.districts = response.data;

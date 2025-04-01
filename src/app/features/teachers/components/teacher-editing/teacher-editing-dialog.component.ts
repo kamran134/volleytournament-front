@@ -12,6 +12,7 @@ import { School } from '../../../../core/models/school.model';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 
 @Component({
     selector: 'app-teacher-editing-dialog',
@@ -54,7 +55,14 @@ export class TeacherEditingDialogComponent implements OnInit{
     }
 
     loadDistricts(): void {
-        this.districtService.getDistricts().subscribe({
+        const params: FilterParams = {
+            page: 1,
+            size: 1000,
+            sortColumn: 'name',
+            sortDirection: 'asc'
+        }
+
+        this.districtService.getDistricts(params).subscribe({
             next: (response) => {
                 this.districts = response.data;
                 this.selectedDistrict = this.districts.find(d => d._id === this.data.teacher.district?._id) || null;

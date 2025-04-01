@@ -14,6 +14,7 @@ import { Teacher } from '../../../../core/models/teacher.model';
 import { DistrictService } from '../../../districts/services/district.service';
 import { SchoolService } from '../../../schools/services/school.service';
 import { TeacherService } from '../../../teachers/services/teacher.service';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 
 @Component({
     selector: 'app-student-editing',
@@ -55,7 +56,14 @@ export class StudentEditingDialogComponent implements OnInit {
     }
 
     loadDistricts(): void {
-        this.districtService.getDistricts().subscribe({
+        const params: FilterParams = {
+            page: 1,
+            size: 1000,
+            sortColumn: 'name',
+            sortDirection: 'asc'
+        }
+
+        this.districtService.getDistricts(params).subscribe({
             next: (response) => {
                 this.districts = response.data;
                 this.selectedDistrict = this.districts.find(d => d._id === this.data.student.district?._id) || null;

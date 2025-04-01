@@ -211,7 +211,7 @@
             
             <div *ngIf="!isloading && stats.teachers && stats.teachers.length > 0">
                 <mat-paginator
-                    [length]="totalCount"
+                    [length]="totalCounts.allTeachersTotalCount"
                     [pageIndex]="pageIndex"
                     [showFirstLastButtons]="true"
                     [pageSize]="pageSize"
@@ -262,7 +262,7 @@
 
             <div *ngIf="!isloading && stats.schools && stats.schools.length > 0">
                 <mat-paginator
-                    [length]="totalCount"
+                    [length]="totalCounts.allSchoolsTotalCount"
                     [pageIndex]="pageIndex"
                     [showFirstLastButtons]="true"
                     [pageSize]="pageSize"
@@ -280,19 +280,19 @@
         <mat-card class="student-card" *ngIf="!isloading">
             <mat-card-title>Rayonlar</mat-card-title>
             <mat-card-content>
-                <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8">
+                <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8" matSort #districtSort (matSortChange)="onSortChange($event)">
                     <ng-container matColumnDef="code">
-                        <th mat-header-cell *matHeaderCellDef> Rayon kodu </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayon kodu </th>
                         <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
                     </ng-container>
                     
                     <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Adı </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Adı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.name }} </td>
                     </ng-container>
             
                     <ng-container matColumnDef="score">
-                    <th mat-header-cell *matHeaderCellDef> Ümumi balı </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Ümumi balı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.score }} </td>
                     </ng-container>
         
