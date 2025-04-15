@@ -26,7 +26,7 @@
   (examChanged)="onExamSelectChanged($event)"
 ></app-stats-filters>
 
-<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)">
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChange($event)" [(selectedIndex)]="selectedTabIndex">
     <mat-tab label="Ayın şagirdləri">
         <div class="stats-container" *ngIf="!isloading">
             <app-student-rating-table

@@ -111,6 +111,7 @@ export class StatsComponent implements OnInit {
     selectedTeacherIds: string[] = [];
     selectedGrades: number[] = [];
     selectedExamId: string = '';
+    selectedTabIndex: number = 0;
     districts: District[] = [];
     schools: School[] = [];
     teachers: Teacher[] = [];
@@ -150,7 +151,15 @@ export class StatsComponent implements OnInit {
             this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
             this.selectedExamId = params['examId'] || '';
             this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + new Date().getMonth();
-            this.loadStudentsStats();
+            this.selectedTab = params['tab'] || 'students';
+
+            if (this.selectedTab === 'students') {
+                this.selectedTabIndex = 0;
+                this.loadStudentsStats();
+            } else if (this.selectedTab === 'allStudents') {
+                this.selectedTabIndex = 1;
+                this.loadAllStudentsStats();
+            }
         });
     }
 
@@ -486,7 +495,8 @@ export class StatsComponent implements OnInit {
             grades: this.selectedGrades.join(","),
             examId: this.selectedExamId,
             month,
-            source: 'stats'
+            source: 'stats',
+            tab: this.selectedTab,
         };
     
         const navigationExtras: NavigationExtras = {
