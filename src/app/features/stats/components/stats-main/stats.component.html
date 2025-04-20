@@ -125,10 +125,10 @@
     
                 <ng-container matColumnDef="district">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Rayonu
+                        Rayonu / şəhəri
                     </th>
                     <td mat-cell *matCellDef="let student" [ngClass]="{'not-found': !student.district}">
-                        {{ (student.district || '').name || 'Rayon tapılmadı' }}
+                        {{ (student.district || '').name || 'Rayon / şəhər tapılmadı' }}
                     </td>
                 </ng-container>
 
@@ -200,7 +200,7 @@
                     </ng-container>
                     
                     <ng-container matColumnDef="district">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu / şəhəri </th>
                         <td mat-cell *matCellDef="let result"> {{ (result.district || '').name }} </td>
                     </ng-container>
 
@@ -251,7 +251,7 @@
                     </ng-container> -->
                     
                     <ng-container matColumnDef="district">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu / şəhəri </th>
                         <td mat-cell *matCellDef="let result"> {{ (result.district || '').name }} </td>
                     </ng-container>
 
@@ -276,13 +276,13 @@
             </div>
         </mat-card>
     </mat-tab>
-    <mat-tab label="İlin rayonları">
+    <mat-tab label="İlin rayonları / şəhərləri">
         <mat-card class="student-card" *ngIf="!isloading">
-            <mat-card-title>Rayonlar</mat-card-title>
+            <mat-card-title>Rayonlar / şəhərlər</mat-card-title>
             <mat-card-content>
                 <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8" matSort #districtSort (matSortChange)="onSortChange($event)">
                     <ng-container matColumnDef="code">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayon kodu </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayon / şəhər kodu </th>
                         <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
                     </ng-container>
                     

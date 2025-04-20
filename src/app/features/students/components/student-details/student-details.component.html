@@ -13,7 +13,7 @@
         </mat-card-header>
     
         <mat-card-content>
-            <p><strong>Rayonu:</strong> {{ student.district.name }} </p>
+            <p><strong>Rayonu / şəhəri:</strong> {{ student.district.name }} </p>
             <p><strong>Məktəbi:</strong> {{ student.school.name }} </p>
             <p><strong>Müəllimi:</strong> {{ student.teacher.fullname }}</p>
             
@@ -44,8 +44,10 @@
                     <th mat-header-cell *matHeaderCellDef> Fənnlər üzrə ballar </th>
                     <td mat-cell *matCellDef="let result">
                         Azərbaycan dili: {{ result.disciplines.az }} | 
-                        Riyaziyyat: {{ result.disciplines.math }} | 
-                        Həyat bilgisi: {{ result.disciplines.lifeKnowledge }} | 
+                        Riyaziyyat: {{ result.disciplines.math }} |
+                        <!-- Если student.grade === 5, то скрывать эту строчку, иначе написать Həyat bilgisi: {{ result.disciplines.lifeKnowledge }} -->
+                        {{ student.grade === 5 ? '' : 'Həyat bilgisi: ' + result.disciplines.lifeKnowledge + ' | ' }}
+                        <!--{{ student.grade !== 5 ? <>Həyat bilgisi: {{result.disciplines.lifeKnowledge}}</> }} | -->
                         Məntiq: {{ result.disciplines.logic }}
                     </td>
                 </ng-container>

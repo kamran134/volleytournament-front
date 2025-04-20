@@ -16,7 +16,7 @@
 
     <div class="filters" *ngIf="districts.length > 0">
         <mat-form-field class="filters__districts">
-            <mat-label>Rayonlar</mat-label>
+            <mat-label>Rayonlar / şəhərlər</mat-label>
             <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
                 <mat-option *ngFor="let district of districts" [value]="district._id">
                     {{ district.name }}
@@ -108,7 +108,7 @@
         <mat-card appearance="outlined" *ngIf="(repairingResults.teachersWithoutDistrict || []).length > 0">
             <mat-card-header>
                 <mat-card-title>
-                    Rayonları tapılmayan müəllimlərin kodları
+                    Rayonları / şəhərləri tapılmayan müəllimlərin kodları
                 </mat-card-title>
             </mat-card-header>
             <mat-card-content>

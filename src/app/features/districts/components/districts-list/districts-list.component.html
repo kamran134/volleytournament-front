@@ -18,7 +18,7 @@
         <table mat-table [dataSource]="districts" class="mat-elevation-z8">
             <ng-container matColumnDef="code">
                 <th mat-header-cell *matHeaderCellDef>
-                    Rayon kodu
+                    Rayon / şəhər kodu
                 </th>
                 <td mat-cell *matCellDef="let district">
                     {{ district.code }}
@@ -60,7 +60,7 @@
     <div class="global-action-pannel" *ngIf="isAdminOrSuperAdmin()">
         <button mat-flat-button extended (click)="openAddDistrictDialog()">
             <mat-icon>add</mat-icon>
-            Yeni rayon əlavə et
+            Yeni rayon / şəhər əlavə et
         </button>
     </div>
 </div>

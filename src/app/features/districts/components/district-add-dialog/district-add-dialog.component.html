@@ -1,13 +1,13 @@
-<h2 mat-dialog-title>Yeni rayonun əlavə edilməsi</h2>
+<h2 mat-dialog-title>Yeni rayonun / şəhərin əlavə edilməsi</h2>
 <mat-dialog-content>
     <form #districtForm='ngForm'>
         <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 16px;">
-            <mat-label style="color: red">Rayon adı</mat-label>
+            <mat-label style="color: red">Rayon / şəhər adı</mat-label>
             <input matInput [(ngModel)]='data.name' name="name" required />
         </mat-form-field>
 
         <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 16px;">
-            <mat-label>Rayon kodu</mat-label>
+            <mat-label>Rayon / şəhər kodu</mat-label>
             <input matInput [(ngModel)]='data.code' name="code" required />
         </mat-form-field>
     </form>

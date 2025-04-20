@@ -25,7 +25,7 @@
         Сюда нужно добавить select, который будет позволять выбирать школу и где выбранная школа будет data.teacher.school
         -->
         <mat-form-field appearance="fill">
-            <mat-label>Şagirdin rayonu</mat-label>
+            <mat-label>Şagirdin rayonu / şəhəri</mat-label>
             <mat-select [(value)]="selectedDistrict" (selectionChange)="onDistrictSelectChanged()" required>
                 <mat-option *ngFor="let district of districts" [value]="district">
                     {{ district.name }}

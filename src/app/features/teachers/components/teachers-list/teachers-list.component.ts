@@ -74,7 +74,7 @@ export class TeachersListComponent implements OnInit {
         { key: 'code', title: 'Müəllimənin kodu' },
         { key: 'fullname', title: 'Soyadı, adı və ata adı' },
         { key: 'school', title: 'Məktəbi', valueFormatter: (teacher: Teacher) => (teacher.school || '').name },
-        { key: 'district', title: 'Rayonu', valueFormatter: (teacher: Teacher) => (teacher.district || '').name }
+        { key: 'district', title: 'Rayonu / şəhəri', valueFormatter: (teacher: Teacher) => (teacher.district || '').name }
     ];
     actions = { edit: true, delete: true };
 

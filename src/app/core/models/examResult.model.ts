@@ -8,6 +8,7 @@ export interface ExamResult {
     grade: number;
     level: string;
     score: number;
-    student: Student;
+    student: string;
     totalScore: number;
+    studentData: Student;
 }

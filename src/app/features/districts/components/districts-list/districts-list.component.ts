@@ -99,7 +99,7 @@ export class DistrictsListComponent implements OnInit {
         
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
-            data: { title: 'Silinməyə razılıq', text: 'Rayonu silmək istədiyinizdən əminsiniz mi?' }
+            data: { title: 'Silinməyə razılıq', text: 'Rayonu / şəhəri silmək istədiyinizdən əminsiniz mi?' }
         });
 
         confirmRef.afterClosed().subscribe((result: boolean) => {

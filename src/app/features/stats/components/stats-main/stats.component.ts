@@ -591,7 +591,7 @@ export class StatsComponent implements OnInit {
             }
             case 'allDistricts': {
                 result = XLSX.utils.json_to_sheet(this.formatDistrictData(this.stats.districts || []));
-                sheetName = 'İlin rayonları';
+                sheetName = 'İlin rayonları / şəhərləri';
                 break;
             }
         }
@@ -603,14 +603,14 @@ export class StatsComponent implements OnInit {
 
     private formatStudentData(students: ExamResult[]): any[] {
         return students.map(result => ({
-            'Şagirdin kodu': (result.student || {}).code,
-            'Soyadı': (result.student || {}).lastName,
-            'Adı': (result.student || {}).firstName,
-            'Atasının adı': (result.student || {}).middleName,
-            'Sinifi': (result.student || {}).grade,
-            'Müəllimi': (result.student || {}).teacher?.fullname || 'Müəllim tapılmadı',
-            'Məktəbi': (result.student || {}).school?.name || 'Məktəb tapılmadı',
-            'Rayonu': (result.student || {}).district?.name || 'Rayon tapılmadı',
+            'Şagirdin kodu': (result.studentData || {}).code,
+            'Soyadı': (result.studentData || {}).lastName,
+            'Adı': (result.studentData || {}).firstName,
+            'Atasının adı': (result.studentData || {}).middleName,
+            'Sinifi': (result.studentData || {}).grade,
+            'Müəllimi': (result.studentData || {}).teacher?.fullname || 'Müəllim tapılmadı',
+            'Məktəbi': (result.studentData || {}).school?.name || 'Məktəb tapılmadı',
+            'Rayonu / şəhəri': (result.studentData || {}).district?.name || 'Rayon / şəhər tapılmadı',
             'Balı': result.totalScore
         }));
     }
@@ -624,7 +624,7 @@ export class StatsComponent implements OnInit {
             'Sinifi': student.grade,
             'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
             'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
-            'Rayonu': student.district?.name || 'Rayon tapılmadı',
+            'Rayonu / şəhəri': student.district?.name || 'Rayon / şəhər tapılmadı',
             'Ümumi balı': student.score || 0,
             'Orta balı': student.averageScore || 0,
         }));
@@ -636,7 +636,7 @@ export class StatsComponent implements OnInit {
             'Müəllimin kodu': teacher.code,
             'Soyadı, adı, ata adı': teacher.fullname,
             'Məktəbi': teacher.school?.name || '',
-            'Rayonu': teacher.district?.name || '',
+            'Rayonu / şəhəri': teacher.district?.name || 'Rayon / şəhər tapılmadı',
             'Ümumi balı': teacher.score,
             'Orta balı': teacher.averageScore,
         }));
@@ -647,7 +647,7 @@ export class StatsComponent implements OnInit {
         return schools.map(school => ({
             'Məktəbin kodu': school.code,
             'Adı': school.name,
-            'Rayonu': school.district?.name || '',
+            'Rayonu / şəhəri': school.district?.name || 'Rayon / şəhər tapılmadı',
             'Ümumi balı': school.score,
             'Orta balı': school.averageScore,
         }));
@@ -656,7 +656,7 @@ export class StatsComponent implements OnInit {
     // Форматирование данных для районов
     private formatDistrictData(districts: District[]): any[] {
         return districts.map(district => ({
-            'Rayon kodu': district.code,
+            'Rayon / şəhər kodu': district.code,
             'Adı': district.name,
             'Ümumi balı': district.score,
             'Orta balı': district.averageScore,

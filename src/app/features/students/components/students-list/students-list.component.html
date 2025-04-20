@@ -16,7 +16,7 @@
 
     <div class="filters" *ngIf="districts.length > 0">
         <mat-form-field class="filters__districts">
-            <mat-label>Rayonlar</mat-label>
+            <mat-label>Rayonlar / şəhərlər</mat-label>
             <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
                 <mat-option *ngFor="let district of districts" [value]="district._id">
                     {{ district.name }}
@@ -140,10 +140,10 @@
 
             <ng-container matColumnDef="district">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Şagirdin rayonu
+                    Şagirdin rayonu / şəhəri
                 </th>
                 <td mat-cell *matCellDef="let student" [ngClass]="{'not-found': !student.district}">
-                    {{ (student.district || '').name || 'Rayon tapılmadı' }}
+                    {{ (student.district || '').name || 'Rayon / şəhər tapılmadı' }}
                 </td>
             </ng-container>
 

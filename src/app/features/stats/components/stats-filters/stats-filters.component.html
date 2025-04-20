@@ -7,7 +7,7 @@
     </mat-form-field>
   
     <mat-form-field class="filters__districts" *ngIf="selectedTab !== 'allDistricts'">
-      <mat-label>Rayonlar</mat-label>
+      <mat-label>Rayonlar / şəhərlər</mat-label>
       <mat-select [(value)]="selectedDistrictIds" (selectionChange)="onDistrictSelectChanged()" multiple>
         <mat-option *ngFor="let district of districts" [value]="district._id">{{ district.name }}</mat-option>
       </mat-select>

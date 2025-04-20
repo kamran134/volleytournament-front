@@ -7,7 +7,7 @@ export enum TableColumnsEnum {
     fullName = 'Soyadı, adı və ata adı',
     code = 'Kodu',
     score = 'Ümumi balı',
-    district = 'Rayonu',
+    district = 'Rayonu / şəhəri',
     school = 'Məktəbi',
     teacher = 'Müəllimi',
     grade = 'Sinfi',
