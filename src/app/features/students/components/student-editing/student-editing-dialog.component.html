@@ -43,7 +43,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>Şagirdin sinifi</mat-label>
+            <mat-label>Şagirdin sinfi</mat-label>
             <mat-select [(value)]="selectedGrade" (selectionChange)="onGradeSelectChanged()" required>
                 <mat-option *ngFor="let grade of grades" [value]="grade">
                     {{ grade }}

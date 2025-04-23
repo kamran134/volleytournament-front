@@ -20,7 +20,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Exam } from '../../../../core/models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
-import { StudentTableComponent } from "./student-table.component";
 import { MatSort, MatSortHeader, MatSortModule, Sort } from '@angular/material/sort';
 import { District, DistrictData } from '../../../../core/models/district.model';
 import { School, SchoolData } from '../../../../core/models/school.model';
@@ -607,7 +606,7 @@ export class StatsComponent implements OnInit {
             'Soyadı': (result.studentData || {}).lastName,
             'Adı': (result.studentData || {}).firstName,
             'Atasının adı': (result.studentData || {}).middleName,
-            'Sinifi': (result.studentData || {}).grade,
+            'Sinfi': (result.studentData || {}).grade,
             'Müəllimi': (result.studentData || {}).teacher?.fullname || 'Müəllim tapılmadı',
             'Məktəbi': (result.studentData || {}).school?.name || 'Məktəb tapılmadı',
             'Rayonu / şəhəri': (result.studentData || {}).district?.name || 'Rayon / şəhər tapılmadı',
@@ -621,7 +620,7 @@ export class StatsComponent implements OnInit {
             'Soyadı': student.lastName,
             'Adı': student.firstName,
             'Atasının adı': student.middleName,
-            'Sinifi': student.grade,
+            'Sinfi': student.grade,
             'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
             'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
             'Rayonu / şəhəri': student.district?.name || 'Rayon / şəhər tapılmadı',
