@@ -1,4 +1,4 @@
-<header>
+<!-- <header>
     <div class="header__settings">
         <div>
             <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">
@@ -13,4 +13,27 @@
     <div>
         <router-outlet></router-outlet>
     </div>
+</header> -->
+
+<header>
+    <mat-toolbar color="white" class="header">
+        <div class="header__left">
+            <span class="header__logo">
+                <img src="assets/isim.png" height="60px" alt="Logo" class="header__logo-img" />
+            </span>
+        </div>
+        <div class="header__right">
+            <div>
+                <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">
+                    <mat-icon [svgIcon]="darkMode ? 'dark_mode' : 'light_mode'" [@rotateAnimation]="animationState"></mat-icon>
+                </mat-slide-toggle>
+            </div>
+            <div>
+                <button mat-flat-button (click)="logInOut()">{{ isAuthorized() ? 'Sistemdən çıxış' : 'Sistemə giriş' }}</button>
+            </div>
+        </div>
+    </mat-toolbar>
 </header>
+<div>
+    <router-outlet></router-outlet>
+</div>

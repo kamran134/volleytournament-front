@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,7 +13,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet, CommonModule, MatButtonModule, MatIconModule, MatSlideToggleModule, HttpClientModule],
+    imports: [RouterOutlet, CommonModule, MatButtonModule, MatIconModule, MatSlideToggleModule, MatToolbarModule, HttpClientModule],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     animations: [

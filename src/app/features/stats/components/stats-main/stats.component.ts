@@ -37,7 +37,7 @@ import { RoundNumberPipe } from '../../../../shared/pipes/round-number.pipe';
 import { StatsPagination } from '../../../../core/models/pagination.model';
 import * as XLSX from 'xlsx';
 import { StudentRatingTableComponent } from '../student-rating-table/student-rating-table.component';
-import { ExamResult } from '../../../../core/models/examResult.model';
+import { ExcelService } from '../../../../core/services/excel.service';
 
 @Component({
     selector: 'app-stats',
@@ -135,6 +135,7 @@ export class StatsComponent implements OnInit {
         private teacherService: TeacherService,
         private studentService: StudentService,
         private examService: ExamService,
+        private excelService: ExcelService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -559,130 +560,44 @@ export class StatsComponent implements OnInit {
 
         switch (tableName) {
             case 'developingStudents': {
-                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.developingStudents || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatStudentData(this.stats.developingStudents || []));
                 sheetName = `İE şagirdlər (${this.selectedMonth})`;
                 break;
             }
             case 'studentsOfMonth': {
-                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.studentsOfMonth || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatStudentData(this.stats.studentsOfMonth || []));
                 sheetName = `AŞ (${this.selectedMonth})`;
                 break;
             }
             case 'studentsOfMonthByRepublic': {
-                result = XLSX.utils.json_to_sheet(this.formatStudentData(this.stats.studentsOfMonthByRepublic || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatStudentData(this.stats.studentsOfMonthByRepublic || []));
                 sheetName = `AŞ respublika üzrə (${this.selectedMonth})`;
                 break;
             }
             case 'allStudents': {
-                result = XLSX.utils.json_to_sheet(this.formatAllStudentData(this.stats.students || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatAllStudentData(this.stats.students || []));
                 sheetName = 'İlin şagirdləri';
                 break;
             }
             case 'allTeachers': {
-                result = XLSX.utils.json_to_sheet(this.formatTeacherData(this.stats.teachers || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatTeacherData(this.stats.teachers || []));
                 sheetName = 'İlin müəllimləri';
                 break;
             }
             case 'allSchools': {
-                result = XLSX.utils.json_to_sheet(this.formatSchoolData(this.stats.schools || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatSchoolData(this.stats.schools || []));
                 sheetName = 'İlin məktəbləri';
                 break;
             }
             case 'allDistricts': {
-                result = XLSX.utils.json_to_sheet(this.formatDistrictData(this.stats.districts || []));
+                result = XLSX.utils.json_to_sheet(this.excelService.formatDistrictData(this.stats.districts || []));
                 sheetName = 'İlin rayonları / şəhərləri';
                 break;
             }
         }
 
-        this.formatHeaders(result);
+        this.excelService.formatHeaders(result);
         XLSX.utils.book_append_sheet(workbook, result, sheetName);
         XLSX.writeFile(workbook, `${sheetName}.xlsx`);
-    }
-
-    private formatStudentData(students: ExamResult[]): any[] {
-        return students.map(result => ({
-            'Şagirdin kodu': (result.studentData || {}).code,
-            'Soyadı': (result.studentData || {}).lastName,
-            'Adı': (result.studentData || {}).firstName,
-            'Atasının adı': (result.studentData || {}).middleName,
-            'Sinfi': (result.studentData || {}).grade,
-            'Müəllimi': (result.studentData || {}).teacher?.fullname || 'Müəllim tapılmadı',
-            'Məktəbi': (result.studentData || {}).school?.name || 'Məktəb tapılmadı',
-            'Rayonu / şəhəri': (result.studentData || {}).district?.name || 'Rayon / şəhər tapılmadı',
-            'Balı': result.totalScore
-        }));
-    }
-
-    private formatAllStudentData(students: Student[]): any[] {
-        return students.map(student => ({
-            'Şagirdin kodu': student.code,
-            'Soyadı': student.lastName,
-            'Adı': student.firstName,
-            'Atasının adı': student.middleName,
-            'Sinfi': student.grade,
-            'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
-            'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
-            'Rayonu / şəhəri': student.district?.name || 'Rayon / şəhər tapılmadı',
-            'Ümumi balı': student.score || 0,
-            'Orta balı': student.averageScore || 0,
-        }));
-    }
-
-    // Форматирование данных для учителей
-    private formatTeacherData(teachers: Teacher[]): any[] {
-        return teachers.map(teacher => ({
-            'Müəllimin kodu': teacher.code,
-            'Soyadı, adı, ata adı': teacher.fullname,
-            'Məktəbi': teacher.school?.name || '',
-            'Rayonu / şəhəri': teacher.district?.name || 'Rayon / şəhər tapılmadı',
-            'Ümumi balı': teacher.score,
-            'Orta balı': teacher.averageScore,
-        }));
-    }
-
-    // Форматирование данных для школ
-    private formatSchoolData(schools: School[]): any[] {
-        return schools.map(school => ({
-            'Məktəbin kodu': school.code,
-            'Adı': school.name,
-            'Rayonu / şəhəri': school.district?.name || 'Rayon / şəhər tapılmadı',
-            'Ümumi balı': school.score,
-            'Orta balı': school.averageScore,
-        }));
-    }
-
-    // Форматирование данных для районов
-    private formatDistrictData(districts: District[]): any[] {
-        return districts.map(district => ({
-            'Rayon / şəhər kodu': district.code,
-            'Adı': district.name,
-            'Ümumi balı': district.score,
-            'Orta balı': district.averageScore,
-        }));
-    }
-
-    private formatHeaders(ws: XLSX.WorkSheet) {
-        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1'); // Получаем диапазон данных
-        const headerRow = 0; // Первая строка — это заголовки
-    
-        for (let col = range.s.c; col <= range.e.c; col++) {
-        const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
-        if (!ws[cellAddress]) continue;
-            // Применяем стили к заголовкам
-            ws[cellAddress].s = {
-                font: {
-                    bold: true, // Жирный шрифт
-                    sz: 14,     // Размер шрифта (14 — чуть больше стандартного)
-                },
-                alignment: {
-                    horizontal: 'center', // Выравнивание по центру (опционально)
-                },
-            };
-        }
-    
-        // Устанавливаем высоту строки заголовков (опционально)
-        if (!ws['!rows']) ws['!rows'] = [];
-        ws['!rows'][headerRow] = { hpt: 20 }; // Высота строки в пунктах
     }
 }
