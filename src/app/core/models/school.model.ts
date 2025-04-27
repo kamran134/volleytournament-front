@@ -14,6 +14,7 @@ export interface School {
     district: District;
     score?: number;
     averageScore?: number;
+    active: boolean;
 }
 
 export interface SchoolForCreation {
@@ -22,4 +23,5 @@ export interface SchoolForCreation {
     code: number;
     districtCode?: number;
     district?: District;
+    active?: boolean;
 }

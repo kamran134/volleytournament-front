@@ -22,6 +22,14 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Məktəbi, müəllimlərini və şagirdlərini siyahıda göstər</mat-label>
+            <mat-select [(ngModel)]="data.school.active" name="showInList" required>
+                <mat-option [value]="true">Bəli</mat-option>
+                <mat-option [value]="false">Xeyr</mat-option>
+            </mat-select>
+        </mat-form-field>
     </form>
 </mat-dialog-content>
 

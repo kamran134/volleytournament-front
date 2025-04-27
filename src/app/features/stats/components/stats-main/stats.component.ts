@@ -215,7 +215,10 @@ export class StatsComponent implements OnInit {
         this.studentService.getStudentsForStats(params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.stats.students = response.data;
+                this.stats.students = response.data.filter((student: Student) => 
+                    student.teacher && student.teacher.active &&
+                    student.school && student.school.active
+                );
                 this.totalCounts.allStudentsTotalCount = response.totalCount;
             },
             error: (error: Error) => {
@@ -257,7 +260,8 @@ export class StatsComponent implements OnInit {
         this.teacherService.getTeachers(params).subscribe({
             next: (response: TeacherData) => {
                 this.isloading = false;
-                this.stats = { ...this.stats, teachers: response.data };
+                this.stats = { ...this.stats, teachers: response.data.filter((teacher: Teacher) => teacher.active &&
+                    teacher.school && teacher.school.active) };
                 this.totalCounts.allTeachersTotalCount = response.totalCount;
                 this.teachersDataSource.data = this.stats.teachers || [];
             },
@@ -284,7 +288,7 @@ export class StatsComponent implements OnInit {
         this.schoolService.getSchools(params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.stats = { ...this.stats, schools: response.data };
+                this.stats = { ...this.stats, schools: response.data.filter((school: School) => school.active) };
                 this.totalCounts.allSchoolsTotalCount = response.totalCount;
                 this.schoolsDataSource.data = this.stats.schools || [];
             },
