@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { District } from '../../../../core/models/district.model';
 import { School } from '../../../../core/models/school.model';
@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
+import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 
 @Component({
     selector: 'app-stats-filters',
@@ -45,7 +46,8 @@ import { RouterModule } from '@angular/router';
         CommonModule,
         ReactiveFormsModule,
         MonthNamePipe,
-        RouterModule
+        RouterModule,
+        FormsModule
     ],
 })
 export class StatsFiltersComponent {
@@ -68,6 +70,14 @@ export class StatsFiltersComponent {
     @Output() teacherChanged = new EventEmitter<string[]>();
     @Output() gradeChanged = new EventEmitter<number[]>();
     @Output() examChanged = new EventEmitter<string>();
+    @Output() searchStringChanged = new EventEmitter<string>();
+
+    searchString: string = '';
+    private searchTerms = new Subject<string>();
+
+    constructor() {
+        this.setupSearch();
+    }
 
     updateMonth(event: any, datepicker: MatDatepicker<Date>) {
         const selectedDate = new Date(event);
@@ -96,5 +106,37 @@ export class StatsFiltersComponent {
 
     onExamSelectChanged() {
         this.examChanged.emit(this.selectedExamId);
+    }
+
+    onSearchChange(): void {
+        console.log(this.searchString);
+        this.searchTerms.next(this.searchString);
+    }
+
+    setupSearch(): void {
+        console.log('setupSearch', this.searchString);
+        this.searchTerms.pipe(
+            debounceTime(300), // Задержка 300 мс
+            distinctUntilChanged(), // Игнорировать повторяющиеся значения
+            switchMap((term: string) => {
+                if (term.trim().length >= 3) {
+                    this.searchStringChanged.emit(term);
+                }
+                else {
+                    this.searchStringChanged.emit('');
+                }
+                return term;
+            })
+        ).subscribe({
+            next: () => {
+                console.log('Success');
+            },
+            error: (error) => {
+                console.error('Error in search:', error);
+            },
+            complete: () => {
+                console.log('Search completed');
+            }
+        });
     }
 }

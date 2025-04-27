@@ -126,6 +126,8 @@ export class StatsComponent implements OnInit {
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
     districtsDataSource = new MatTableDataSource(this.districts);
+    darkMode: boolean = false;
+    searchString: string = '';
 
     constructor(
         private authService: AuthService,
@@ -142,6 +144,10 @@ export class StatsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        if (typeof localStorage !== 'undefined') {
+            this.darkMode = localStorage.getItem('theme') === 'true';
+        }
+
         this.loadExams();
         this.loadDistricts();
         this.route.queryParams.subscribe((params: Params) => {
@@ -177,7 +183,8 @@ export class StatsComponent implements OnInit {
             districtIds: this.selectedDistrictIds.join(","),
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
-            grades: this.selectedGrades.join(",")
+            grades: this.selectedGrades.join(","),
+            code: this.searchString || undefined,
         };
         
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
@@ -201,7 +208,8 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc'
+            sortDirection: sortDirection || 'desc',
+            code: this.searchString || undefined,
         };
 
         this.studentService.getStudentsForStats(params).subscribe({
@@ -233,24 +241,6 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    loadDistrictsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
-        const params: FilterParams = {
-            sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc'
-        }
-
-        this.districtService.getDistricts(params).subscribe({
-            next: (response: DistrictData) => {
-                this.stats = {...this.stats, districts: response.data};
-                this.totalCounts.allDistrictsTotalCount = response.totalCount;
-                this.districtsDataSource.data = this.stats.districts || [];
-            },
-            error: (error: Error) => {
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-    }
-
     loadTeachersStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
@@ -260,7 +250,8 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc'
+            sortDirection: sortDirection || 'desc',
+            code: this.searchString || undefined,
         }
 
         this.teacherService.getTeachers(params).subscribe({
@@ -286,7 +277,8 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc'
+            sortDirection: sortDirection || 'desc',
+            code: this.searchString || undefined,
         }
 
         this.schoolService.getSchools(params).subscribe({
@@ -302,6 +294,27 @@ export class StatsComponent implements OnInit {
             }
         });
     }
+    
+    loadDistrictsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
+        const params: FilterParams = {
+            sortColumn: sortActive || 'averageScore',
+            sortDirection: sortDirection || 'desc',
+            code: this.searchString || undefined,
+        }
+
+        this.districtService.getDistricts(params).subscribe({
+            next: (response: DistrictData) => {
+                this.isloading = false;
+                this.stats = {...this.stats, districts: response.data};
+                this.totalCounts.allDistrictsTotalCount = response.totalCount;
+                this.districtsDataSource.data = this.stats.districts || [];
+            },
+            error: (error: Error) => {
+                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+            }
+        });
+    }
+
 
     loadTeachers(): void {
         const params: FilterParams = {
@@ -398,6 +411,8 @@ export class StatsComponent implements OnInit {
     }
 
     onTabChange(event: any): void {
+        this.isloading = true;
+
         if (event.index === 0) {
             this.selectedTab = 'students';
             this.loadStudentsStats();
@@ -511,14 +526,16 @@ export class StatsComponent implements OnInit {
         this.pageIndex = event.pageIndex;
         this.pageSize = event.pageSize;
 
+        this.isloading = true;
+
         if (this.selectedTab === 'allStudents') {
             this.loadAllStudentsStats();
         }
         else if (this.selectedTab === 'allTeachers') {
-            this.loadTeachers();
+            this.loadTeachersStats();
         }
         else if (this.selectedTab === 'allSchools') {
-            this.loadSchools();
+            this.loadSchoolsStats();
         }
     }
 
@@ -550,6 +567,22 @@ export class StatsComponent implements OnInit {
             else if (this.selectedTab === 'allDistricts') {
                 this.loadDistrictsStats();
             }
+        }
+    }
+
+    onSearchChange(searchString: string) {
+        this.pageIndex = 0; // Сбрасываем страницу
+        this.searchString = searchString;
+        if (this.selectedTab === 'students') {
+            this.loadStudentsStats();
+        } else if (this.selectedTab === 'allStudents') {
+            this.loadAllStudentsStats();
+        } else if (this.selectedTab === 'allTeachers') {
+            this.loadTeachersStats();
+        } else if (this.selectedTab === 'allSchools') {
+            this.loadSchoolsStats();
+        } else if (this.selectedTab === 'allDistricts') {
+            this.loadDistrictsStats();
         }
     }
 

@@ -9,6 +9,11 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
     color: $backgroundColor;
 
+    &.light-mode {
+        background-color: $white;
+        color: $backgroundColor;
+    }
+
     &.dark-mode {
         background-color: $backgroundColor;
         color: $white;
@@ -84,6 +89,10 @@ table {
     }
     &__search {
         width: 500px;
+
+        &-by-code {
+            width: 185px;
+        }
     }
 }
 

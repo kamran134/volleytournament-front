@@ -35,6 +35,9 @@ export class StatsService {
         if (params.grades && params.grades.length > 0) {
             url = `${url}&grades=${params.grades}`;
         }
+        if (params.code) {
+            url = `${url}&code=${params.code}`;
+        }
         return this.http.get<Stats>(url, {});
     }
 

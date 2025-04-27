@@ -65,6 +65,9 @@ export class StudentService {
         if (params.sortColumn && params.sortDirection) {
             url = `${url}&sortColumn=${params.sortColumn}&sortDirection=${params.sortDirection}`;
         }
+        if (params.code) {
+            url = `${url}&code=${params.code}`;
+        }
         return this.http.get<StudentData>(url);
     }
 

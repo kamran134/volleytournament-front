@@ -9,4 +9,5 @@ export interface FilterParams {
     examIds?: string;
     sortColumn?: string;
     sortDirection?: string;
+    code?: string;
 }

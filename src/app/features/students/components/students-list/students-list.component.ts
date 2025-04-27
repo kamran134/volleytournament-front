@@ -123,48 +123,10 @@ export class StudentsListComponent implements OnInit, AfterViewInit {
         this.setupSearch();
     }
 
-    ngAfterViewInit(): void {
-        // this.sort.sortChange.subscribe(() => {
-        //     this.pageIndex = 0;
-        //     this.loadStudents();
-        // });
-    }
+    ngAfterViewInit(): void {}
 
     isAdminOrSuperAdmin(): boolean {
         return this.authService.isAdminOrSuperAdmin();
-    }
-
-    setupSearch(): void {
-        this.searchTerms.pipe(
-            debounceTime(300), // Задержка 300 мс
-            distinctUntilChanged(), // Игнорировать повторяющиеся значения
-            switchMap((term: string) => {
-                if (term.length >= 3) {
-                    // Если введено 3 и более символов, выполняем поиск
-                    return this.studentService.searchStudents(term);
-                } else {
-                    // Если меньше 3 символов, возвращаем всех студентов
-                    return this.studentService.getStudents({
-                        page: this.pageIndex + 1,
-                        size: this.pageSize,
-                        districtIds: this.selectedDistrictIds.join(","),
-                        schoolIds: this.selectedSchoolIds.join(","),
-                        teacherIds: this.selectedTeacherIds.join(","),
-                        defective: this.checkedDeffective(),
-                        grades: this.selectedGrades.join(","),
-                        examIds: this.selectedExamIds.join(",")
-                    });
-                }
-            })
-        ).subscribe({
-            next: (response) => {
-                this.students = response.data;
-                this.totalCount = response.totalCount;
-            },
-            error: (error) => {
-                this.errorMessage = error.message;
-            }
-        });
     }
 
     loadStudents(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
@@ -314,7 +276,6 @@ export class StudentsListComponent implements OnInit, AfterViewInit {
             this.loadStudents();
         }
     }
-
 
     onPageChange(event: PageEvent): void {
         this.pageIndex = event.pageIndex;
@@ -496,5 +457,38 @@ export class StudentsListComponent implements OnInit, AfterViewInit {
 
     onSearchChange(): void {
         this.searchTerms.next(this.searchString);
+    }
+
+    setupSearch(): void {
+        this.searchTerms.pipe(
+            debounceTime(300), // Задержка 300 мс
+            distinctUntilChanged(), // Игнорировать повторяющиеся значения
+            switchMap((term: string) => {
+                if (term.length >= 3) {
+                    // Если введено 3 и более символов, выполняем поиск
+                    return this.studentService.searchStudents(term);
+                } else {
+                    // Если меньше 3 символов, возвращаем всех студентов
+                    return this.studentService.getStudents({
+                        page: this.pageIndex + 1,
+                        size: this.pageSize,
+                        districtIds: this.selectedDistrictIds.join(","),
+                        schoolIds: this.selectedSchoolIds.join(","),
+                        teacherIds: this.selectedTeacherIds.join(","),
+                        defective: this.checkedDeffective(),
+                        grades: this.selectedGrades.join(","),
+                        examIds: this.selectedExamIds.join(",")
+                    });
+                }
+            })
+        ).subscribe({
+            next: (response) => {
+                this.students = response.data;
+                this.totalCount = response.totalCount;
+            },
+            error: (error) => {
+                this.errorMessage = error.message;
+            }
+        });
     }
 }
