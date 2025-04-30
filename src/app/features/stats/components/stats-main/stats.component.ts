@@ -215,10 +215,7 @@ export class StatsComponent implements OnInit {
         this.studentService.getStudentsForStats(params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.stats.students = response.data.filter((student: Student) => 
-                    student.teacher && student.teacher.active &&
-                    student.school && student.school.active
-                );
+                this.stats.students = response.data;
                 this.totalCounts.allStudentsTotalCount = response.totalCount;
             },
             error: (error: Error) => {

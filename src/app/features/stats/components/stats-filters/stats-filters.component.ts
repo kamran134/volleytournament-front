@@ -114,7 +114,6 @@ export class StatsFiltersComponent {
     }
 
     setupSearch(): void {
-        console.log('setupSearch', this.searchString);
         this.searchTerms.pipe(
             debounceTime(300), // Задержка 300 мс
             distinctUntilChanged(), // Игнорировать повторяющиеся значения

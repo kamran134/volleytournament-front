@@ -59,7 +59,6 @@
         </div>
     </mat-tab>
     <mat-tab label="İlin şagirdləri">
-        <div *ngIf="isloading" class="stats-container">Statistika yüklənir...</div>
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.students || []" class="mat-elevation-z8" matSort #studentSort (matSortChange)="onSortChange($event)">
                 <ng-container matColumnDef="code">
@@ -172,7 +171,6 @@
         </div>
     </mat-tab>
     <mat-tab label="İlin müəllimləri">
-        <div *ngIf="isloading" class="stats-container">Statistika yüklənir...</div>
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.teachers || []" class="mat-elevation-z8" matSort #teacherSort (matSortChange)="onSortChange($event)">
                 <ng-container matColumnDef="code">
@@ -226,7 +224,6 @@
         </div>
     </mat-tab>
     <mat-tab label="İlin məktəbləri">
-        <div *ngIf="isloading" class="stats-container">Statistika yüklənir...</div>
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.schools || []" class="mat-elevation-z8" matSort #schoolSort (matSortChange)="onSortChange($event)">
                 <ng-container matColumnDef="code">
@@ -275,7 +272,6 @@
         </div>
     </mat-tab>
     <mat-tab label="İlin rayonları / şəhərləri">
-        <div *ngIf="isloading" class="stats-container">Statistika yüklənir...</div>
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8" matSort #districtSort (matSortChange)="onSortChange($event)">
                 <ng-container matColumnDef="code">
