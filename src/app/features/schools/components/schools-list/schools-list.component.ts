@@ -23,7 +23,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/co
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RepairingResults } from '../../../../core/models/student.model';
-import { SchoolEditingDialogComponent } from '../../school-editing/school-editing-dialog.component';
+import { SchoolEditingDialogComponent } from '../school-editing/school-editing-dialog.component';
 import { ResponseFromBackend } from '../../../../core/models/response.model';
 import { SnackBarService } from '../../../commonComponents/services/snack-bar.service';
 
@@ -218,8 +218,8 @@ export class SchoolsListComponent implements OnInit {
             if (result) {
                 this.schoolService.createSchool(result).subscribe({
                     next: (response: ResponseFromBackend) => {
+                        console.log(response);
                         this.schools = [...this.schools, response.data];
-                        // this.snackBarService.show(response.message || 'Məktəb uğurla yaradıldı', 'success');
                         this.snackBar.open(response.message || 'Məktəb uğurla yaradıldı', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {

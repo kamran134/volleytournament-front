@@ -7,11 +7,11 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { District } from '../../../core/models/district.model';
-import { DistrictService } from '../../districts/services/district.service';
-import { SchoolService } from '../services/school.service';
-import { School, SchoolForCreation } from '../../../core/models/school.model';
-import { FilterParams } from '../../../core/models/filterParams.model';
+import { District } from '../../../../core/models/district.model';
+import { DistrictService } from '../../../districts/services/district.service';
+import { SchoolService } from '../../services/school.service';
+import { School, SchoolForCreation } from '../../../../core/models/school.model';
+import { FilterParams } from '../../../../core/models/filterParams.model';
 
 @Component({
     selector: 'app-school-editing-dialog',
@@ -48,6 +48,7 @@ export class SchoolEditingDialogComponent implements OnInit {
                 code: 0,
                 name: '',
                 address: '',
+                active: true,
             } as SchoolForCreation
         }
     }
