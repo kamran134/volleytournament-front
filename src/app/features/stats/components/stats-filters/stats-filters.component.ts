@@ -46,7 +46,6 @@ import { MonthYearPipe } from '../../../../shared/pipes/month-year.pipe';
         MatSortModule,
         CommonModule,
         ReactiveFormsModule,
-        MonthYearPipe,
         RouterModule,
         FormsModule
     ],
