@@ -22,6 +22,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { MonthYearPipe } from '../../../../shared/pipes/month-year.pipe';
 
 @Component({
     selector: 'app-stats-filters',
@@ -45,7 +46,7 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
         MatSortModule,
         CommonModule,
         ReactiveFormsModule,
-        MonthNamePipe,
+        MonthYearPipe,
         RouterModule,
         FormsModule
     ],
@@ -57,7 +58,7 @@ export class StatsFiltersComponent {
     @Input() teachers: Teacher[] = [];
     @Input() exams: Exam[] = [];
     @Input() gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    @Input() monthControl = new FormControl(new Date());
+    // @Input() monthControl = new FormControl(new Date());
     @Input() selectedDistrictIds: string[] = [];
     @Input() selectedSchoolIds: string[] = [];
     @Input() selectedTeacherIds: string[] = [];
@@ -75,17 +76,61 @@ export class StatsFiltersComponent {
     searchString: string = '';
     private searchTerms = new Subject<string>();
 
+    // Контролы для месяца и года
+    monthControl = new FormControl(new Date().getMonth()); // 0-11
+    yearControl = new FormControl(new Date().getFullYear());
+
+    months = [
+        { value: 0, name: 'Yanvar' },
+        { value: 1, name: 'Fevral' },
+        { value: 2, name: 'Mart' },
+        { value: 3, name: 'Aprel' },
+        { value: 4, name: 'May' },
+        { value: 5, name: 'İyun' },
+        { value: 6, name: 'İyul' },
+        { value: 7, name: 'Avqust' },
+        { value: 8, name: 'Sentyabr' },
+        { value: 9, name: 'Oktyabr' },
+        { value: 10, name: 'Noyabr' },
+        { value: 11, name: 'Dekabr' }
+    ];
+    years: number[] = [];
+
     constructor() {
         this.setupSearch();
+        this.setupMonthYearChange();
+        this.setupYears();
     }
 
-    updateMonth(event: any, datepicker: MatDatepicker<Date>) {
-        const selectedDate = new Date(event);
-        this.monthControl.setValue(selectedDate);
-        if (!this.monthControl.value) return;
-        const month = selectedDate.toISOString().slice(0, 7);
-        this.monthUpdated.emit(month);
-        datepicker.close();
+    setupYears() {
+        const currentYear = new Date().getFullYear();
+        for (let i: number = currentYear - 5; i <= currentYear + 5; i++) {
+            this.years.push(i);
+        }
+    }
+
+    setupMonthYearChange() {
+        // Эмитим YYYY-MM при изменении месяца или года
+        this.monthControl.valueChanges.subscribe(() => this.emitMonthYear());
+        this.yearControl.valueChanges.subscribe(() => this.emitMonthYear());
+        // Эмитим начальное значение
+        this.emitMonthYear();
+    }
+
+    emitMonthYear() {
+        const month = this.monthControl.value as number - 1;
+        const year = this.yearControl.value;
+
+        console.log('Month:', month, 'Year:', year);
+        if (month != null && year != null) {
+            const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+            console.log('Emitting month:', monthStr);
+            this.monthUpdated.emit(monthStr);
+        }
+    }
+
+    openDatepicker(datepicker: MatDatepicker<Date>) {
+        datepicker.open();
     }
 
     onDistrictSelectChanged() {
