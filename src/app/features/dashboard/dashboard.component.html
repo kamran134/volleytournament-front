@@ -1,1 +1,69 @@
-<p>dashboard works!</p>
+<div [ngClass]="theme ? 'true' : 'false'">
+    <h1>Admin panel</h1>
+    <button mat-raised-button (click)="showSettings = !showSettings">
+        {{ showSettings ? 'Hide' : 'Show' }} Settings
+    </button>
+
+    <div *ngIf="showSettings" class="settings">
+        <!-- Theme -->
+        <mat-slide-toggle [(ngModel)]="theme" (change)="saveSettings()">
+            {{ theme ? 'true' : 'false' }}
+        </mat-slide-toggle>
+
+        <!-- Student Columns -->
+        <!-- <mat-form-field appearance="outline">
+            <mat-label>Şagirdlərin sütunları</mat-label>
+            <input
+                matInput
+                [(ngModel)]="studentColumns"
+                (blur)="saveSettings()"
+                placeholder="e.g. id,name,grade"
+            />
+        </mat-form-field> -->
+        <!-- CHANGE: Чекбоксы для studentColumns -->
+        <h3>Student Columns</h3>
+        <div *ngFor="let column of studentColumnOptions">
+            <mat-checkbox [(ngModel)]="column.selected">
+                {{ column.label }}
+            </mat-checkbox>
+        </div>
+
+      <!-- School Columns -->
+        <mat-form-field appearance="outline">
+            <mat-label>Məktəblərin sütunları</mat-label>
+            <input
+                matInput
+                [(ngModel)]="schoolColumns"
+                (blur)="saveSettings()"
+                placeholder="e.g. id,name,location"
+            />
+        </mat-form-field>
+
+        <!-- Teacher Columns -->
+        <mat-form-field appearance="outline">
+            <mat-label>Müəllimlərin sütunları</mat-label>
+            <input
+                matInput
+                [(ngModel)]="teacherColumns"
+                (blur)="saveSettings()"
+                placeholder="e.g. id,name,subject"
+            />
+        </mat-form-field>
+
+        <!-- CHANGE: Кнопка для сохранения -->
+        <button mat-raised-button color="primary" (click)="saveSettings()">
+            Yadda saxla
+        </button>
+    </div>
+
+    <!-- Пример таблиц -->
+    <div class="tables">
+        <h2>Şagirdlər</h2>
+        <p>Columns: {{ getSelectedColumns(studentColumnOptions) || 'Not set' }}</p>
+        <!-- <p>sütunlar: {{ studentColumns || 'Not set' }}</p> -->
+        <h2>Məktəblər</h2>
+        <p>sütunlar: {{ schoolColumns || 'Not set' }}</p>
+        <h2>Müəllimlər</h2>
+        <p>sütunlar: {{ teacherColumns || 'Not set' }}</p>
+    </div>
+  </div>
