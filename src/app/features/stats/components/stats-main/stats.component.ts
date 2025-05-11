@@ -100,10 +100,18 @@ export class StatsComponent implements OnInit {
         allDistrictsTotalCount: 0
     };
     selectedTab: 'students' | 'allStudents' | 'allTeachers' | 'allSchools' | 'allDistricts' = 'students';
-    columns: string[] = ['code', 'fullName', 'score', 'grade', 'teacher', 'school', 'district'];
-    teacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'score'];
-    schoolColumns: string[] = ['code', 'name', 'district', 'score'];
-    districtColumns: string[] = ['code', 'name', 'score'];
+    studentColumns: string[] = [];
+    teacherColumns: string[] = [];
+    schoolColumns: string[] = [];
+    districtColumns: string[] = [];
+
+    private readonly availableStudentColumns: string[] = [
+        'code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'
+    ];
+    private readonly availableTeacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'score'];
+    private readonly availableSchoolColumns: string[] = ['code', 'name', 'district', 'score'];
+    private readonly availableDistrictColumns: string[] = ['code', 'name', 'score'];
+
     selectedMonth: string = new Date().getMonth() + '-' + new Date().getFullYear();
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
@@ -121,7 +129,6 @@ export class StatsComponent implements OnInit {
     exams: Exam[] = [];
     errorMessage: string = '';
     gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    studentsDisplayedColumns: string[] = ['code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score'];
     studentsDataSource = new MatTableDataSource(this.stats.students);
     teachersDataSource = new MatTableDataSource(this.stats.teachers);
     schoolsDataSource = new MatTableDataSource(this.stats.schools);
@@ -146,6 +153,9 @@ export class StatsComponent implements OnInit {
     ngOnInit(): void {
         if (typeof localStorage !== 'undefined') {
             this.darkMode = localStorage.getItem('theme') === 'true';
+        }
+        if (typeof localStorage !== 'undefined') {
+            this.loadSettings();
         }
 
         this.loadExams();
@@ -173,7 +183,32 @@ export class StatsComponent implements OnInit {
         return this.authService.isAdminOrSuperAdmin();
     }
 
-    ngAfterViewInit(): void {}
+    // CHANGE: Метод для загрузки настроек из localStorage
+    private loadSettings() {
+        const saved = localStorage.getItem('dashboard-settings');
+        if (saved) {
+            const settings = JSON.parse(saved);
+            // Применяем тему
+            this.darkMode = settings.theme ?? false;
+            // Применяем столбцы
+            if (settings.studentColumns) {
+                const selectedColumns = settings.studentColumns.split(',');
+                this.studentColumns = this.availableStudentColumns.filter(col => selectedColumns.includes(col));
+            }
+            if (settings.schoolColumns) {
+                const selectedColumns = settings.schoolColumns.split(',');
+                this.schoolColumns = this.availableSchoolColumns.filter(col => selectedColumns.includes(col));
+            }
+            if (settings.teacherColumns) {
+                const selectedColumns = settings.teacherColumns.split(',');
+                this.teacherColumns = this.availableTeacherColumns.filter(col => selectedColumns.includes(col));
+            }
+            if (settings.districtColumns) {
+                const selectedColumns = settings.districtColumns.split(',');
+                this.districtColumns = this.availableDistrictColumns.filter(col => selectedColumns.includes(col));
+            }
+        }
+    }
 
     loadStudentsStats(): void {
         this.isloading = true;

@@ -33,7 +33,7 @@
                 [title]="(selectedMonth | monthName:false) + ' ayında inkişaf edən şagirdlər'"
                 [tableName]="'developingStudents'"
                 [dataSource]="stats.developingStudents || []"
-                [columns]="columns"
+                [columns]="studentColumns"
                 (excelExport)="exportToExcel('developingStudents')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>
@@ -42,7 +42,7 @@
                 [title]="(selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [tableName]="'studentsOfMonth'"
                 [dataSource]="stats.studentsOfMonth || []"
-                [columns]="columns"
+                [columns]="studentColumns"
                 (excelExport)="exportToExcel('studentsOfMonth')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>
@@ -51,7 +51,7 @@
                 [title]="'Respublika üzrə ' + (selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [tableName]="'studentsOfMonthByRepublic'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
-                [columns]="columns"
+                [columns]="studentColumns"
                 (excelExport)="exportToExcel('studentsOfMonthByRepublic')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>
@@ -60,7 +60,7 @@
     <mat-tab label="İlin şagirdləri">
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.students || []" class="mat-elevation-z8" matSort #studentSort (matSortChange)="onSortChange($event)">
-                <ng-container matColumnDef="code">
+                <ng-container matColumnDef="code" *ngIf="studentColumns.includes('code')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Şagirdin kodu
                     </th>
@@ -69,7 +69,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="lastName">
+                <ng-container matColumnDef="lastName" *ngIf="studentColumns.includes('lastName')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Soyadı
                     </th>
@@ -78,7 +78,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="firstName">
+                <ng-container matColumnDef="firstName" *ngIf="studentColumns.includes('firstName')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Adı
                     </th>
@@ -87,7 +87,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="middleName">
+                <ng-container matColumnDef="middleName" *ngIf="studentColumns.includes('middleName')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Atasının adı
                     </th>
@@ -96,7 +96,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="grade">
+                <ng-container matColumnDef="grade" *ngIf="studentColumns.includes('grade')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Sinfi
                     </th>
@@ -105,7 +105,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="teacher">
+                <ng-container matColumnDef="teacher" *ngIf="studentColumns.includes('teacher')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Müəllimi
                     </th>
@@ -114,7 +114,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="school">
+                <ng-container matColumnDef="school" *ngIf="studentColumns.includes('school')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Məktəbi
                     </th>
@@ -123,7 +123,7 @@
                     </td>
                 </ng-container>
     
-                <ng-container matColumnDef="district">
+                <ng-container matColumnDef="district" *ngIf="studentColumns.includes('district')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Rayonu / şəhəri
                     </th>
@@ -132,7 +132,7 @@
                     </td>
                 </ng-container>
 
-                <ng-container matColumnDef="score">
+                <ng-container matColumnDef="score" *ngIf="studentColumns.includes('score')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Ümumi balı
                     </th>
@@ -141,17 +141,17 @@
                     </td>
                 </ng-container>
     
-                <!-- <ng-container matColumnDef="averageScore">
+                <ng-container matColumnDef="averageScore" *ngIf="studentColumns.includes('averageScore')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>
                         Orta balı
                     </th>
                     <td mat-cell *matCellDef="let student">
                         {{ student.averageScore }}
                     </td>
-                </ng-container> -->
+                </ng-container>
     
-                <tr mat-header-row *matHeaderRowDef="studentsDisplayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: studentsDisplayedColumns;" class="clickable-row" (click)="openStudentDetails(row._id)"></tr>
+                <tr mat-header-row *matHeaderRowDef="studentColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: studentColumns;" class="clickable-row" (click)="openStudentDetails(row._id)"></tr>
             </table>
         </div>
 
@@ -172,32 +172,32 @@
     <mat-tab label="İlin müəllimləri">
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.teachers || []" class="mat-elevation-z8" matSort #teacherSort (matSortChange)="onSortChange($event)">
-                <ng-container matColumnDef="code">
+                <ng-container matColumnDef="code" *ngIf="teacherColumns.includes('code')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Müəllimin kodu </th>
                     <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
                 </ng-container>
                 
-                <ng-container matColumnDef="fullName">
+                <ng-container matColumnDef="fullName" *ngIf="teacherColumns.includes('fullName')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Soyadı, adı, ata adı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.fullname }} </td>
                 </ng-container>
         
-                <ng-container matColumnDef="score">
+                <ng-container matColumnDef="score" *ngIf="teacherColumns.includes('score')">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Ümumi balı </th>
                 <td mat-cell *matCellDef="let result"> {{ result.score | roundNumber }} </td>
                 </ng-container>
     
-                <!-- <ng-container matColumnDef="averageScore">
+                <ng-container matColumnDef="averageScore" *ngIf="teacherColumns.includes('averageScore')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header=""> Orta balı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
-                </ng-container> -->
+                </ng-container>
     
-                <ng-container matColumnDef="school">
+                <ng-container matColumnDef="school" *ngIf="teacherColumns.includes('school')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Məktəbi </th>
                     <td mat-cell *matCellDef="let result"> {{ (result.school || '').name }} </td>
                 </ng-container>
                 
-                <ng-container matColumnDef="district">
+                <ng-container matColumnDef="district" *ngIf="teacherColumns.includes('district')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu / şəhəri </th>
                     <td mat-cell *matCellDef="let result"> {{ (result.district || '').name }} </td>
                 </ng-container>
@@ -225,27 +225,27 @@
     <mat-tab label="İlin məktəbləri">
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="stats.schools || []" class="mat-elevation-z8" matSort #schoolSort (matSortChange)="onSortChange($event)">
-                <ng-container matColumnDef="code">
+                <ng-container matColumnDef="code" *ngIf="schoolColumns.includes('code')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Məktəbin kodu </th>
                     <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
                 </ng-container>
                 
-                <ng-container matColumnDef="name">
+                <ng-container matColumnDef="name" *ngIf="schoolColumns.includes('name')">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Adı </th>
                 <td mat-cell *matCellDef="let result"> {{ result.name }} </td>
                 </ng-container>
         
-                <ng-container matColumnDef="score">
+                <ng-container matColumnDef="score" *ngIf="schoolColumns.includes('score')">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Ümumi balı </th>
                 <td mat-cell *matCellDef="let result"> {{ result.score | roundNumber }} </td>
                 </ng-container>
     
-                <!-- <ng-container matColumnDef="averageScore">
+                <ng-container matColumnDef="averageScore" *ngIf="schoolColumns.includes('averageScore')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Orta balı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
-                </ng-container> -->
+                </ng-container>
                 
-                <ng-container matColumnDef="district">
+                <ng-container matColumnDef="district" *ngIf="schoolColumns.includes('district')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayonu / şəhəri </th>
                     <td mat-cell *matCellDef="let result"> {{ (result.district || '').name }} </td>
                 </ng-container>
@@ -273,25 +273,25 @@
     <mat-tab label="İlin rayonları / şəhərləri">
         <div *ngIf="!isloading">
             <table mat-table [dataSource]="districtsDataSource" class="mat-elevation-z8" matSort #districtSort (matSortChange)="onSortChange($event)">
-                <ng-container matColumnDef="code">
+                <ng-container matColumnDef="code" *ngIf="districtColumns.includes('code')">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Rayon / şəhər kodu </th>
                     <td mat-cell *matCellDef="let result"> {{ result.code }} </td>
                 </ng-container>
                 
-                <ng-container matColumnDef="name">
+                <ng-container matColumnDef="name" *ngIf="districtColumns.includes('name')">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Adı </th>
                 <td mat-cell *matCellDef="let result"> {{ result.name }} </td>
                 </ng-container>
         
-                <ng-container matColumnDef="score">
+                <ng-container matColumnDef="score" *ngIf="districtColumns.includes('score')">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Ümumi balı </th>
                 <td mat-cell *matCellDef="let result"> {{ result.score }} </td>
                 </ng-container>
     
-                <!-- <ng-container matColumnDef="averageScore">
+                <ng-container matColumnDef="averageScore" *ngIf="districtColumns.includes('averageScore')">
                     <th mat-header-cell *matHeaderCellDef> Orta balı </th>
                     <td mat-cell *matCellDef="let result"> {{ result.averageScore | roundNumber }} </td>
-                </ng-container> -->
+                </ng-container>
                 
                 <tr mat-header-row *matHeaderRowDef="districtColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: districtColumns;"></tr>

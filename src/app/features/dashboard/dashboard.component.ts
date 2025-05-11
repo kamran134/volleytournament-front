@@ -6,6 +6,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
 
 interface Column {
     key: string;
@@ -23,6 +24,7 @@ interface Column {
         MatFormFieldModule,
         MatInputModule,
         MatSlideToggleModule,
+        MatTabsModule,
         CommonModule
     ],
     templateUrl: './dashboard.component.html',
@@ -42,7 +44,33 @@ export class DashboardComponent implements OnInit {
         { key: 'district', label: 'Rayonu', selected: false },
         { key: 'score', label: 'Balı', selected: false },
         { key: 'averageScore', label: 'Orta balı', selected: false },
+        { key: 'status', label: 'Statusu', selected: false },
     ];
+
+    teacherColumnOptions: Column[] = [
+        { key: 'code', label: 'Kodu', selected: false },
+        { key: 'fullname', label: 'Soyadı, adı, ata adı', selected: false },
+        { key: 'school', label: 'Məktəbi', selected: false },
+        { key: 'district', label: 'Rayonu', selected: false },
+        { key: 'score', label: 'Balı', selected: false },
+        { key: 'averageScore', label: 'Orta balı', selected: false }
+    ];
+
+    schoolColumnOptions: Column[] = [
+        { key: 'code', label: 'Kodu', selected: false },
+        { key: 'name', label: 'Adı', selected: false },
+        { key: 'district', label: 'Rayonu', selected: false },
+        { key: 'score', label: 'Balı', selected: false },
+        { key: 'averageScore', label: 'Orta balı', selected: false }
+    ];
+
+    districtColumnOptions: Column[] = [
+        { key: 'code', label: 'Kodu', selected: false },
+        { key: 'name', label: 'Adı', selected: false },
+        { key: 'score', label: 'Balı', selected: false },
+        { key: 'averageScore', label: 'Orta balı', selected: false }
+    ];
+
     schoolColumns: string = '';
     teacherColumns: string = '';
     showSettings: boolean = false;
@@ -64,8 +92,18 @@ export class DashboardComponent implements OnInit {
                 .filter((col) => col.selected)
                 .map((col) => col.key)
                 .join(','),
-            schoolColumns: this.schoolColumns,
-            teacherColumns: this.teacherColumns,
+            schoolColumns: this.schoolColumnOptions
+                .filter((col) => col.selected)
+                .map((col) => col.key)
+                .join(','),
+            teacherColumns: this.teacherColumnOptions
+                .filter((col) => col.selected)
+                .map((col) => col.key)
+                .join(','),
+            districtColumns: this.districtColumnOptions
+                .filter((col) => col.selected)
+                .map((col) => col.key)
+                .join(',')
         };
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
       }
@@ -81,9 +119,27 @@ export class DashboardComponent implements OnInit {
                   col.selected = selectedKeys.includes(col.key);
                 });
             }
-            //this.studentColumns = settings.studentColumns ?? '';
-            this.schoolColumns = settings.schoolColumns ?? '';
-            this.teacherColumns = settings.teacherColumns ?? '';
+
+            if (settings.schoolColumns) {
+                const selectedKeys = settings.schoolColumns.split(',');
+                this.schoolColumnOptions.forEach((col) => {
+                  col.selected = selectedKeys.includes(col.key);
+                });
+            }
+
+            if (settings.teacherColumns) {
+                const selectedKeys = settings.teacherColumns.split(',');
+                this.teacherColumnOptions.forEach((col) => {
+                  col.selected = selectedKeys.includes(col.key);
+                });
+            }
+
+            if (settings.districtColumns) {
+                const selectedKeys = settings.districtColumns.split(',');
+                this.districtColumnOptions.forEach((col) => {
+                  col.selected = selectedKeys.includes(col.key);
+                });
+            }
         }
     }
 
