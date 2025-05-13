@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
 
     teacherColumnOptions: Column[] = [
         { key: 'code', label: 'Kodu', selected: false },
-        { key: 'fullname', label: 'Soyadı, adı, ata adı', selected: false },
+        { key: 'fullName', label: 'Soyadı, adı, ata adı', selected: false },
         { key: 'school', label: 'Məktəbi', selected: false },
         { key: 'district', label: 'Rayonu', selected: false },
         { key: 'score', label: 'Balı', selected: false },

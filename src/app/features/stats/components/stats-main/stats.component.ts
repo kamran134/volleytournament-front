@@ -109,9 +109,9 @@ export class StatsComponent implements OnInit {
     private readonly availableStudentColumns: string[] = [
         'code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'
     ];
-    private readonly availableTeacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'score'];
-    private readonly availableSchoolColumns: string[] = ['code', 'name', 'district', 'score'];
-    private readonly availableDistrictColumns: string[] = ['code', 'name', 'score'];
+    private readonly availableTeacherColumns: string[] = ['code', 'fullName', 'school', 'district', 'score', 'averageScore'];
+    private readonly availableSchoolColumns: string[] = ['code', 'name', 'district', 'score', 'averageScore'];
+    private readonly availableDistrictColumns: string[] = ['code', 'name', 'score', 'averageScore'];
 
     selectedMonth: string = new Date().getMonth() + '-' + new Date().getFullYear();
     selectedDistrictIds: string[] = [];
