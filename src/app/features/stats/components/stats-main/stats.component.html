@@ -33,7 +33,7 @@
                 [title]="(selectedMonth | monthName:false) + ' ayında inkişaf edən şagirdlər'"
                 [tableName]="'developingStudents'"
                 [dataSource]="stats.developingStudents || []"
-                [columns]="studentColumns"
+                [columns]="monthStudentColumns"
                 (excelExport)="exportToExcel('developingStudents')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>
@@ -42,7 +42,7 @@
                 [title]="(selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [tableName]="'studentsOfMonth'"
                 [dataSource]="stats.studentsOfMonth || []"
-                [columns]="studentColumns"
+                [columns]="monthStudentColumns"
                 (excelExport)="exportToExcel('studentsOfMonth')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>
@@ -51,7 +51,7 @@
                 [title]="'Respublika üzrə ' + (selectedMonth | monthName:false) + ' ayının şagirdləri'"
                 [tableName]="'studentsOfMonthByRepublic'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
-                [columns]="studentColumns"
+                [columns]="monthStudentColumns"
                 (excelExport)="exportToExcel('studentsOfMonthByRepublic')"
                 (rowClicked)="openStudentDetails($event)">
             </app-student-rating-table>

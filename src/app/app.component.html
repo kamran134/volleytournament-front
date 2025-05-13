@@ -1,6 +1,6 @@
 <header>
     <mat-toolbar color="white" class="header">
-        <div class="header__left">
+        <div class="header__left" routerLink="/" style="cursor: pointer;">
             <span class="header__logo">
                 <img src="assets/isim.png" height="60px" alt="Logo" class="header__logo-img" />
             </span>
@@ -10,6 +10,9 @@
                 <mat-slide-toggle [checked] = "darkMode" (toggleChange)="darkModeToogleChanged()">
                     <mat-icon [svgIcon]="darkMode ? 'dark_mode' : 'light_mode'" [@rotateAnimation]="animationState"></mat-icon>
                 </mat-slide-toggle>
+            </div>
+            <div *ngIf="isAuthorized()">
+                <button mat-flat-button (click)="goToAdminPanel()">İdarəetmə paneli</button>
             </div>
             <div>
                 <button mat-flat-button (click)="logInOut()">{{ isAuthorized() ? 'Sistemdən çıxış' : 'Sistemə giriş' }}</button>

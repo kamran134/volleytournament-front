@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -13,7 +13,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet, CommonModule, MatButtonModule, MatIconModule, MatSlideToggleModule, MatToolbarModule, HttpClientModule],
+    imports: [RouterOutlet, RouterModule, CommonModule, MatButtonModule, MatIconModule, MatSlideToggleModule, MatToolbarModule, HttpClientModule],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     animations: [
@@ -78,6 +78,14 @@ export class AppComponent implements OnInit {
                 table.classList.remove('dark-mode');
             }
         });
+    }
+
+    goToAdminPanel(): void {
+        if (this.isAdminOrSuperAdmin()) {
+            this.router.navigate(['/admin']);
+        } else {
+            this.router.navigate(['/']);
+        }
     }
 
     logInOut(): void {

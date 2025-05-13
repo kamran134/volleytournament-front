@@ -100,6 +100,7 @@ export class StatsComponent implements OnInit {
         allDistrictsTotalCount: 0
     };
     selectedTab: 'students' | 'allStudents' | 'allTeachers' | 'allSchools' | 'allDistricts' = 'students';
+    monthStudentColumns: string[] = [];
     studentColumns: string[] = [];
     teacherColumns: string[] = [];
     schoolColumns: string[] = [];
@@ -191,6 +192,10 @@ export class StatsComponent implements OnInit {
             // Применяем тему
             this.darkMode = settings.theme ?? false;
             // Применяем столбцы
+            if (settings.monthStudentColumns) {
+                const selectedColumns = settings.monthStudentColumns.split(',');
+                this.monthStudentColumns = this.availableStudentColumns.filter(col => selectedColumns.includes(col));
+            }
             if (settings.studentColumns) {
                 const selectedColumns = settings.studentColumns.split(',');
                 this.studentColumns = this.availableStudentColumns.filter(col => selectedColumns.includes(col));
