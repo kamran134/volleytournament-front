@@ -256,6 +256,7 @@ export class StatsComponent implements OnInit {
             next: (response) => {
                 this.isloading = false;
                 this.stats.students = response.data;
+                this.studentsDataSource.data = response.data;
                 this.totalCounts.allStudentsTotalCount = response.totalCount;
             },
             error: (error: Error) => {
