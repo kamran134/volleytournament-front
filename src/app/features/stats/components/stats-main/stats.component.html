@@ -16,7 +16,7 @@
     [selectedSchoolIds]="selectedSchoolIds"
     [selectedTeacherIds]="selectedTeacherIds"
     [selectedGrades]="selectedGrades"
-    [selectedExamId]="selectedExamId"
+    [selectedExam]="selectedExam"
     (monthUpdated)="updateMonth($event)"
     (districtChanged)="onDistrictSelectChanged($event)"
     (schoolChanged)="onSchoolSelectChanged($event)"
@@ -30,7 +30,7 @@
     <mat-tab label="Ayın şagirdləri" [className]="darkMode ? 'dark-mode' : 'light-mode'">
         <div class="stats-container" *ngIf="!isloading">
             <app-student-rating-table
-                [title]="(selectedMonth | monthName:false) + ' ayında inkişaf edən şagirdlər'"
+                [title]="developingStudentsLabel"
                 [tableName]="'developingStudents'"
                 [dataSource]="stats.developingStudents || []"
                 [columns]="monthStudentColumns"
@@ -39,7 +39,7 @@
             </app-student-rating-table>
         
             <app-student-rating-table
-                [title]="(selectedMonth | monthName:false) + ' ayının şagirdləri'"
+                [title]="studentsOfMonthLabel"
                 [tableName]="'studentsOfMonth'"
                 [dataSource]="stats.studentsOfMonth || []"
                 [columns]="monthStudentColumns"
@@ -48,7 +48,7 @@
             </app-student-rating-table>
         
             <app-student-rating-table
-                [title]="'Respublika üzrə ' + (selectedMonth | monthName:false) + ' ayının şagirdləri'"
+                [title]="studentsOfMonthByRepublicLabel"
                 [tableName]="'studentsOfMonthByRepublic'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
                 [columns]="monthStudentColumns"

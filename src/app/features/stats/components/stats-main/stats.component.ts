@@ -11,14 +11,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Stats } from '../../../../core/models/stats.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MonthNamePipe } from '../../../../shared/pipes/month-name.pipe';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Exam } from '../../../../core/models/exam.model';
+import { Exam, ExamData } from '../../../../core/models/exam.model';
 import { ExamService } from '../../../exams/services/exam.service';
 import { MatSort, MatSortHeader, MatSortModule, Sort } from '@angular/material/sort';
 import { District, DistrictData } from '../../../../core/models/district.model';
@@ -38,34 +38,35 @@ import { StatsPagination } from '../../../../core/models/pagination.model';
 import * as XLSX from 'xlsx';
 import { StudentRatingTableComponent } from '../student-rating-table/student-rating-table.component';
 import { ExcelService } from '../../../../core/services/excel.service';
+import { MomentDateFormatPipe } from '../../../../shared/pipes/moment-date-format.pipe';
 
 @Component({
     selector: 'app-stats',
     standalone: true,
     imports: [
-    MatGridListModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatTableModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatPaginatorModule,
-    MatInputModule,
-    MatTabsModule,
-    MatSortModule,
-    MatSortHeader,
-    CommonModule,
-    ReactiveFormsModule,
-    MonthNamePipe,
-    RouterModule,
-    StudentRatingTableComponent,
-    StatsFiltersComponent,
-    RoundNumberPipe
-],
+        MatGridListModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        MatTableModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatPaginatorModule,
+        MatInputModule,
+        MatTabsModule,
+        MatSortModule,
+        MatSortHeader,
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        StudentRatingTableComponent,
+        StatsFiltersComponent,
+        RoundNumberPipe
+    ],
+    providers: [MonthNamePipe, MomentDateFormatPipe],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
@@ -105,6 +106,9 @@ export class StatsComponent implements OnInit {
     teacherColumns: string[] = [];
     schoolColumns: string[] = [];
     districtColumns: string[] = [];
+    developingStudentsLabel: string = 'inkişaf edən şagirdlər';
+    studentsOfMonthLabel: string = 'ayın şagirdləri';
+    studentsOfMonthByRepublicLabel: string = 'respublika üzrə ayın şagirdləri';
 
     private readonly availableStudentColumns: string[] = [
         'code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'
@@ -118,7 +122,7 @@ export class StatsComponent implements OnInit {
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
     selectedGrades: number[] = [];
-    selectedExamId: string = '';
+    selectedExam: Exam | undefined = undefined;
     selectedTabIndex: number = 0;
     districts: District[] = [];
     schools: School[] = [];
@@ -149,6 +153,8 @@ export class StatsComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
+        private monthNamePipe: MonthNamePipe,
+        private matDateFormatPipe: MomentDateFormatPipe
     ) {}
 
     ngOnInit(): void {
@@ -166,7 +172,7 @@ export class StatsComponent implements OnInit {
             this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
             this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
             this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
-            this.selectedExamId = params['examId'] || '';
+            this.selectedExam = params['examId'] || '';
             this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + new Date().getMonth();
             this.selectedTab = params['tab'] || 'students';
 
@@ -225,12 +231,16 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             code: this.searchString || undefined,
+            examId: this.selectedExam ? this.selectedExam._id : undefined,
         };
         
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {
                 this.isloading = false;
                 this.stats = {...response};
+                this.developingStudentsLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında inkişaf edən şagirdlər`;
+                this.studentsOfMonthLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında ayın şagirdləri`;
+                this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında respublika üzrə ayın şagirdləri`;
             },
             error: (error: Error) => {
                 this.isloading = false;
@@ -270,7 +280,12 @@ export class StatsComponent implements OnInit {
         this.isloading = true;
         this.stats = {};
 
-        this.statsService.getStatsByExam(this.selectedExamId).subscribe({
+        if (!this.selectedExam) {
+            this.isloading = false;
+            this.snackBar.open('İmtahan seçilməyib', 'Bağla', this.matSnackConfig);
+            return;
+        }
+        this.statsService.getStatsByExam(this.selectedExam).subscribe({
             next: (response) => {
                 this.isloading = false;
                 this.stats = response;
@@ -358,6 +373,8 @@ export class StatsComponent implements OnInit {
     }
 
 
+    // Filters
+
     loadTeachers(): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
@@ -419,10 +436,10 @@ export class StatsComponent implements OnInit {
     }
 
     loadExams(): void {
-        this.examService.getExams({ page: 0, size: 1000 })
+        this.examService.getExamsForFilter()
         .subscribe({
-            next: (response) => {
-                this.exams = response.data
+            next: (response: ExamData) => {
+                this.exams = response.data;
             },
             error: (err: any) => {
                 this.errorMessage = '';
@@ -449,7 +466,11 @@ export class StatsComponent implements OnInit {
 
     updateMonth(month: string) {
         this.selectedMonth = month;
+        this.selectedExam = undefined;
         this.loadStudentsStats();
+        this.developingStudentsLabel = `${this.monthNamePipe.transform(month)} ayında inkişaf edən şagirdlər`;
+        this.studentsOfMonthLabel = `${this.monthNamePipe.transform(month)} ayında ayın şagirdləri`;
+        this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(month)} ayında respublika üzrə ayın şagirdləri`;
     }
 
     onTabChange(event: any): void {
@@ -529,10 +550,13 @@ export class StatsComponent implements OnInit {
         }
     }
 
-    onExamSelectChanged(examId: string) {
-        this.selectedExamId = examId;
+    onExamSelectChanged(exam: Exam) {
+        this.selectedExam = exam;
         if (this.selectedTab === 'students') {
             this.loadStudentsStats();
+            this.developingStudentsLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə inkişaf edən şagirdlər`;
+            this.studentsOfMonthLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə ayın şagirdləri`;
+            this.studentsOfMonthByRepublicLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə respublika üzrə ayın şagirdləri`;
         }
         else if (this.selectedTab === 'allStudents') {
             this.loadAllStudentsStats();
@@ -550,7 +574,7 @@ export class StatsComponent implements OnInit {
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
-            examId: this.selectedExamId,
+            examId: this.selectedExam ? this.selectedExam._id : undefined,
             month,
             source: 'stats',
             tab: this.selectedTab,

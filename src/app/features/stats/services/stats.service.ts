@@ -4,6 +4,7 @@ import { ConfigService } from '../../../core/services/config.service';
 import { Observable } from 'rxjs';
 import { Stats } from '../../../core/models/stats.model';
 import { FilterParams } from '../../../core/models/filterParams.model';
+import { Exam } from '../../../core/models/exam.model';
 
 @Injectable({
     providedIn: 'root'
@@ -38,11 +39,14 @@ export class StatsService {
         if (params.code) {
             url = `${url}&code=${params.code}`;
         }
+        if (params.examId) {
+            url = `${url}&examId=${params.examId}`;
+        }
         return this.http.get<Stats>(url, {});
     }
 
-    getStatsByExam(examId: string): Observable<Stats> {
-        let url: string = `${this.configService.getApiUrl()}/stats/by-exam/${examId}`;
+    getStatsByExam(exam: Exam): Observable<Stats> {
+        let url: string = `${this.configService.getApiUrl()}/stats/by-exam/${exam._id}`;
         return this.http.get<Stats>(url, {});
     }
 

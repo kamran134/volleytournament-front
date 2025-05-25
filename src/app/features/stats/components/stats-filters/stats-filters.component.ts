@@ -22,7 +22,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSortModule } from '@angular/material/sort';
 import { RouterModule } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
-import { MonthYearPipe } from '../../../../shared/pipes/month-year.pipe';
 
 @Component({
     selector: 'app-stats-filters',
@@ -57,19 +56,18 @@ export class StatsFiltersComponent {
     @Input() teachers: Teacher[] = [];
     @Input() exams: Exam[] = [];
     @Input() gradesOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    // @Input() monthControl = new FormControl(new Date());
     @Input() selectedDistrictIds: string[] = [];
     @Input() selectedSchoolIds: string[] = [];
     @Input() selectedTeacherIds: string[] = [];
     @Input() selectedGrades: number[] = [];
-    @Input() selectedExamId: string = '';
+    @Input() selectedExam: Exam | undefined = undefined;
 
     @Output() monthUpdated = new EventEmitter<string>();
     @Output() districtChanged = new EventEmitter<string[]>();
     @Output() schoolChanged = new EventEmitter<string[]>();
     @Output() teacherChanged = new EventEmitter<string[]>();
     @Output() gradeChanged = new EventEmitter<number[]>();
-    @Output() examChanged = new EventEmitter<string>();
+    @Output() examChanged = new EventEmitter<Exam>();
     @Output() searchStringChanged = new EventEmitter<string>();
 
     searchString: string = '';
@@ -149,7 +147,7 @@ export class StatsFiltersComponent {
     }
 
     onExamSelectChanged() {
-        this.examChanged.emit(this.selectedExamId);
+        this.examChanged.emit(this.selectedExam);
     }
 
     onSearchChange(): void {

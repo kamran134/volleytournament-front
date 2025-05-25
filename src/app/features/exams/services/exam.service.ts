@@ -4,7 +4,6 @@ import { ConfigService } from '../../../core/services/config.service';
 import { Observable } from 'rxjs';
 import { Exam, ExamData } from '../../../core/models/exam.model';
 import { FilterParams } from '../../../core/models/filterParams.model';
-import { ExamResult } from '../../../core/models/examResult.model';
 import { ResponseFromBackend } from '../../../core/models/response.model';
 
 @Injectable({
@@ -19,6 +18,11 @@ export class ExamService {
         if (params.page && params.size) {
             url = `${url}?page=${params.page}&size=${params.size}`;
         }
+        return this.http.get<ExamData>(url);
+    }
+
+    getExamsForFilter(): Observable<ExamData> {
+        const url: string = `${this.configService.getApiUrl()}/exams/filter`;
         return this.http.get<ExamData>(url);
     }
 
