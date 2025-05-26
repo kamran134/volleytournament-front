@@ -217,7 +217,7 @@ export class StudentsListComponent implements OnInit, AfterViewInit {
     }
 
     loadExams(): void {
-        this.examService.getExams({ page: 0, size: 1000 })
+        this.examService.getExamsForFilter()
             .subscribe({
                 next: (response) => {
                     this.exams = response.data
