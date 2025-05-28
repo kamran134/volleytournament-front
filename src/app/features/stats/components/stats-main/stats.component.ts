@@ -39,6 +39,8 @@ import * as XLSX from 'xlsx';
 import { StudentRatingTableComponent } from '../student-rating-table/student-rating-table.component';
 import { ExcelService } from '../../../../core/services/excel.service';
 import { MomentDateFormatPipe } from '../../../../shared/pipes/moment-date-format.pipe';
+import { DashboardService } from '../../../dashboard/services/dashboard.service';
+import { UserSettings } from '../../../../core/models/settings.model';
 
 @Component({
     selector: 'app-stats',
@@ -154,7 +156,8 @@ export class StatsComponent implements OnInit {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private monthNamePipe: MonthNamePipe,
-        private matDateFormatPipe: MomentDateFormatPipe
+        private matDateFormatPipe: MomentDateFormatPipe,
+        private dashboardService: DashboardService
     ) {}
 
     ngOnInit(): void {
@@ -192,33 +195,19 @@ export class StatsComponent implements OnInit {
 
     // CHANGE: Метод для загрузки настроек из localStorage
     private loadSettings() {
-        const saved = localStorage.getItem('dashboard-settings');
-        if (saved) {
-            const settings = JSON.parse(saved);
-            // Применяем тему
-            this.darkMode = settings.theme ?? false;
-            // Применяем столбцы
-            if (settings.monthStudentColumns) {
-                const selectedColumns = settings.monthStudentColumns.split(',');
-                this.monthStudentColumns = this.availableStudentColumns.filter(col => selectedColumns.includes(col));
+        this.dashboardService.getRatingColumns(localStorage.getItem('id') || '')
+        .subscribe({
+            next: (settings: UserSettings) => {
+                this.monthStudentColumns = settings.studentCollumns || this.availableStudentColumns;
+                this.studentColumns = settings.allStudentCollumns || this.availableStudentColumns;
+                this.teacherColumns = settings.allTeacherCollumns || this.availableTeacherColumns;
+                this.schoolColumns = settings.allSchoolCollumns || this.availableSchoolColumns;
+                this.districtColumns = settings.allDistrictCollumns || this.availableDistrictColumns;
+            },
+            error: (error: Error) => {
+                console.error('Error loading settings:', error);
             }
-            if (settings.studentColumns) {
-                const selectedColumns = settings.studentColumns.split(',');
-                this.studentColumns = this.availableStudentColumns.filter(col => selectedColumns.includes(col));
-            }
-            if (settings.schoolColumns) {
-                const selectedColumns = settings.schoolColumns.split(',');
-                this.schoolColumns = this.availableSchoolColumns.filter(col => selectedColumns.includes(col));
-            }
-            if (settings.teacherColumns) {
-                const selectedColumns = settings.teacherColumns.split(',');
-                this.teacherColumns = this.availableTeacherColumns.filter(col => selectedColumns.includes(col));
-            }
-            if (settings.districtColumns) {
-                const selectedColumns = settings.districtColumns.split(',');
-                this.districtColumns = this.availableDistrictColumns.filter(col => selectedColumns.includes(col));
-            }
-        }
+        });
     }
 
     loadStudentsStats(): void {

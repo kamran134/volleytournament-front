@@ -12,3 +12,13 @@ export interface FilterParams {
     sortDirection?: string;
     code?: string;
 }
+
+export interface UserParams {
+    email?: string;
+    role?: string;
+    isApproved?: boolean;
+    page?: number;
+    size?: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+}

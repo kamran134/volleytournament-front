@@ -34,6 +34,18 @@
             }
         }
     }
+
+    .mat-toolbar {
+        .dark-mode {
+            background-color: #333 !important;
+            color: #fff !important;
+        }
+    }
+}
+
+.mat-black {
+    background-color: #1f1f1f !important;
+    color: #fff !important;
 }
 
 .main-container {

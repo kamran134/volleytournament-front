@@ -1,5 +1,5 @@
 <header>
-    <mat-toolbar color="white" class="header">
+    <mat-toolbar [color]="darkMode ? 'black' : 'white'" [ngClass]="darkMode ? 'header dark-mode' : 'header light-mode'">
         <div class="header__left" routerLink="/" style="cursor: pointer;">
             <span class="header__logo">
                 <img src="assets/isim.png" height="60px" alt="Logo" class="header__logo-img" />

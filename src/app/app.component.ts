@@ -13,7 +13,16 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [RouterOutlet, RouterModule, CommonModule, MatButtonModule, MatIconModule, MatSlideToggleModule, MatToolbarModule, HttpClientModule],
+    imports: [
+        RouterOutlet,
+        RouterModule,
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSlideToggleModule,
+        MatToolbarModule,
+        HttpClientModule
+    ],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     animations: [

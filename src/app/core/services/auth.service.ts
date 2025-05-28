@@ -37,13 +37,14 @@ export class AuthService {
     }
 
     login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-        return this.http.post<{ token: string, role: string, message: string }>(
+        return this.http.post<{ token: string, role: string, id: string, message: string }>(
             `${this.configService.getAuthUrl()}/login`,
             credentials, 
             { withCredentials: true }).pipe(
                 tap (response => {
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('role', response.role);
+                    localStorage.setItem('id', response.id);
                     this.userRole = response.role;
                     this.authStatus.next(true);
                     // this.router.navigate(['/admin']);
