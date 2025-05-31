@@ -176,7 +176,7 @@ export class StatsComponent implements OnInit {
             this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
             this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
             this.selectedExam = params['examId'] || '';
-            this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + new Date().getMonth();
+            this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
             this.selectedTab = params['tab'] || 'students';
 
             if (this.selectedTab === 'students') {
@@ -221,15 +221,16 @@ export class StatsComponent implements OnInit {
             grades: this.selectedGrades.join(","),
             code: this.searchString || undefined,
             examId: this.selectedExam ? this.selectedExam._id : undefined,
+            month: this.selectedMonth,
         };
         
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {
                 this.isloading = false;
                 this.stats = {...response};
-                this.developingStudentsLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında inkişaf edən şagirdlər`;
-                this.studentsOfMonthLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında ayın şagirdləri`;
-                this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(this.selectedMonth, false)} ayında respublika üzrə ayın şagirdləri`;
+                this.developingStudentsLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında inkişaf edən şagirdlər`;
+                this.studentsOfMonthLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında ayın şagirdləri`;
+                this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında respublika üzrə ayın şagirdləri`;
             },
             error: (error: Error) => {
                 this.isloading = false;

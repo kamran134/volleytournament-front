@@ -50,6 +50,8 @@ export class StudentDetailsComponent implements OnInit {
             this.filterParams = params;
             this.source = params['source'] || 'students'
         });
+
+        //console.log('queryParams.filterParams', this.filterParams);
     }
 
     private loadStudent(): void {
@@ -70,7 +72,6 @@ export class StudentDetailsComponent implements OnInit {
         let result: XLSX.WorkSheet = {};
 
         result = XLSX.utils.json_to_sheet(this.excelService.formatStudentDetailsData(this.student!));
-        console.log(result);
         sheetName = `${this.student?.lastName} ${this.student?.firstName}`;
 
         if (!result) {

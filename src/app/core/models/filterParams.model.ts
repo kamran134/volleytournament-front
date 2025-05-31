@@ -11,6 +11,7 @@ export interface FilterParams {
     sortColumn?: string;
     sortDirection?: string;
     code?: string;
+    month?: string;
 }
 
 export interface UserParams {
