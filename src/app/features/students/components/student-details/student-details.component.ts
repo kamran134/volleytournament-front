@@ -4,18 +4,20 @@ import { ActivatedRoute, Params, RouterModule } from '@angular/router';
 import { StudentWithResult } from '../../../../core/models/student.model';
 import { Error } from '../../../../core/models/error.model';
 import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider'; 
+import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import * as XLSX from 'xlsx';
+import { ExcelService } from '../../../../core/services/excel.service';
 
 @Component({
     selector: 'app-student-details',
     standalone: true,
     imports: [
-        MatCardModule, MatDividerModule, MatTableModule, MatProgressSpinner, MatIconModule, MatButtonModule, 
+        MatCardModule, MatDividerModule, MatTableModule, MatProgressSpinner, MatIconModule, MatButtonModule,
         RouterModule,
         CommonModule
     ],
@@ -30,7 +32,11 @@ export class StudentDetailsComponent implements OnInit {
     filterParams: any = {};
     source: string = 'students';
 
-    constructor(private studentService: StudentService, private route: ActivatedRoute) {}
+    constructor(
+        private studentService: StudentService,
+        private route: ActivatedRoute,
+        private excelService: ExcelService
+    ) { }
 
     ngOnInit(): void {
         this.route.params.subscribe(params => {
@@ -56,5 +62,24 @@ export class StudentDetailsComponent implements OnInit {
                 this.student = null;
             }
         });
+    }
+
+    exportToExcel() {
+        const workbook = XLSX.utils.book_new();
+        let sheetName: string = '';
+        let result: XLSX.WorkSheet = {};
+
+        result = XLSX.utils.json_to_sheet(this.excelService.formatStudentDetailsData(this.student!));
+        console.log(result);
+        sheetName = `${this.student?.lastName} ${this.student?.firstName}`;
+
+        if (!result) {
+            console.error('Xəta: Excel cədvəli yaradılmadı!');
+            return;
+        }
+
+        // this.excelService.formatHeaders(result);
+        XLSX.utils.book_append_sheet(workbook, result, sheetName);
+        XLSX.writeFile(workbook, `${this.student?.code}.xlsx`);
     }
 }

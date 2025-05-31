@@ -11,4 +11,5 @@ export interface ExamResult {
     student: string;
     totalScore: number;
     studentData: Student;
+    status?: string;
 }

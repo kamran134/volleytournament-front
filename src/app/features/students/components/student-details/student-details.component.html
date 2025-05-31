@@ -62,6 +62,10 @@
                 <tr mat-header-row *matHeaderRowDef="['examDate', 'level', 'totalScore', 'disciplines', 'status']"></tr>
                 <tr mat-row *matRowDef="let row; columns: ['examDate', 'level', 'totalScore', 'disciplines', 'status'];"></tr>
             </table>
+            <mat-divider></mat-divider>
+            <div *ngIf="student">
+                <button mat-raised-button (click)="exportToExcel()"><mat-icon>file_download</mat-icon> Excel-ə eksport et</button>
+            </div>
         </mat-card-content>
     </mat-card>
 </ng-container>

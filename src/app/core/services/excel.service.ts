@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import * as XLSX from 'xlsx';
 import { ExamResult } from "../models/examResult.model";
-import { Student } from "../models/student.model";
+import { Student, StudentWithResult } from "../models/student.model";
 import { Teacher } from "../models/teacher.model";
 import { School } from "../models/school.model";
 import { District } from "../models/district.model";
+import moment from "moment";
 
 @Injectable({
     providedIn: 'root'
@@ -72,6 +73,52 @@ export class ExcelService {
             'Ümumi balı': district.score,
             'Orta balı': district.averageScore,
         }));
+    }
+
+    formatStudentDetailsData(student: StudentWithResult): any[] {
+        return student.results.map(result => (
+            student.grade < 5 ? {
+                'Şagirdin kodu': student.code,
+                'Soyadı': student.lastName,
+                'Adı': student.firstName,
+                'Atasının adı': student.middleName,
+                'Sinfi': student.grade,
+                'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
+                'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
+                'Rayonu / şəhəri': student.district?.name || 'Rayon / şəhər tapılmadı',
+                'İmtahanın adı': result.exam.name,
+                'Balı': result.score,
+                'Tarixi': result.exam.date ? moment(new Date(result.exam.date)).format('DD.MM.yyyy') : 'Tarix tapılmadı',
+                'Azərbaycan dili': result.disciplines.az || 0,
+                'Riyaziyyat': result.disciplines.math || 0,
+                'Həyat bilgisi': result.disciplines.lifeKnowledge || 0,
+                'Məntiq': result.disciplines.logic || 0,
+                'Ümumi balı': result.totalScore || 0,
+                'Pilləsi': result.level || 'Pillə tapılmadı',
+                'Statusu': result.status || '',
+            }
+            : 
+            {
+                'Şagirdin kodu': student.code,
+                'Soyadı': student.lastName,
+                'Adı': student.firstName,
+                'Atasının adı': student.middleName,
+                'Sinfi': student.grade,
+                'Müəllimi': student.teacher?.fullname || 'Müəllim tapılmadı',
+                'Məktəbi': student.school?.name || 'Məktəb tapılmadı',
+                'Rayonu / şəhəri': student.district?.name || 'Rayon / şəhər tapılmadı',
+                'İmtahanın adı': result.exam.name,
+                'Balı': result.score,
+                'Tarixi': result.exam.date ? moment(new Date(result.exam.date)).format('DD.MM.yyyy') : 'Tarix tapılmadı',
+                //'Tarixi': result.exam.date ? new Date(result.exam.date).toLocaleDateString() : 'Tarix tapılmadı',
+                'Azərbaycan dili': result.disciplines.az || 0,
+                'Riyaziyyat': result.disciplines.math || 0,
+                'Məntiq': result.disciplines.logic || 0,
+                'Ümumi balı': result.totalScore || 0,
+                'Pilləsi': result.level || 'Pillə tapılmadı',
+                'Statusu': result.status || '',
+            }
+        ));
     }
 
     formatHeaders(ws: XLSX.WorkSheet) {
