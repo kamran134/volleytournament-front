@@ -108,9 +108,9 @@ export class StatsComponent implements OnInit {
     teacherColumns: string[] = [];
     schoolColumns: string[] = [];
     districtColumns: string[] = [];
-    developingStudentsLabel: string = 'inkişaf edən şagirdlər';
-    studentsOfMonthLabel: string = 'ayın şagirdləri';
-    studentsOfMonthByRepublicLabel: string = 'respublika üzrə ayın şagirdləri';
+    developingStudentsLabel: string = 'Cari ayda inkişaf edən şagirdlər';
+    studentsOfMonthLabel: string = 'Cari ayın şagirdləri';
+    studentsOfMonthByRepublicLabel: string = 'Respublika üzrə cari ayın şagirdləri';
 
     private readonly availableStudentColumns: string[] = [
         'code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'
@@ -142,7 +142,6 @@ export class StatsComponent implements OnInit {
     districtsDataSource = new MatTableDataSource(this.districts);
     darkMode: boolean = false;
     searchString: string = '';
-
     sortDirection: 'asc' | 'desc' | '' = 'desc';
     sortActive: string = 'averageScore';
 
@@ -183,6 +182,9 @@ export class StatsComponent implements OnInit {
             this.selectedTab = params['tab'] || 'students';
             this.sortActive = params['sortActive'] || 'averageScore';
             this.sortDirection = params['sortDirection'] || 'desc';
+            this.pageSize = params['pageSize'] ? +params['pageSize'] : 100;
+            this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : 0;
+
 
             if (this.selectedTab === 'students') {
                 this.selectedTabIndex = 0;
@@ -575,6 +577,8 @@ export class StatsComponent implements OnInit {
             tab: this.selectedTab,
             sortActive: this.sortActive,
             sortDirection: this.sortDirection,
+            pageSize: this.pageSize,
+            pageIndex: this.pageIndex
         };
     
         const navigationExtras: NavigationExtras = {

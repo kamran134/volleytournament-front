@@ -74,7 +74,7 @@ export class StatsFiltersComponent {
     private searchTerms = new Subject<string>();
 
     // Контролы для месяца и года
-    monthControl = new FormControl(new Date().getMonth()); // 0-11
+    monthControl = new FormControl(new Date().getMonth() + 1); // 0-11
     yearControl = new FormControl(new Date().getFullYear());
 
     months = [
@@ -122,10 +122,6 @@ export class StatsFiltersComponent {
             const monthStr = `${year}-${String(month).padStart(2, '0')}`;
             this.monthUpdated.emit(monthStr);
         }
-    }
-
-    openDatepicker(datepicker: MatDatepicker<Date>) {
-        datepicker.open();
     }
 
     onDistrictSelectChanged() {
