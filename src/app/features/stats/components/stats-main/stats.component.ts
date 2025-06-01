@@ -77,7 +77,7 @@ export class StatsComponent implements OnInit {
     @ViewChild('schoolSort') schoolSort!: MatSort;
     @ViewChild('studentSort') studentSort!: MatSort;
     @ViewChild('districtSort') districtSort!: MatSort;
-    monthControl = new FormControl(new Date());
+    // monthControl = new FormControl(new Date());
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
         horizontalPosition: 'center',
@@ -181,6 +181,8 @@ export class StatsComponent implements OnInit {
             this.selectedExam = params['examId'] || '';
             this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
             this.selectedTab = params['tab'] || 'students';
+            this.sortActive = params['sortActive'] || 'averageScore';
+            this.sortDirection = params['sortDirection'] || 'desc';
 
             if (this.selectedTab === 'students') {
                 this.selectedTabIndex = 0;
@@ -291,7 +293,6 @@ export class StatsComponent implements OnInit {
     }
 
     loadTeachersStats(): void {
-        console.log('sort direction', this.sortDirection);
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -558,7 +559,7 @@ export class StatsComponent implements OnInit {
     }
 
     openStudentDetails(studentId: string): void {
-        const selectedDate = this.monthControl.value;
+        const selectedDate = new Date(this.selectedMonth);
         if (!selectedDate) return;
 
         const month = selectedDate.toISOString().slice(0, 7);
@@ -572,6 +573,8 @@ export class StatsComponent implements OnInit {
             month,
             source: 'stats',
             tab: this.selectedTab,
+            sortActive: this.sortActive,
+            sortDirection: this.sortDirection,
         };
     
         const navigationExtras: NavigationExtras = {

@@ -78,18 +78,18 @@ export class StatsFiltersComponent {
     yearControl = new FormControl(new Date().getFullYear());
 
     months = [
-        { value: 0, name: 'Yanvar' },
-        { value: 1, name: 'Fevral' },
-        { value: 2, name: 'Mart' },
-        { value: 3, name: 'Aprel' },
-        { value: 4, name: 'May' },
-        { value: 5, name: 'İyun' },
-        { value: 6, name: 'İyul' },
-        { value: 7, name: 'Avqust' },
-        { value: 8, name: 'Sentyabr' },
-        { value: 9, name: 'Oktyabr' },
-        { value: 10, name: 'Noyabr' },
-        { value: 11, name: 'Dekabr' }
+        { value: 1, name: 'Yanvar' },
+        { value: 2, name: 'Fevral' },
+        { value: 3, name: 'Mart' },
+        { value: 4, name: 'Aprel' },
+        { value: 5, name: 'May' },
+        { value: 6, name: 'İyun' },
+        { value: 7, name: 'İyul' },
+        { value: 8, name: 'Avqust' },
+        { value: 9, name: 'Sentyabr' },
+        { value: 10, name: 'Oktyabr' },
+        { value: 11, name: 'Noyabr' },
+        { value: 12, name: 'Dekabr' }
     ];
     years: number[] = [];
 
@@ -115,13 +115,11 @@ export class StatsFiltersComponent {
     }
 
     emitMonthYear() {
-        const month = this.monthControl.value as number - 1;
+        const month = this.monthControl.value as number;
         const year = this.yearControl.value;
 
-        console.log('Month:', month, 'Year:', year);
         if (month != null && year != null) {
-            const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-            console.log('Emitting month:', monthStr);
+            const monthStr = `${year}-${String(month).padStart(2, '0')}`;
             this.monthUpdated.emit(monthStr);
         }
     }
