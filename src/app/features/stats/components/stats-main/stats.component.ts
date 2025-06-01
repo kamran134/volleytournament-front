@@ -143,6 +143,9 @@ export class StatsComponent implements OnInit {
     darkMode: boolean = false;
     searchString: string = '';
 
+    sortDirection: 'asc' | 'desc' | '' = 'desc';
+    sortActive: string = 'averageScore';
+
     constructor(
         private authService: AuthService,
         private statsService: StatsService,
@@ -239,7 +242,7 @@ export class StatsComponent implements OnInit {
         })
     }
 
-    loadAllStudentsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
+    loadAllStudentsStats(): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -247,8 +250,8 @@ export class StatsComponent implements OnInit {
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
-            sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc',
+            sortColumn: this.sortActive || 'averageScore',
+            sortDirection: this.sortDirection || 'desc',
             code: this.searchString || undefined,
         };
 
@@ -287,7 +290,8 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    loadTeachersStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
+    loadTeachersStats(): void {
+        console.log('sort direction', this.sortDirection);
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -295,8 +299,8 @@ export class StatsComponent implements OnInit {
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
-            sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc',
+            sortColumn: this.sortActive || 'averageScore',
+            sortDirection: this.sortDirection || 'desc',
             code: this.searchString || undefined,
         }
 
@@ -315,7 +319,7 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    loadSchoolsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
+    loadSchoolsStats(): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
             size: this.pageSize,
@@ -323,8 +327,8 @@ export class StatsComponent implements OnInit {
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
-            sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc',
+            sortColumn: this.sortActive || 'averageScore',
+            sortDirection: this.sortDirection || 'desc',
             code: this.searchString || undefined,
         }
 
@@ -342,10 +346,10 @@ export class StatsComponent implements OnInit {
         });
     }
     
-    loadDistrictsStats(sortActive?: string, sortDirection?: 'asc' | 'desc'): void {
+    loadDistrictsStats(): void {
         const params: FilterParams = {
-            sortColumn: sortActive || 'averageScore',
-            sortDirection: sortDirection || 'desc',
+            sortColumn: this.sortActive || 'averageScore',
+            sortDirection: this.sortDirection || 'desc',
             code: this.searchString || undefined,
         }
 
@@ -597,18 +601,21 @@ export class StatsComponent implements OnInit {
 
     onSortChange(sortState: Sort): void {
         this.pageIndex = 0; // Сбрасываем страницу
+        this.sortDirection = sortState.direction;
+        this.sortActive = sortState.active;
         if (sortState.direction) {
             if (this.selectedTab === 'allStudents') {
-                this.loadAllStudentsStats(sortState.active, sortState.direction);
+                this.loadAllStudentsStats();
             }
             else if (this.selectedTab === 'allTeachers') {
-                this.loadTeachersStats(sortState.active, sortState.direction);
+                
+                this.loadTeachersStats();
             }
             else if (this.selectedTab === 'allSchools') {
-                this.loadSchoolsStats(sortState.active, sortState.direction);
+                this.loadSchoolsStats();
             }
             else if (this.selectedTab === 'allDistricts') {
-                this.loadDistrictsStats(sortState.active, sortState.direction);
+                this.loadDistrictsStats();
             }
         } else {
             if (this.selectedTab === 'allStudents') {
