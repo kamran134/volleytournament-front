@@ -132,6 +132,7 @@ export class StatsComponent implements OnInit {
     students: Student[] = [];
     totalCount: number = 0;
     pageSize: number = 100;
+    studentsPageSize: number = 1000;
     pageIndex: number = 0;
     exams: Exam[] = [];
     errorMessage: string = '';
@@ -183,8 +184,9 @@ export class StatsComponent implements OnInit {
             this.sortActive = params['sortActive'] || 'averageScore';
             this.sortDirection = params['sortDirection'] || 'desc';
             this.pageSize = params['pageSize'] ? +params['pageSize'] : 100;
+            this.studentsPageSize = params['studentsPageSize'] ? +params['studentsPageSize'] : 1000;
             this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : 0;
-
+            
 
             if (this.selectedTab === 'students') {
                 this.selectedTabIndex = 0;
@@ -249,7 +251,7 @@ export class StatsComponent implements OnInit {
     loadAllStudentsStats(): void {
         const params: FilterParams = {
             page: this.pageIndex + 1,
-            size: this.pageSize,
+            size: this.studentsPageSize,
             districtIds: this.selectedDistrictIds.join(","),
             schoolIds: this.selectedSchoolIds.join(","),
             teacherIds: this.selectedTeacherIds.join(","),
@@ -578,6 +580,7 @@ export class StatsComponent implements OnInit {
             sortActive: this.sortActive,
             sortDirection: this.sortDirection,
             pageSize: this.pageSize,
+            studentsPageSize: this.studentsPageSize,
             pageIndex: this.pageIndex
         };
     
@@ -591,17 +594,19 @@ export class StatsComponent implements OnInit {
 
     onPageChange(event: PageEvent): void {
         this.pageIndex = event.pageIndex;
-        this.pageSize = event.pageSize;
 
         this.isloading = true;
 
         if (this.selectedTab === 'allStudents') {
+            this.studentsPageSize = event.pageSize;
             this.loadAllStudentsStats();
         }
         else if (this.selectedTab === 'allTeachers') {
+            this.pageSize = event.pageSize;
             this.loadTeachersStats();
         }
         else if (this.selectedTab === 'allSchools') {
+            this.pageSize = event.pageSize;
             this.loadSchoolsStats();
         }
     }

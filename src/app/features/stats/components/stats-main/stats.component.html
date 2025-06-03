@@ -160,8 +160,8 @@
                 [length]="totalCounts.allStudentsTotalCount"
                 [pageIndex]="pageIndex"
                 [showFirstLastButtons]="true"
-                [pageSize]="pageSize"
-                [pageSizeOptions]="[100, 1000]"
+                [pageSize]="studentsPageSize"
+                [pageSizeOptions]="[1000, 10000]"
                 (page)="onPageChange($event)" />
         </div>
 
