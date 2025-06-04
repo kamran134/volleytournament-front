@@ -13,6 +13,12 @@ export class DashboardService {
     
     constructor(private http: HttpClient, private configService: ConfigService) { }
 
+    /**
+     * Fetches users based on the provided parameters.
+     * @param userParams - Parameters to filter users.
+     * @returns An observable containing user data.
+     */
+
     getUsers(userParams: UserParams): Observable<UserData> {
         let url: string = `${this.configService.getApiUrl()}/users`;
         if (userParams.page && userParams.size) {
@@ -36,9 +42,19 @@ export class DashboardService {
         return this.http.get<UserData>(url, { withCredentials: true });
     }
 
+    createUser(user: UserEdit): Observable<UserData> {
+        const url = `${this.configService.getApiUrl()}/users`;
+        return this.http.post<UserData>(url, user, { withCredentials: true });
+    }
+
     editUser(user: UserEdit): Observable<UserData> {
         const url = `${this.configService.getApiUrl()}/users`;
         return this.http.put<any>(url, user, { withCredentials: true });
+    }
+
+    deleteUser(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/users/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 
     getRatingColumns(id: string): Observable<UserSettings> {

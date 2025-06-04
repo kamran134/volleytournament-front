@@ -6,16 +6,19 @@ import { DashboardService } from '../../services/dashboard.service';
 import { UserEditDialogComponent } from '../user-edit-dialog/user-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-users',
     standalone: true,
-    imports: [MatTableModule, MatButtonModule],
+    imports: [MatTableModule, MatButtonModule, CommonModule],
     templateUrl: './users.component.html',
     styleUrl: './users.component.scss'
 })
 export class UsersComponent implements OnInit{
-    displayedColumns: string[] = ['id', 'email', 'role', 'active', 'actions'];
+    displayedColumns: string[] = ['email', 'role', 'active', 'actions'];
     dataSource: User[] = [];
     totalCount: number = 0;
     matSnackConfig: MatSnackBarConfig = {
@@ -23,12 +26,32 @@ export class UsersComponent implements OnInit{
         horizontalPosition: 'center',
         verticalPosition: 'top'
     }
+    authorizedUserRole: string | null = null;
 
-    constructor(private dashboardService: DashboardService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
+    constructor(
+        private dashboardService: DashboardService,
+        private dialog: MatDialog,
+        private snackBar: MatSnackBar,
+        private authService: AuthService,
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
-        // Initial load of users
-        this.loadUsers();
+        // Initial load of users or rating columns based on user role
+        if (this.isAdminOrSuperAdmin()) this.loadUsers();
+        else this.router.navigate(['/admin/rating-columns']);
+    }
+
+    isSuperAdmin(): boolean {
+        return this.authService.isSuperAdmin();
+    }
+
+    isAdminOrSuperAdmin(): boolean {
+        return this.authService.isAdminOrSuperAdmin();
+    }
+
+    isLevelUpUser(user: User): boolean {
+        return user.role === 'superadmin' && !this.isSuperAdmin();
     }
 
     loadUsers(): void {
@@ -43,7 +66,40 @@ export class UsersComponent implements OnInit{
         });
     }
 
+    onUserCreate(): void {
+        const dialogRef = this.dialog.open(UserEditDialogComponent, {
+            width: '1000px',
+            data: {
+                email: '',
+                password: '',
+                role: 'USER', // Default role, can be changed in dialog
+                isApproved: false,
+                firstName: '',
+                lastName: ''
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((result: UserEdit) => {
+            if (result) {
+                this.dashboardService.createUser(result).subscribe({
+                    next: () => {
+                        this.loadUsers();
+                        this.snackBar.open('Yeni istifadəçi yaradıldı', 'Bağla', this.matSnackConfig);
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
     onUserUpdate(user: User): void {
+        if (this.isAdminOrSuperAdmin()) this.openEditDialog(user);   
+    }
+
+    openEditDialog(user: User): void {
         const dialogRef = this.dialog.open(UserEditDialogComponent, {
             width: '1000px',
             data: user

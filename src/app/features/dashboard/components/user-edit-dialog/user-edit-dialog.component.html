@@ -5,12 +5,20 @@
             <mat-label>E-mail</mat-label>
             <input matInput [(ngModel)]='dataSource.email' name="email" required />
         </mat-form-field>
+        <mat-form-field appearance="fill" *ngIf="!dataSource._id">
+            <mat-label>Şifrə</mat-label>
+            <input matInput [(ngModel)]='dataSource.password' name="password" type="password" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill" *ngIf="!dataSource._id">
+            <mat-label>Şifrəni təkrarlayın</mat-label>
+            <input matInput [(ngModel)]='repeatedPassword' name="repeatedPassword" type="password" required />
+        </mat-form-field>
         <mat-form-field appearance="fill">
             <mat-label>Vəzifəsi</mat-label>
             <mat-select [(value)]="dataSource.role" name="role" required>
-                <mat-option value="superadmin">Super admin</mat-option>
                 <mat-option value="admin">Admin</mat-option>
                 <mat-option value="moderator">Moderator</mat-option>
+                <mat-option value="teacher">Müəllim</mat-option>
                 <mat-option value="user">İstifadəçi</mat-option>
             </mat-select>
         </mat-form-field>

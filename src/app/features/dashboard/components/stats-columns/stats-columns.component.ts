@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface Column {
     key: string;
@@ -103,18 +104,24 @@ export class StatsColumnsComponent implements OnInit{
         { key: 'averageScore', label: 'Orta balı', selected: false }
     ];
 
-    constructor(private dashboardService: DashboardService, private snackBar: MatSnackBar) {}
+    userId: string = '';
+
+    constructor(private authService: AuthService, private dashboardService: DashboardService, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
+        // Assuming userId is set from a service or route parameter
+        this.userId = this.authService.getUserId() || ''; // Get the current user's ID from the auth service
+        if (!this.userId) {
+            console.error('User ID is not set. Please ensure the user is authenticated.');
+            return;
+        }
         // Initialization logic can go here
         this.loadColumns();
         
     }
 
     loadColumns(): void {
-        const userId: string = localStorage.getItem('id') || '';
-        
-        this.dashboardService.getRatingColumns(userId).subscribe({
+        this.dashboardService.getRatingColumns(this.userId).subscribe({
             next: (settings: UserSettings) => {
                 this.dataSource = settings;
                 // Set selected state based on the loaded settings
@@ -158,7 +165,7 @@ export class StatsColumnsComponent implements OnInit{
             .map(column => column.key);
 
         const userSettings: UserSettings = {
-            userId: this.dataSource.userId || '', // Ensure userId is set
+            userId: this.userId || '', // Ensure userId is set
             studentCollumns: selectedStudentColumns,
             allStudentCollumns: selectedAllStudentColumns,
             allTeacherCollumns: selectedTeacherColumns,
