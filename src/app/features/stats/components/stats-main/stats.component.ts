@@ -167,7 +167,11 @@ export class StatsComponent implements OnInit {
         if (typeof localStorage !== 'undefined') {
             this.darkMode = localStorage.getItem('theme') === 'true';
         }
-        if (typeof localStorage !== 'undefined') {
+        if (this.authService.getUserId() === 'undefined') {
+            this.router.navigate(['/login']);
+            return;
+        }
+        else {
             this.loadSettings();
         }
 
@@ -204,7 +208,7 @@ export class StatsComponent implements OnInit {
 
     // CHANGE: Метод для загрузки настроек из localStorage
     private loadSettings() {
-        this.dashboardService.getRatingColumns(localStorage.getItem('id') || '')
+        this.dashboardService.getRatingColumns(this.authService.getUserId() || '')
         .subscribe({
             next: (settings: UserSettings) => {
                 this.monthStudentColumns = settings.studentCollumns || this.availableStudentColumns;
