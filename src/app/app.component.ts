@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
     title: string = 'İbtidai Siniflərin İnkişaf Metodikası';
     darkMode: boolean = false;
     animationState: string = 'default';
+    userId: string | null = null;
 
     constructor(
         private matIconRegistry: MatIconRegistry, 
@@ -50,17 +51,14 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         if (typeof localStorage !== 'undefined') {
+            this.userId = this.authService.getUserId();
             this.darkMode = localStorage.getItem('theme') === 'true';
             this.setMode();
         }
     }
 
-    isAdminOrSuperAdmin(): boolean {
-        return this.authService.isAdminOrSuperAdmin();
-    }
-
     isAuthorized(): boolean {
-        return this.authService.getRole() !== '' && this.authService.getRole() !== null;
+        return this.authService.getToken() !== null;
     }
 
     darkModeToogleChanged(): void {
@@ -90,11 +88,11 @@ export class AppComponent implements OnInit {
     }
 
     goToAdminPanel(): void {
-        if (this.isAdminOrSuperAdmin()) {
-            this.router.navigate(['/admin']);
-        } else {
-            this.router.navigate(['/']);
+        if (!this.isAuthorized()) {
+            this.router.navigate(['/login']);
+            return;
         }
+        this.router.navigate(['/admin']);
     }
 
     logInOut(): void {
@@ -102,7 +100,5 @@ export class AppComponent implements OnInit {
             this.authService.logout();
         else 
             this.router.navigate(['/login']);
-
-        console.log(this.isAuthorized());
     }
 }

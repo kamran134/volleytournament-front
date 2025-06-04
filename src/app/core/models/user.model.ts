@@ -14,6 +14,7 @@ export interface User {
 export interface UserEdit {
     _id: string;
     email: string;
+    password?: string;
     role: "superadmin" | "admin" | "moderator" | "user";
     isApproved: boolean;
 }

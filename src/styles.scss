@@ -91,6 +91,11 @@ body {
             background-color: $backgroundColorGreen !important;
             color: $white !important;
         }
+
+        .mat-mdc-dialog-surface {
+            //background-color: $backgroundColor;
+            color: $white !important;
+        }
     }
 
     .mdc-list-item {
@@ -225,4 +230,13 @@ mat-form-field {
 .mat-edit-button {
     background-color: rgb(231, 107, 19) !important;
     margin-right: 15px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-start;
+
+    > button {
+        margin-right: 10px;
+    }
 }
