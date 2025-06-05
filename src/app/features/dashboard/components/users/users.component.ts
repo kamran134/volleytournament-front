@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-users',
@@ -97,6 +98,28 @@ export class UsersComponent implements OnInit{
 
     onUserUpdate(user: User): void {
         if (this.isAdminOrSuperAdmin()) this.openEditDialog(user);   
+    }
+
+    onUserDelete(user: User): void {
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'İstifadəçini silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe((confirmed: boolean) => {
+            if (confirmed && this.isAdminOrSuperAdmin()) {
+                this.dashboardService.deleteUser(user._id).subscribe({
+                    next: () => {
+                        this.loadUsers();
+                        this.snackBar.open('İstifadəçi silindi', 'Bağla', this.matSnackConfig);
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
     }
 
     openEditDialog(user: User): void {

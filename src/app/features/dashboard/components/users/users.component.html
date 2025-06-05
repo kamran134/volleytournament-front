@@ -17,7 +17,7 @@
         <td mat-cell *matCellDef="let user">
             <div class="action-buttons" *ngIf="!isLevelUpUser(user)">
                 <button mat-raised-button color="primary" (click)="onUserUpdate(user)">Redaktə</button>
-                <button mat-raised-button color="warn" *ngIf="user.role != 'superadmin'">Sil</button>
+                <button mat-raised-button color="warn" (click)="onUserDelete(user)" *ngIf="user.role != 'superadmin'">Sil</button>
             </div>
         </td>
     </ng-container>

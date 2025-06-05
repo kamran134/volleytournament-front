@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { ConfigService } from './config.service';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -13,39 +13,64 @@ export class AuthService {
     private router = inject(Router);
     private platformId = inject(PLATFORM_ID);
 
-    private authStatus = new BehaviorSubject<boolean>(this.hasToken());
     // private userRole: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('role') ? localStorage.getItem('role') : '';
-    private userId: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('id') ? localStorage.getItem('id') : '';
-    private userRole: string | null = null;
+    // private userId: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('id') ? localStorage.getItem('id') : '';
+    private authStatus = new BehaviorSubject<boolean>(this.hasToken());
+    private userId = new BehaviorSubject<string | null>(
+        isPlatformBrowser(this.platformId) ? localStorage.getItem('id') : null
+    );
+    private userRole = new BehaviorSubject<string | null>(
+        isPlatformBrowser(this.platformId) ? localStorage.getItem('role') : null
+    );
 
     get isLoggedIn$(): Observable<boolean> {
         return this.authStatus.asObservable();
     }
 
+    get userRole$(): Observable<string | null> {
+        return this.userRole.asObservable();
+    }
+
+    get isAdminOrSuperAdmin$(): Observable<boolean> {
+        return this.userRole$.pipe(
+            map(role => role === 'admin' || role === 'superadmin')
+        );
+    }
+
     getRole(): string | null {
-        if (!this.userRole) {
-            this.userRole = this.getRoleFromToken();
+        if (!this.userRole.value) {
+            this.userRole.next(this.getRoleFromToken());
         }
-        return this.userRole;
+        return this.userRole.value;
     }
 
     getUserId(): string | null {
-        if (!this.userId) {
-            this.userId = this.getUserIdFromToken();
+        if (!this.userId.value) {
+            this.userId.next(this.getUserIdFromToken());
         }
-        return this.userId;
+        return this.userId.value;
+    }
+
+    updateUserRole(role: string | null) {
+        this.userRole.next(role);
+        if (isPlatformBrowser(this.platformId)) {
+            if (role) {
+                localStorage.setItem('role', role);
+            } else {
+                localStorage.removeItem('role');
+            }
+        }
     }
 
     isAdmin(): boolean {
-        return this.userRole === 'admin';
+        return this.userRole.value === 'admin';
     }
 
     isSuperAdmin(): boolean {
-        return this.userRole === 'superadmin';
+        return this.userRole.value === 'superadmin';
     }
 
     isAdminOrSuperAdmin(): boolean {
-        console.log('isAdminOrSuperAdmin called', this.isAdmin(), this.isSuperAdmin());
         return this.isAdmin() || this.isSuperAdmin();
     }
 
@@ -88,16 +113,16 @@ export class AuthService {
     }
 
     login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-        return this.http.post<{ token: string, role: string, id: string, message: string }>(
+        return this.http.post<{ token: string }>(
             `${this.configService.getAuthUrl()}/login`,
-            credentials, 
+            credentials,
             { withCredentials: true }).pipe(
-                tap (response => {
+                tap(response => {
                     localStorage.setItem('token', response.token);
                     this.authStatus.next(true);
                     this.router.navigate(['/admin']);
                 })
-        );
+            );
     }
 
     register(credentials: { email: string; password: string; confirmPassword: string }): Observable<any> {
@@ -124,7 +149,7 @@ export class AuthService {
                     if (isPlatformBrowser(this.platformId)) {
                         localStorage.removeItem('token');
                     }
-                    this.userRole = null;
+                    this.userRole.next(null);
                     this.authStatus.next(false);
                     this.router.navigate(['/login']);
                 })
@@ -137,8 +162,8 @@ export class AuthService {
             const token = this.getToken();
             if (token) {
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                this.userRole = payload.role || null;
-                this.userId = payload.userId || null;
+                this.userRole.next(payload.role || null);
+                this.userId.next(payload.userId || null);
             }
         }
     }

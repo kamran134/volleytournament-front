@@ -77,7 +77,6 @@ export class StatsComponent implements OnInit {
     @ViewChild('schoolSort') schoolSort!: MatSort;
     @ViewChild('studentSort') studentSort!: MatSort;
     @ViewChild('districtSort') districtSort!: MatSort;
-    // monthControl = new FormControl(new Date());
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
         horizontalPosition: 'center',
@@ -146,6 +145,8 @@ export class StatsComponent implements OnInit {
     sortDirection: 'asc' | 'desc' | '' = 'desc';
     sortActive: string = 'averageScore';
 
+    isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
+
     constructor(
         private authService: AuthService,
         private statsService: StatsService,
@@ -202,9 +203,10 @@ export class StatsComponent implements OnInit {
         });
     }
 
-    isAdminOrSuperAdmin(): boolean {
-        return this.authService.isAdminOrSuperAdmin();
-    }
+    // isAdminOrSuperAdmin(): boolean {
+    //     console.log('Checking if user is admin or superadmin BAAAA');
+    //     return this.authService.isAdminOrSuperAdmin();
+    // }
 
     // CHANGE: Метод для загрузки настроек из localStorage
     private loadSettings() {
@@ -556,10 +558,11 @@ export class StatsComponent implements OnInit {
     onExamSelectChanged(exam: Exam) {
         this.selectedExam = exam;
         if (this.selectedTab === 'students') {
-            this.loadStudentsStats();
+            console.log(`Exam selected: ${this.matDateFormatPipe.transform(exam.date)}`);
             this.developingStudentsLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə inkişaf edən şagirdlər`;
             this.studentsOfMonthLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə ayın şagirdləri`;
             this.studentsOfMonthByRepublicLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə respublika üzrə ayın şagirdləri`;
+            this.loadStudentsStats();
         }
         else if (this.selectedTab === 'allStudents') {
             this.loadAllStudentsStats();
