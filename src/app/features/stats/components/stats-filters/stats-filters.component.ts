@@ -61,6 +61,7 @@ export class StatsFiltersComponent {
     @Input() selectedTeacherIds: string[] = [];
     @Input() selectedGrades: number[] = [];
     @Input() selectedExam: Exam | undefined = undefined;
+    @Input() selectedMonth: string = new Date().getFullYear() + '-0';
 
     @Output() monthUpdated = new EventEmitter<string>();
     @Output() districtChanged = new EventEmitter<string[]>();
@@ -74,11 +75,12 @@ export class StatsFiltersComponent {
     private searchTerms = new Subject<string>();
 
     // Контролы для месяца и года
-    monthControl = new FormControl(new Date().getMonth() + 1); // 0-11
+    monthControl = new FormControl(Number(this.selectedMonth.substring(5))); // 0-11
     yearControl = new FormControl(new Date().getFullYear());
     examControl = new FormControl<Exam | undefined>(undefined);
 
     months = [
+        { value: 0, name: 'Seçin' }, // Добавляем опцию "Выберите"
         { value: 1, name: 'Yanvar' },
         { value: 2, name: 'Fevral' },
         { value: 3, name: 'Mart' },
@@ -99,6 +101,7 @@ export class StatsFiltersComponent {
         this.setupMonthYearChange();
         this.setupYears();
         this.setupExamChange();
+        console.log('selected month:', this.monthControl.value);
     }
 
     setupYears() {

@@ -108,9 +108,6 @@ export class StatsComponent implements OnInit {
     teacherColumns: string[] = [];
     schoolColumns: string[] = [];
     districtColumns: string[] = [];
-    // developingStudentsLabel: string = 'Cari ayda inkişaf edən şagirdlər';
-    // studentsOfMonthLabel: string = 'Cari ayın şagirdləri';
-    // studentsOfMonthByRepublicLabel: string = 'Respublika üzrə cari ayın şagirdləri';
     developingStudentsLabel$ = new BehaviorSubject<string>('Cari ayda inkişaf edən şagirdlər');
     studentsOfMonthLabel$ = new BehaviorSubject<string>('Cari ayın şagirdləri');
     studentsOfMonthByRepublicLabel$ = new BehaviorSubject<string>('Respublika üzrə cari ayın şagirdləri');
@@ -122,12 +119,13 @@ export class StatsComponent implements OnInit {
     private readonly availableSchoolColumns: string[] = ['code', 'name', 'district', 'score', 'averageScore'];
     private readonly availableDistrictColumns: string[] = ['code', 'name', 'score', 'averageScore'];
 
-    selectedMonth: string = new Date().getMonth() + '-' + new Date().getFullYear();
+    selectedMonth: string = new Date().getFullYear() + '-0'; // Формат: 'MM-YYYY-DD', где MM - месяц, YYYY - год, DD - день
     selectedDistrictIds: string[] = [];
     selectedSchoolIds: string[] = [];
     selectedTeacherIds: string[] = [];
     selectedGrades: number[] = [];
     selectedExam: Exam | undefined = undefined;
+    selectedExamId: string = '';
     selectedTabIndex: number = 0;
     districts: District[] = [];
     schools: School[] = [];
@@ -165,7 +163,6 @@ export class StatsComponent implements OnInit {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private monthNamePipe: MonthNamePipe,
-        private cdx: ChangeDetectorRef,
         private dashboardService: DashboardService
     ) { }
 
@@ -174,7 +171,6 @@ export class StatsComponent implements OnInit {
             if (isLoggedIn) {
                 this.authorizedUserRole = this.authService.getRole();
                 this.loadSettings();
-
                 this.loadExams();
                 this.loadDistricts();
                 this.route.queryParams.subscribe((params: Params) => {
@@ -182,8 +178,8 @@ export class StatsComponent implements OnInit {
                     this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
                     this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
                     this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
-                    this.selectedExam = params['examId'] || '';
-                    this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
+                    this.selectedExamId = params['examId'] || '';
+                    this.selectedMonth = params['month'] || new Date().getFullYear() + '-0';
                     this.selectedTab = params['tab'] || 'students';
                     this.sortActive = params['sortActive'] || 'averageScore';
                     this.sortDirection = params['sortDirection'] || 'desc';
@@ -191,13 +187,18 @@ export class StatsComponent implements OnInit {
                     this.studentsPageSize = params['studentsPageSize'] ? +params['studentsPageSize'] : 1000;
                     this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : 0;
 
-
                     if (this.selectedTab === 'students') {
                         this.selectedTabIndex = 0;
                         this.loadStudentsStats();
                     } else if (this.selectedTab === 'allStudents') {
                         this.selectedTabIndex = 1;
                         this.loadAllStudentsStats();
+                    }
+
+                    if (this.selectedMonth.substring(5) !== '0') {
+                        this.developingStudentsLabel$.next(`${this.monthNamePipe.transform(this.selectedMonth)} ayında inkişaf edən şagirdlər`);
+                        this.studentsOfMonthLabel$.next(`${this.monthNamePipe.transform(this.selectedMonth)} ayında ayın şagirdləri`);
+                        this.studentsOfMonthByRepublicLabel$.next(`${this.monthNamePipe.transform(this.selectedMonth)} ayında respublika üzrə ayın şagirdləri`);
                     }
                 });
             }
@@ -234,7 +235,7 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             code: this.searchString || undefined,
-            examId: this.selectedExam ? this.selectedExam._id : undefined,
+            examId: this.selectedExamId ?? undefined,
             month: this.selectedMonth,
         };
 
@@ -443,6 +444,14 @@ export class StatsComponent implements OnInit {
             .subscribe({
                 next: (response: ExamData) => {
                     this.exams = response.data;
+                    if (this.selectedExamId) {
+                        this.selectedExam = this.exams.find(exam => exam._id === this.selectedExamId);
+                        if (this.selectedExam) {
+                            this.developingStudentsLabel$.next(`${this.selectedExam.name} üzrə inkişaf edən şagirdlər`);
+                            this.studentsOfMonthLabel$.next(`${this.selectedExam.name} üzrə ayın şagirdləri`);
+                            this.studentsOfMonthByRepublicLabel$.next(`${this.selectedExam.name} üzrə respublika üzrə ayın şagirdləri`);
+                        }
+                    }
                 },
                 error: (err: any) => {
                     this.errorMessage = '';
@@ -470,6 +479,7 @@ export class StatsComponent implements OnInit {
     updateMonth(month: string) {
         this.selectedMonth = month;
         this.selectedExam = undefined;
+        this.selectedExamId = '';
         this.loadStudentsStats();
         this.developingStudentsLabel$.next(`${this.monthNamePipe.transform(month)} ayında inkişaf edən şagirdlər`);
         this.studentsOfMonthLabel$.next(`${this.monthNamePipe.transform(month)} ayında ayın şagirdləri`);
@@ -555,6 +565,8 @@ export class StatsComponent implements OnInit {
 
     onExamSelectChanged(exam: Exam) {
         this.selectedExam = exam;
+        this.selectedExamId = exam._id;
+        this.selectedMonth = `${new Date().getFullYear()}-0`; // Сбрасываем месяц при смене экзамена
         if (this.selectedTab === 'students') {
             this.loadStudentsStats();
             this.developingStudentsLabel$.next(`${exam.name} üzrə inkişaf edən şagirdlər`);
@@ -567,10 +579,10 @@ export class StatsComponent implements OnInit {
     }
 
     openStudentDetails(studentId: string): void {
-        const selectedDate = new Date(this.selectedMonth);
-        if (!selectedDate) return;
+        // const selectedDate = new Date(this.selectedMonth);
+        // if (!selectedDate) return;
 
-        const month = selectedDate.toISOString().slice(0, 7);
+        // const month = selectedDate.toISOString().slice(0, 7);
 
         const queryParams = {
             districtIds: this.selectedDistrictIds.join(","),
@@ -578,7 +590,7 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             examId: this.selectedExam ? this.selectedExam._id : undefined,
-            month,
+            month: this.selectedMonth,
             source: 'stats',
             tab: this.selectedTab,
             sortActive: this.sortActive,
