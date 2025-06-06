@@ -28,6 +28,10 @@ export class UsersComponent implements OnInit{
         verticalPosition: 'top'
     }
     authorizedUserRole: string | null = null;
+    
+    isSuperAdmin$ = this.authService.isSuperAdmin$;
+    isLevelUpUser$ = this.authService.isLevelUpUser$;
+    isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
 
     constructor(
         private dashboardService: DashboardService,
@@ -39,20 +43,20 @@ export class UsersComponent implements OnInit{
 
     ngOnInit(): void {
         // Initial load of users or rating columns based on user role
-        if (this.isAdminOrSuperAdmin()) this.loadUsers();
-        else this.router.navigate(['/admin/rating-columns']);
-    }
-
-    isSuperAdmin(): boolean {
-        return this.authService.isSuperAdmin();
-    }
-
-    isAdminOrSuperAdmin(): boolean {
-        return this.authService.isAdminOrSuperAdmin();
+        this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+            if (isLoggedIn) {
+                this.authorizedUserRole = this.authService.getRole();
+                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadUsers();
+                else this.router.navigate(['/admin/rating-columns']);
+            } else {
+                this.router.navigate(['/login']);
+            }
+        });
+        
     }
 
     isLevelUpUser(user: User): boolean {
-        return user.role === 'superadmin' && !this.isSuperAdmin();
+        return user.role === 'superadmin' && this.authorizedUserRole !== 'superadmin';
     }
 
     loadUsers(): void {
@@ -97,7 +101,7 @@ export class UsersComponent implements OnInit{
     }
 
     onUserUpdate(user: User): void {
-        if (this.isAdminOrSuperAdmin()) this.openEditDialog(user);   
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(user);   
     }
 
     onUserDelete(user: User): void {
@@ -107,7 +111,7 @@ export class UsersComponent implements OnInit{
         });
 
         confirmRef.afterClosed().subscribe((confirmed: boolean) => {
-            if (confirmed && this.isAdminOrSuperAdmin()) {
+            if (confirmed && this.isAdminOrSuperAdmin$) {
                 this.dashboardService.deleteUser(user._id).subscribe({
                     next: () => {
                         this.loadUsers();

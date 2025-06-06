@@ -4,7 +4,7 @@
             <span>İdarəetmə paneli</span>
         </mat-toolbar>
         <mat-nav-list>
-            <a mat-list-item routerLink="/admin/users" *ngIf="isAdminOrSuperAdmin()">
+            <a mat-list-item routerLink="/admin/users" *ngIf="isAdminOrSuperAdmin$ | async">
                 <mat-icon matListIcon>people</mat-icon>
                 <span>İstifadəçilər</span>
             </a>

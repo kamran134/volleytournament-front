@@ -22,9 +22,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     styleUrl: './admin-layout.component.scss'
 })
 export class AdminLayoutComponent {
-    constructor(private authService: AuthService) { }
+    isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
     
-    isAdminOrSuperAdmin(): boolean {
-        return this.authService.isAdminOrSuperAdmin();
-    }
+    constructor(private authService: AuthService) { }
 }

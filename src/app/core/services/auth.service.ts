@@ -31,9 +31,21 @@ export class AuthService {
         return this.userRole.asObservable();
     }
 
+    get isSuperAdmin$(): Observable<boolean> {
+        return this.userRole$.pipe(
+            map(role => role === 'superadmin')
+        );
+    }
+
     get isAdminOrSuperAdmin$(): Observable<boolean> {
         return this.userRole$.pipe(
             map(role => role === 'admin' || role === 'superadmin')
+        );
+    }
+
+    get isLevelUpUser$(): Observable<boolean> {
+        return this.userRole$.pipe(
+            map(role => role === 'superadmin' && !this.isSuperAdmin$)
         );
     }
 
