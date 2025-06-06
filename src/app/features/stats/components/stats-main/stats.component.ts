@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { StatsService } from '../../services/stats.service';
@@ -41,6 +41,7 @@ import { ExcelService } from '../../../../core/services/excel.service';
 import { MomentDateFormatPipe } from '../../../../shared/pipes/moment-date-format.pipe';
 import { DashboardService } from '../../../dashboard/services/dashboard.service';
 import { UserSettings } from '../../../../core/models/settings.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-stats',
@@ -107,9 +108,12 @@ export class StatsComponent implements OnInit {
     teacherColumns: string[] = [];
     schoolColumns: string[] = [];
     districtColumns: string[] = [];
-    developingStudentsLabel: string = 'Cari ayda inkişaf edən şagirdlər';
-    studentsOfMonthLabel: string = 'Cari ayın şagirdləri';
-    studentsOfMonthByRepublicLabel: string = 'Respublika üzrə cari ayın şagirdləri';
+    // developingStudentsLabel: string = 'Cari ayda inkişaf edən şagirdlər';
+    // studentsOfMonthLabel: string = 'Cari ayın şagirdləri';
+    // studentsOfMonthByRepublicLabel: string = 'Respublika üzrə cari ayın şagirdləri';
+    developingStudentsLabel$ = new BehaviorSubject<string>('Cari ayda inkişaf edən şagirdlər');
+    studentsOfMonthLabel$ = new BehaviorSubject<string>('Cari ayın şagirdləri');
+    studentsOfMonthByRepublicLabel$ = new BehaviorSubject<string>('Respublika üzrə cari ayın şagirdləri');
 
     private readonly availableStudentColumns: string[] = [
         'code', 'lastName', 'firstName', 'middleName', 'grade', 'teacher', 'school', 'district', 'score', 'averageScore'
@@ -146,6 +150,7 @@ export class StatsComponent implements OnInit {
     sortActive: string = 'averageScore';
 
     isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
+    authorizedUserRole: string | null = null;
 
     constructor(
         private authService: AuthService,
@@ -160,69 +165,63 @@ export class StatsComponent implements OnInit {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private monthNamePipe: MonthNamePipe,
-        private matDateFormatPipe: MomentDateFormatPipe,
+        private cdx: ChangeDetectorRef,
         private dashboardService: DashboardService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
-        if (typeof localStorage !== 'undefined') {
-            this.darkMode = localStorage.getItem('theme') === 'true';
-        }
-        if (this.authService.getUserId() === 'undefined') {
-            this.router.navigate(['/login']);
-            return;
-        }
-        else {
-            this.loadSettings();
-        }
+        this.authService.isLoggedIn$.subscribe(isLoggedIn => {
+            if (isLoggedIn) {
+                this.authorizedUserRole = this.authService.getRole();
+                this.loadSettings();
 
-        this.loadExams();
-        this.loadDistricts();
-        this.route.queryParams.subscribe((params: Params) => {
-            this.selectedDistrictIds = params['districtIds'] ? params['districtIds'].split(',') : [];
-            this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
-            this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
-            this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
-            this.selectedExam = params['examId'] || '';
-            this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
-            this.selectedTab = params['tab'] || 'students';
-            this.sortActive = params['sortActive'] || 'averageScore';
-            this.sortDirection = params['sortDirection'] || 'desc';
-            this.pageSize = params['pageSize'] ? +params['pageSize'] : 100;
-            this.studentsPageSize = params['studentsPageSize'] ? +params['studentsPageSize'] : 1000;
-            this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : 0;
-            
+                this.loadExams();
+                this.loadDistricts();
+                this.route.queryParams.subscribe((params: Params) => {
+                    this.selectedDistrictIds = params['districtIds'] ? params['districtIds'].split(',') : [];
+                    this.selectedSchoolIds = params['schoolIds'] ? params['schoolIds'].split(',') : [];
+                    this.selectedTeacherIds = params['teacherIds'] ? params['teacherIds'].split(',') : [];
+                    this.selectedGrades = params['grades'] ? params['grades'].split(',').map(Number) : [];
+                    this.selectedExam = params['examId'] || '';
+                    this.selectedMonth = params['month'] || new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
+                    this.selectedTab = params['tab'] || 'students';
+                    this.sortActive = params['sortActive'] || 'averageScore';
+                    this.sortDirection = params['sortDirection'] || 'desc';
+                    this.pageSize = params['pageSize'] ? +params['pageSize'] : 100;
+                    this.studentsPageSize = params['studentsPageSize'] ? +params['studentsPageSize'] : 1000;
+                    this.pageIndex = params['pageIndex'] ? +params['pageIndex'] : 0;
 
-            if (this.selectedTab === 'students') {
-                this.selectedTabIndex = 0;
-                this.loadStudentsStats();
-            } else if (this.selectedTab === 'allStudents') {
-                this.selectedTabIndex = 1;
-                this.loadAllStudentsStats();
+
+                    if (this.selectedTab === 'students') {
+                        this.selectedTabIndex = 0;
+                        this.loadStudentsStats();
+                    } else if (this.selectedTab === 'allStudents') {
+                        this.selectedTabIndex = 1;
+                        this.loadAllStudentsStats();
+                    }
+                });
+            }
+            else {
+                this.router.navigate(['/login']);
             }
         });
     }
 
-    // isAdminOrSuperAdmin(): boolean {
-    //     console.log('Checking if user is admin or superadmin BAAAA');
-    //     return this.authService.isAdminOrSuperAdmin();
-    // }
-
     // CHANGE: Метод для загрузки настроек из localStorage
     private loadSettings() {
         this.dashboardService.getRatingColumns(this.authService.getUserId() || '')
-        .subscribe({
-            next: (settings: UserSettings) => {
-                this.monthStudentColumns = settings.studentCollumns || this.availableStudentColumns;
-                this.studentColumns = settings.allStudentCollumns || this.availableStudentColumns;
-                this.teacherColumns = settings.allTeacherCollumns || this.availableTeacherColumns;
-                this.schoolColumns = settings.allSchoolCollumns || this.availableSchoolColumns;
-                this.districtColumns = settings.allDistrictCollumns || this.availableDistrictColumns;
-            },
-            error: (error: Error) => {
-                console.error('Error loading settings:', error);
-            }
-        });
+            .subscribe({
+                next: (settings: UserSettings) => {
+                    this.monthStudentColumns = settings.studentCollumns || this.availableStudentColumns;
+                    this.studentColumns = settings.allStudentCollumns || this.availableStudentColumns;
+                    this.teacherColumns = settings.allTeacherCollumns || this.availableTeacherColumns;
+                    this.schoolColumns = settings.allSchoolCollumns || this.availableSchoolColumns;
+                    this.districtColumns = settings.allDistrictCollumns || this.availableDistrictColumns;
+                },
+                error: (error: Error) => {
+                    console.error('Error loading settings:', error);
+                }
+            });
     }
 
     loadStudentsStats(): void {
@@ -238,14 +237,11 @@ export class StatsComponent implements OnInit {
             examId: this.selectedExam ? this.selectedExam._id : undefined,
             month: this.selectedMonth,
         };
-        
+
         this.statsService.getStudentsStats(this.selectedMonth, params).subscribe({
             next: (response) => {
                 this.isloading = false;
-                this.stats = {...response};
-                this.developingStudentsLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında inkişaf edən şagirdlər`;
-                this.studentsOfMonthLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında ayın şagirdləri`;
-                this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(this.selectedMonth, true)} ayında respublika üzrə ayın şagirdləri`;
+                this.stats = { ...response };
             },
             error: (error: Error) => {
                 this.isloading = false;
@@ -318,8 +314,10 @@ export class StatsComponent implements OnInit {
         this.teacherService.getTeachers(params).subscribe({
             next: (response: TeacherData) => {
                 this.isloading = false;
-                this.stats = { ...this.stats, teachers: response.data.filter((teacher: Teacher) => teacher.active &&
-                    teacher.school && teacher.school.active) };
+                this.stats = {
+                    ...this.stats, teachers: response.data.filter((teacher: Teacher) => teacher.active &&
+                        teacher.school && teacher.school.active)
+                };
                 this.totalCounts.allTeachersTotalCount = response.totalCount;
                 this.teachersDataSource.data = this.stats.teachers || [];
             },
@@ -356,7 +354,7 @@ export class StatsComponent implements OnInit {
             }
         });
     }
-    
+
     loadDistrictsStats(): void {
         const params: FilterParams = {
             sortColumn: this.sortActive || 'averageScore',
@@ -367,7 +365,7 @@ export class StatsComponent implements OnInit {
         this.districtService.getDistricts(params).subscribe({
             next: (response: DistrictData) => {
                 this.isloading = false;
-                this.stats = {...this.stats, districts: response.data};
+                this.stats = { ...this.stats, districts: response.data };
                 this.totalCounts.allDistrictsTotalCount = response.totalCount;
                 this.districtsDataSource.data = this.stats.districts || [];
             },
@@ -391,15 +389,15 @@ export class StatsComponent implements OnInit {
         }
 
         this.teacherService.getTeachersForFilter(params)
-        .subscribe({
-            next: (response: TeacherData) => {
-                this.teachers = response.data;
-            },
-            error: (error: Error) => {
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-        
+            .subscribe({
+                next: (response: TeacherData) => {
+                    this.teachers = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
+
     }
 
     loadSchools(): void {
@@ -412,15 +410,15 @@ export class StatsComponent implements OnInit {
         }
 
         this.schoolService.getSchoolsForFilter(params)
-        .subscribe({
-            next: (response: SchoolData) => {
-                this.schools = response.data;
-            },
-            error: (error: Error) => {
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
-        
+            .subscribe({
+                next: (response: SchoolData) => {
+                    this.schools = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
+
     }
 
     loadDistricts(): void {
@@ -428,28 +426,28 @@ export class StatsComponent implements OnInit {
             sortColumn: 'name',
             sortDirection: 'asc'
         }
-        
+
         this.districtService.getDistricts(params)
-        .subscribe({
-            next: (response: DistrictData) => {
-                this.districts = response.data;
-            },
-            error: (error: Error) => {
-                this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-            }
-        });
+            .subscribe({
+                next: (response: DistrictData) => {
+                    this.districts = response.data;
+                },
+                error: (error: Error) => {
+                    this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                }
+            });
     }
 
     loadExams(): void {
         this.examService.getExamsForFilter()
-        .subscribe({
-            next: (response: ExamData) => {
-                this.exams = response.data;
-            },
-            error: (err: any) => {
-                this.errorMessage = '';
-            }
-        });
+            .subscribe({
+                next: (response: ExamData) => {
+                    this.exams = response.data;
+                },
+                error: (err: any) => {
+                    this.errorMessage = '';
+                }
+            });
     }
 
 
@@ -473,9 +471,9 @@ export class StatsComponent implements OnInit {
         this.selectedMonth = month;
         this.selectedExam = undefined;
         this.loadStudentsStats();
-        this.developingStudentsLabel = `${this.monthNamePipe.transform(month)} ayında inkişaf edən şagirdlər`;
-        this.studentsOfMonthLabel = `${this.monthNamePipe.transform(month)} ayında ayın şagirdləri`;
-        this.studentsOfMonthByRepublicLabel = `${this.monthNamePipe.transform(month)} ayında respublika üzrə ayın şagirdləri`;
+        this.developingStudentsLabel$.next(`${this.monthNamePipe.transform(month)} ayında inkişaf edən şagirdlər`);
+        this.studentsOfMonthLabel$.next(`${this.monthNamePipe.transform(month)} ayında ayın şagirdləri`);
+        this.studentsOfMonthByRepublicLabel$.next(`${this.monthNamePipe.transform(month)} ayında respublika üzrə ayın şagirdləri`);
     }
 
     onTabChange(event: any): void {
@@ -558,11 +556,10 @@ export class StatsComponent implements OnInit {
     onExamSelectChanged(exam: Exam) {
         this.selectedExam = exam;
         if (this.selectedTab === 'students') {
-            console.log(`Exam selected: ${this.matDateFormatPipe.transform(exam.date)}`);
-            this.developingStudentsLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə inkişaf edən şagirdlər`;
-            this.studentsOfMonthLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə ayın şagirdləri`;
-            this.studentsOfMonthByRepublicLabel = `${this.matDateFormatPipe.transform(exam.date)} tarixli imtahan üzrə respublika üzrə ayın şagirdləri`;
             this.loadStudentsStats();
+            this.developingStudentsLabel$.next(`${exam.name} üzrə inkişaf edən şagirdlər`);
+            this.studentsOfMonthLabel$.next(`${exam.name} üzrə ayın şagirdləri`);
+            this.studentsOfMonthByRepublicLabel$.next(`${exam.name} üzrə respublika üzrə ayın şagirdləri`);
         }
         else if (this.selectedTab === 'allStudents') {
             this.loadAllStudentsStats();
@@ -590,12 +587,12 @@ export class StatsComponent implements OnInit {
             studentsPageSize: this.studentsPageSize,
             pageIndex: this.pageIndex
         };
-    
+
         const navigationExtras: NavigationExtras = {
             queryParams: queryParams,
             replaceUrl: true
         };
-    
+
         this.router.navigate(['/students', studentId], navigationExtras);
     }
 
@@ -627,7 +624,7 @@ export class StatsComponent implements OnInit {
                 this.loadAllStudentsStats();
             }
             else if (this.selectedTab === 'allTeachers') {
-                
+
                 this.loadTeachersStats();
             }
             else if (this.selectedTab === 'allSchools') {

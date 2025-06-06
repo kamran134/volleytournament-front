@@ -30,7 +30,7 @@
     <mat-tab label="Ayın şagirdləri" [className]="darkMode ? 'dark-mode' : 'light-mode'">
         <div class="stats-container" *ngIf="!isloading">
             <app-student-rating-table
-                [title]="developingStudentsLabel"
+                [title]="(developingStudentsLabel$ | async) || 'Cari ayda inkişaf edən şagirdlər'"
                 [tableName]="'developingStudents'"
                 [dataSource]="stats.developingStudents || []"
                 [columns]="monthStudentColumns"
@@ -39,7 +39,7 @@
             </app-student-rating-table>
         
             <app-student-rating-table
-                [title]="studentsOfMonthLabel"
+                [title]="(studentsOfMonthLabel$ | async) || 'Cari ayın şagirdləri'"
                 [tableName]="'studentsOfMonth'"
                 [dataSource]="stats.studentsOfMonth || []"
                 [columns]="monthStudentColumns"
@@ -48,7 +48,7 @@
             </app-student-rating-table>
         
             <app-student-rating-table
-                [title]="studentsOfMonthByRepublicLabel"
+                [title]="(studentsOfMonthByRepublicLabel$ | async) || 'Respublika üzrə cari ayın şagirdləri'"
                 [tableName]="'studentsOfMonthByRepublic'"
                 [dataSource]="stats.studentsOfMonthByRepublic || []"
                 [columns]="monthStudentColumns"

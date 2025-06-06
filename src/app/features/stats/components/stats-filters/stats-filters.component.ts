@@ -76,6 +76,7 @@ export class StatsFiltersComponent {
     // Контролы для месяца и года
     monthControl = new FormControl(new Date().getMonth() + 1); // 0-11
     yearControl = new FormControl(new Date().getFullYear());
+    examControl = new FormControl<Exam | undefined>(undefined);
 
     months = [
         { value: 1, name: 'Yanvar' },
@@ -97,6 +98,7 @@ export class StatsFiltersComponent {
         this.setupSearch();
         this.setupMonthYearChange();
         this.setupYears();
+        this.setupExamChange();
     }
 
     setupYears() {
@@ -124,6 +126,14 @@ export class StatsFiltersComponent {
         }
     }
 
+    setupExamChange() {
+        this.examControl.valueChanges.subscribe(exam => {
+            if (exam) {
+                this.examChanged.emit(exam);
+            }
+        });
+    }
+
     onDistrictSelectChanged() {
         this.districtChanged.emit(this.selectedDistrictIds);
     }
@@ -140,9 +150,9 @@ export class StatsFiltersComponent {
         this.gradeChanged.emit(this.selectedGrades);
     }
 
-    onExamSelectChanged() {
-        this.examChanged.emit(this.selectedExam);
-    }
+    // onExamSelectChanged() {
+    //     this.examChanged.emit(this.selectedExam);
+    // }
 
     onSearchChange(): void {
         console.log(this.searchString);
