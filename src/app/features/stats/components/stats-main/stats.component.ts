@@ -235,7 +235,7 @@ export class StatsComponent implements OnInit {
             teacherIds: this.selectedTeacherIds.join(","),
             grades: this.selectedGrades.join(","),
             code: this.searchString || undefined,
-            examId: this.selectedExamId ?? undefined,
+            examId: this.selectedExamId || undefined,
             month: this.selectedMonth,
         };
 
@@ -262,7 +262,11 @@ export class StatsComponent implements OnInit {
             sortColumn: this.sortActive || 'averageScore',
             sortDirection: this.sortDirection || 'desc',
             code: this.searchString || undefined,
+            examIds: this.selectedExamId || undefined,
         };
+        
+        this.isloading = true;
+        this.stats = {};
 
         this.studentService.getStudentsForStats(params).subscribe({
             next: (response) => {
