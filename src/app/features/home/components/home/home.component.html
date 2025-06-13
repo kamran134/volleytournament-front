@@ -1,15 +1,18 @@
-<div class="cards">
-    <div class="cards__container">
-        <div>
-            <img src="assets/isim.png" width="300px" alt="Logo" class="header__logo-img" />
-        </div>
+<div class="cover">
+    <div class="cover__container">
+        <h1>Voleybol turniri</h1>
+        <p>Bella Cup həvəskar voleybol turniri</p>
+        <button class="cover__button" routerLink="/tournaments">Yarışlara bax</button>
     </div>
 </div>
+
 <div class="cards">
     <div class="cards__container">
-        <div class="card" routerLink="/districts">
-            <mat-icon>location_city</mat-icon>
-            <h2>Rayonlar / şəhərlər</h2>
+        <div class="card" routerLink="/tournaments">
+            <mat-icon>emoji_events</mat-icon>
+            <h2>Yarışlar</h2>
+            <!-- <mat-icon>location_city</mat-icon>
+            <h2>Rayonlar / şəhərlər</h2> -->
         </div>
         <div class="card" routerLink="/schools">
             <mat-icon>school</mat-icon>
@@ -31,8 +34,5 @@
             <mat-icon>trending_up</mat-icon>
             <h2>Reytinq</h2>
         </div>
-        <!-- <div class="card" routerLink="/booklets">
-            <h2>Kitabçalar</h2>
-        </div> -->
     </div>
 </div>
