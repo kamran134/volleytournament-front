@@ -4,7 +4,6 @@ import { DistrictsListComponent } from './features/districts/components/district
 import { SchoolsListComponent } from './features/schools/components/schools-list/schools-list.component';
 import { TeachersListComponent } from './features/teachers/components/teachers-list/teachers-list.component';
 import { ExamsListComponent } from './features/exams/components/exams-list/exams-list.component';
-import { StatsComponent } from './features/stats/components/stats-main/stats.component';
 import { StudentsListComponent } from './features/students/components/students-list/students-list.component';
 import { StudentDetailsComponent } from './features/students/components/student-details/student-details.component';
 import { authGuard } from './core/guards/auth.guard';
@@ -19,7 +18,6 @@ export const routes: Routes = [
     { path: 'students', component: StudentsListComponent, canActivate: [authGuard] },
     { path: 'students/:id', component: StudentDetailsComponent, canActivate: [authGuard] },
     { path: 'exams', component: ExamsListComponent, canActivate: [authGuard] },
-    { path: 'stats', component: StatsComponent, canActivate: [authGuard] },
     { path: 'admin', loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.routes), canActivate: [authGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },

@@ -13,8 +13,6 @@ export class AuthService {
     private router = inject(Router);
     private platformId = inject(PLATFORM_ID);
 
-    // private userRole: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('role') ? localStorage.getItem('role') : '';
-    // private userId: string | null = isPlatformBrowser(this.platformId) && !!localStorage.getItem('id') ? localStorage.getItem('id') : '';
     private authStatus = new BehaviorSubject<boolean>(this.hasToken());
     private userId = new BehaviorSubject<string | null>(
         isPlatformBrowser(this.platformId) ? localStorage.getItem('id') : null
