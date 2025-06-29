@@ -1,3 +1,37 @@
+.cover {
+    width: 100%;
+    height: 450px;
+    background-image: url('/assets/cyberpunk_cover.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+
+    h1 {
+        font-size: 36px;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    &__button {
+        background-color: rgb(123 86 157 / 52%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+    }
+}
+
+
 .cards {
     display: flex;
     justify-content: center;

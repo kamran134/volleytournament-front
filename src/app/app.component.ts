@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,6 +38,7 @@ export class AppComponent implements OnInit {
     darkMode: boolean = false;
     animationState: string = 'default';
     userId: string | null = null;
+    isScrolled: boolean = false;
 
     constructor(
         private matIconRegistry: MatIconRegistry, 
@@ -47,6 +48,12 @@ export class AppComponent implements OnInit {
     ) {
         this.matIconRegistry.addSvgIcon('dark_mode', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/dark_mode.svg'));
         this.matIconRegistry.addSvgIcon('light_mode', this.domSanitizer.bypassSecurityTrustResourceUrl('/assets/light_mode.svg'));
+    }
+
+    @HostListener('window:scroll', [])
+    onWindowScroll() {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        this.isScrolled = scrollPosition > 40;
     }
 
     ngOnInit(): void {
