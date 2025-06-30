@@ -4,7 +4,6 @@ import { ConfigService } from "../../../core/services/config.service";
 import { UserParams } from "../../../core/models/filterParams.model";
 import { Observable } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
-import { UserSettings } from "../../../core/models/settings.model";
 
 @Injectable({
     providedIn: 'root'
@@ -55,15 +54,5 @@ export class DashboardService {
     deleteUser(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/users/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
-    }
-
-    getRatingColumns(id: string): Observable<UserSettings> {
-        const url = `${this.configService.getApiUrl()}/user-settings?userId=${id}`;
-        return this.http.get<any>(url, { withCredentials: true });
-    }
-
-    saveRatingColumns(settings: UserSettings): Observable<{userSettings: UserSettings, message: string}> {
-        const url = `${this.configService.getApiUrl()}/user-settings`;
-        return this.http.put<{userSettings: UserSettings, message: string}>(url, settings, { withCredentials: true });
     }
 }
