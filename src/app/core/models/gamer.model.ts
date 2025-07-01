@@ -30,6 +30,7 @@ export interface CreateGamerDto {
 }
 
 export interface UpdateGamerDto {
+    _id: string;
     number?: number;
     lastName?: string;
     firstName?: string;

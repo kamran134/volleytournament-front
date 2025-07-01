@@ -43,3 +43,14 @@ export interface TeamParams {
     page?: number;
     size?: number;
 }
+
+export interface GamerParams {
+    number?: number;
+    lastName?: string;
+    firstName?: string;
+    isCaptain?: boolean;
+    isCoach?: boolean;
+    team?: string;
+    page?: number;
+    size?: number;
+}

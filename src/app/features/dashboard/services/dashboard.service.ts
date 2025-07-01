@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ConfigService } from "../../../core/services/config.service";
-import { TeamParams, TournamentParams, UserParams } from "../../../core/models/filterParams.model";
+import { GamerParams, TeamParams, TournamentParams, UserParams } from "../../../core/models/filterParams.model";
 import { Observable } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
 import { TournamentResponse } from "../../../core/models/tournament.model";
@@ -132,6 +132,48 @@ export class DashboardService {
 
     deleteTeam(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/teams/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+    
+    getGamers(gamerParams: GamerParams): Observable<any> {
+        let url: string = `${this.configService.getApiUrl()}/gamers`;
+        if (gamerParams.page && gamerParams.size) {
+            url = `${url}?page=${gamerParams.page}&size=${gamerParams.size}`;
+        }
+        if (gamerParams.number) {
+            url = `${url}&number=${gamerParams.number}`;
+        }
+        if (gamerParams.lastName) {
+            url = `${url}&lastName=${gamerParams.lastName}`;
+        }
+        if (gamerParams.firstName) {
+            url = `${url}&firstName=${gamerParams.firstName}`;
+        }
+        if (gamerParams.isCaptain !== undefined) {
+            url = `${url}&isCaptain=${gamerParams.isCaptain}`;
+        }
+        if (gamerParams.isCoach !== undefined) {
+            url = `${url}&isCoach=${gamerParams.isCoach}`;
+        }
+        if (gamerParams.team) {
+            url = `${url}&team=${gamerParams.team}`;
+        }
+        return this.http.get<any>(url, { withCredentials: true });
+    }
+
+    createGamer(gamer: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/gamers`;
+        return this.http.post<any>(url, gamer, { withCredentials: true });
+    }
+
+    editGamer(gamer: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/gamers`;
+        return this.http.put<any>(url, gamer, { withCredentials: true });
+    }
+
+    deleteGamer(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/gamers/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }

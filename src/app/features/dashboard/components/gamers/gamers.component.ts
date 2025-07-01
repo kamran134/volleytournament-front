@@ -1,26 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { CreateTeamDto, Team, TeamResponse } from '../../../../core/models/team.model';
+import { CreateGamerDto, Gamer, GamerResponse, UpdateGamerDto } from '../../../../core/models/gamer.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { TeamEditDialogComponent } from './team-edit-dialog/team-edit-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { GamerEditDialogComponent } from './gamer-edit-dialog/gamer-edit-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
-    selector: 'app-teams',
+    selector: 'app-gamers',
     standalone: true,
-    imports: [MatTableModule, MatButtonModule, CommonModule],
-    templateUrl: './teams.component.html',
-    styleUrl: './teams.component.scss'
+    imports: [
+        MatTableModule,
+        MatButtonModule,
+        CommonModule
+    ],
+    templateUrl: './gamers.component.html',
+    styleUrl: './gamers.component.scss'
 })
-export class TeamsComponent implements OnInit {
-    displayedColumns: string[] = ['index', 'name', 'shortName', 'country', 'city', 'captain', 'tournaments', 'actions'];
-    dataSource: Team[] = [];
+export class GamersComponent implements OnInit{
+    displayedColumns: string[] = ['number', 'lastName', 'firstName', 'team', 'role', 'actions'];
+    dataSource: Gamer[] = [];
     totalCount: number = 0;
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
@@ -47,12 +51,12 @@ export class TeamsComponent implements OnInit {
             if (isLoggedIn) {
                 this.authorizedUserRole = this.authService.getRole();
                 if (
-                    this.authorizedUserRole === 'admin' || 
-                    this.authorizedUserRole === 'superadmin' || 
+                    this.authorizedUserRole === 'admin' ||
+                    this.authorizedUserRole === 'superadmin' ||
                     this.authorizedUserRole === 'moderator' ||
                     this.authorizedUserRole === 'captain' ||
                     this.authorizedUserRole === 'coach'
-                ) this.loadTeams();
+                ) this.loadGamers();
                 else this.router.navigate(['/']);
             } else {
                 this.router.navigate(['/login']);
@@ -60,37 +64,42 @@ export class TeamsComponent implements OnInit {
         });
     }
 
-    loadTeams(): void {
-        this.dashboardService.getTeams({ page: 1, size: 10 }).subscribe({
-            next: (data: TeamResponse) => {
+    loadGamers(): void {
+        this.dashboardService.getGamers({ page: 1, size: 10 }).subscribe({
+            next: (data: GamerResponse) => {
                 this.dataSource = data.data;
                 this.totalCount = data.totalCount;
             },
             error: (err) => {
-                this.snackBar.open('Komandaların yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
+                this.snackBar.open('Oyunçuların yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
             }
         });
     }
 
-    onTeamCreate(): void {
-        const dialogRef = this.dialog.open(TeamEditDialogComponent, {
+    onGamerCreate(): void {
+        const dialogRef = this.dialog.open(GamerEditDialogComponent, {
             width: '1000px',
             data: {
-                name: '',
-                shortName: '',
-                country: '',
-                city: '',
-                tournaments: [],
+                number: null,
+                lastName: '',
+                firstName: '',
+                middleName: '',
+                birthDate: null,
+                height: null,
+                email: '',
+                role: '',
+                isCaptain: false,
+                isCoach: false,
+                team: null
             }
         });
 
-        dialogRef.afterClosed().subscribe((result: CreateTeamDto) => {
+        dialogRef.afterClosed().subscribe((result: CreateGamerDto) => {
             if (result) {
-                console.log('Yeni komanda yaradılır:', result);
-                this.dashboardService.createTeam(result).subscribe({
+                this.dashboardService.createGamer(result).subscribe({
                     next: () => {
-                        this.loadTeams();
-                        this.snackBar.open('Yeni komanda yaradıldı', 'Bağla', this.matSnackConfig);
+                        this.loadGamers();
+                        this.snackBar.open('Yeni oyunçu yaradıldı', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -101,22 +110,28 @@ export class TeamsComponent implements OnInit {
         });
     }
 
-    onTeamUpdate(team: Team): void {
-        if (this.isAdminOrSuperAdmin$) this.openEditDialog(team);
+    onGamerUpdate(gamer: Gamer): void {
+        if (
+            this.authorizedUserRole === 'admin' ||
+            this.authorizedUserRole === 'superadmin' ||
+            this.authorizedUserRole === 'moderator' ||
+            this.authorizedUserRole === 'captain' ||
+            this.authorizedUserRole === 'coach'
+        ) this.openEditDialog(gamer);
     }
 
-    onTeamDelete(team: Team): void {
+    onGamerDelete(gamer: Gamer): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
-            data: { title: 'Silinməyə razılıq', text: 'Turniri silmək istədiyinizdən əminsiniz mi?' }
+            data: { title: 'Silinməyə razılıq', text: 'Oyunçunu silmək istədiyinizdən əminsiniz mi?' }
         });
 
         confirmRef.afterClosed().subscribe((confirmed: boolean) => {
             if (confirmed && this.isAdminOrSuperAdmin$) {
-                this.dashboardService.deleteTeam(team._id).subscribe({
+                this.dashboardService.deleteGamer(gamer._id).subscribe({
                     next: () => {
-                        this.loadTeams();
-                        this.snackBar.open('Komanda silindi', 'Bağla', this.matSnackConfig);
+                        this.loadGamers();
+                        this.snackBar.open('Oyunçu silindi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -127,18 +142,18 @@ export class TeamsComponent implements OnInit {
         });
     }
 
-    openEditDialog(team: Team): void {
-        const dialogRef = this.dialog.open(TeamEditDialogComponent, {
+    openEditDialog(gamer: Gamer): void {
+        const dialogRef = this.dialog.open(GamerEditDialogComponent, {
             width: '1000px',
-            data: team
+            data: gamer
         });
 
-        dialogRef.afterClosed().subscribe((result: Team) => {
+        dialogRef.afterClosed().subscribe((result: UpdateGamerDto) => {
             if (result) {
-                this.dashboardService.editTeam(result).subscribe({
+                this.dashboardService.editGamer(result).subscribe({
                     next: () => {
-                        this.loadTeams();
-                        this.snackBar.open('Komanda məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        this.loadGamers();
+                        this.snackBar.open('Oyunçu məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -149,13 +164,13 @@ export class TeamsComponent implements OnInit {
         });
     }
 
-    // openTeamDetails(team: Team): void {
-    //     const dialogRef = this.dialog.open(TeamEditDialogComponent, {
+    // openGamerDetails(gamer: Gamer): void {
+    //     const dialogRef = this.dialog.open(GamerEditDialogComponent, {
     //         width: '1000px',
-    //         data: team
+    //         data: gamer
     //     });
 
-    //     dialogRef.afterClosed().subscribe((result: Team) => {
+    //     dialogRef.afterClosed().subscribe((result: GamerEditDialogComponent) => {
     //         if (result) {
     //             this.dashboardService.editTournament(result).subscribe({
     //                 next: () => {

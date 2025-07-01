@@ -1,0 +1,37 @@
+<h2>Oyunçular</h2>
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef>№</th>
+        <td mat-cell *matCellDef="let gamer">{{ gamer.number }}</td>
+    </ng-container>
+    <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef>Soyadı</th>
+        <td mat-cell *matCellDef="let gamer">{{ gamer.lastName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>Adı</th>
+        <td mat-cell *matCellDef="let gamer">{{ gamer.firstName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="team">
+        <th mat-header-cell *matHeaderCellDef>Komandası</th>
+        <td mat-cell *matCellDef="let gamer">{{ gamer.team?.name || 'Qeyd olunmayıb' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Vəzifəsi</th>
+        <td mat-cell *matCellDef="let gamer">{{ gamer.captain ? 'Kapitan' : gamer.coach ? 'Məşqçi' : '' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+        <td mat-cell *matCellDef="let user">
+            <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onGamerUpdate(user)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onGamerDelete(user)">Sil</button>
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div class="add-user-button">
+    <button mat-raised-button color="primary" (click)="onGamerCreate()">Oyunçu əlavə et</button>
+</div>
