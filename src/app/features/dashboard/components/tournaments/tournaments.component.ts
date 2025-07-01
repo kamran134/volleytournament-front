@@ -1,26 +1,26 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { User, UserData, UserEdit } from '../../../../core/models/user.model';
-import { DashboardService } from '../../services/dashboard.service';
-import { UserEditDialogComponent } from './user-edit-dialog/user-edit-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { Tournament, TournamentResponse } from '../../../../core/models/tournament.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { DashboardService } from '../../services/dashboard.service';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { TournamentEditDialogComponent } from './tournament-edit-dialog/tournament-edit-dialog.component';
 
 @Component({
-    selector: 'app-users',
+    selector: 'app-tournaments',
     standalone: true,
     imports: [MatTableModule, MatButtonModule, CommonModule],
-    templateUrl: './users.component.html',
-    styleUrl: './users.component.scss'
+    templateUrl: './tournaments.component.html',
+    styleUrl: './tournaments.component.scss'
 })
-export class UsersComponent implements OnInit{
-    displayedColumns: string[] = ['email', 'role', 'active', 'actions'];
-    dataSource: User[] = [];
+export class TournamentsComponent implements OnInit {
+    displayedColumns: string[] = ['name', 'country', 'city', 'startDate', 'endDate', 'actions'];
+    dataSource: Tournament[] = [];
     totalCount: number = 0;
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
@@ -28,7 +28,7 @@ export class UsersComponent implements OnInit{
         verticalPosition: 'top'
     }
     authorizedUserRole: string | null = null;
-    
+
     isSuperAdmin$ = this.authService.isSuperAdmin$;
     isLevelUpUser$ = this.authService.isLevelUpUser$;
     isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
@@ -39,56 +39,51 @@ export class UsersComponent implements OnInit{
         private snackBar: MatSnackBar,
         private authService: AuthService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         // Initial load of users or rating columns based on user role
         this.authService.isLoggedIn$.subscribe(isLoggedIn => {
             if (isLoggedIn) {
                 this.authorizedUserRole = this.authService.getRole();
-                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadUsers();
+                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadTournaments();
                 else this.router.navigate(['/admin/rating-columns']);
             } else {
                 this.router.navigate(['/login']);
             }
         });
-        
     }
-
-    isLevelUpUser(user: User): boolean {
-        return user.role === 'superadmin' && this.authorizedUserRole !== 'superadmin';
-    }
-
-    loadUsers(): void {
-        this.dashboardService.getUsers({ page: 1, size: 10 }).subscribe({
-            next: (data: UserData) => {
+    
+    loadTournaments(): void {
+        this.dashboardService.getTournaments({ page: 1, size: 10 }).subscribe({
+            next: (data: TournamentResponse) => {
                 this.dataSource = data.data;
                 this.totalCount = data.totalCount;
             },
             error: (err) => {
-                console.error('Error loading users:', err);
+                this.snackBar.open('Yarışların yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
             }
         });
     }
 
-    onUserCreate(): void {
-        const dialogRef = this.dialog.open(UserEditDialogComponent, {
+    onTournamentCreate(): void {
+        const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
             width: '1000px',
             data: {
-                email: '',
-                password: '',
-                role: 'USER', // Default role, can be changed in dialog
-                isApproved: false,
-                firstName: '',
-                lastName: ''
+                name: '',
+                shortName: '',
+                country: '',
+                city: '',
+                startDate: '',
+                endDate: ''
             }
         });
 
-        dialogRef.afterClosed().subscribe((result: UserEdit) => {
+        dialogRef.afterClosed().subscribe((result: Tournament) => {
             if (result) {
-                this.dashboardService.createUser(result).subscribe({
+                this.dashboardService.createTournament(result).subscribe({
                     next: () => {
-                        this.loadUsers();
+                        this.loadTournaments();
                         this.snackBar.open('Yeni istifadəçi yaradıldı', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
@@ -100,22 +95,22 @@ export class UsersComponent implements OnInit{
         });
     }
 
-    onUserUpdate(user: User): void {
-        if (this.isAdminOrSuperAdmin$) this.openEditDialog(user);   
+    onTournamentUpdate(tournament: Tournament): void {
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(tournament);
     }
 
-    onUserDelete(user: User): void {
+    onTournamentDelete(tournament: Tournament): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
-            data: { title: 'Silinməyə razılıq', text: 'İstifadəçini silmək istədiyinizdən əminsiniz mi?' }
+            data: { title: 'Silinməyə razılıq', text: 'Turniri silmək istədiyinizdən əminsiniz mi?' }
         });
 
         confirmRef.afterClosed().subscribe((confirmed: boolean) => {
             if (confirmed && this.isAdminOrSuperAdmin$) {
-                this.dashboardService.deleteUser(user._id).subscribe({
+                this.dashboardService.deleteTournament(tournament._id).subscribe({
                     next: () => {
-                        this.loadUsers();
-                        this.snackBar.open('İstifadəçi silindi', 'Bağla', this.matSnackConfig);
+                        this.loadTournaments();
+                        this.snackBar.open('Turnir silindi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -126,18 +121,18 @@ export class UsersComponent implements OnInit{
         });
     }
 
-    openEditDialog(user: User): void {
-        const dialogRef = this.dialog.open(UserEditDialogComponent, {
+    openEditDialog(tournament: Tournament): void {
+        const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
             width: '1000px',
-            data: user
+            data: tournament
         });
 
-        dialogRef.afterClosed().subscribe((result: UserEdit) => {
+        dialogRef.afterClosed().subscribe((result: Tournament) => {
             if (result) {
-                this.dashboardService.editUser(result).subscribe({
+                this.dashboardService.editTournament(result).subscribe({
                     next: () => {
-                        this.loadUsers();
-                        this.snackBar.open('İstifadəçi məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        this.loadTournaments();
+                        this.snackBar.open('Turnir məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
                     },
                     error: (error) => {
                         console.error(error);
@@ -148,17 +143,17 @@ export class UsersComponent implements OnInit{
         });
     }
 
-    openUserDetails(user: User): void {
-        const dialogRef = this.dialog.open(UserEditDialogComponent, {
+    openTournamentDetails(tournament: Tournament): void {
+        const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
             width: '1000px',
-            data: user
+            data: tournament
         });
 
-        dialogRef.afterClosed().subscribe((result: UserEdit) => {
+        dialogRef.afterClosed().subscribe((result: Tournament) => {
             if (result) {
-                this.dashboardService.editUser(result).subscribe({
+                this.dashboardService.editTournament(result).subscribe({
                     next: () => {
-                        this.loadUsers();
+                        this.loadTournaments();
                     },
                     error: (error) => {
                         console.error(error);

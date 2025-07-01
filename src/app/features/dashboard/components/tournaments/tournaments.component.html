@@ -1,0 +1,41 @@
+<h2>Yarışlar</h2>
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Ad</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="shortName">
+        <th mat-header-cell *matHeaderCellDef>Qısa ad</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.shortName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Başlanğıc tarixi</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.startDate | date: 'shortDate' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef>Bitmə tarixi</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.endDate | date: 'shortDate' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef>Ölkə</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.country }}</td>
+    </ng-container>
+    <ng-container matColumnDef="city">
+        <th mat-header-cell *matHeaderCellDef>Şəhər</th>
+        <td mat-cell *matCellDef="let tournament">{{ tournament.city }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+        <td mat-cell *matCellDef="let user">
+            <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onTournamentUpdate(user)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onTournamentDelete(user)" *ngIf="user.role != 'superadmin'">Sil</button>
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div class="add-user-button">
+    <button mat-raised-button color="primary" (click)="onTournamentCreate()">Yarış əlavə et</button>
+</div>

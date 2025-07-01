@@ -8,15 +8,15 @@
                 <mat-icon matListIcon>people</mat-icon>
                 <span>İstifadəçilər</span>
             </a>
-            <a mat-list-item routerLink="/admin/rating-columns">
-                <mat-icon matListIcon>bar_chart</mat-icon>
-                <span>Reytinq sütunları</span>
+            <a mat-list-item routerLink="/admin/tournaments" *ngIf="isAdminOrSuperAdmin$ | async">
+                <mat-icon matListIcon>star</mat-icon>
+                <span>Yarışlar</span>
             </a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
-            <span>Admin Dashboard</span>
+            <span>Voleybol Yarışları</span>
         </mat-toolbar>
         <div class="content">
             <router-outlet></router-outlet>

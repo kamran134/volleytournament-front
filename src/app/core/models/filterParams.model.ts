@@ -23,3 +23,13 @@ export interface UserParams {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface TournamentParams {
+    name?: string;
+    country?: string;
+    city?: string;
+    startDate?: Date;
+    endDate?: Date;
+    page?: number;
+    size?: number;
+}

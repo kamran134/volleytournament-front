@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Turnirin redaktə edilməsi</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Ad</mat-label>
+            <input matInput [(ngModel)]='dataSource.name' name="name" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Qısa ad (vacib deyil)</mat-label>
+            <input matInput [(ngModel)]='dataSource.shortName' name="shortName" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-form-field>
+                <mat-label>Başlanğıc tarixi</mat-label>
+                <input matInput [matDatepicker]="pickerStart" [(ngModel)]='dataSource.startDate' name="startDate" required>
+                <mat-hint>DD.MM.YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                <mat-datepicker #pickerStart (monthSelected)="setStartDate($event, pickerStart)"></mat-datepicker>
+            </mat-form-field>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-form-field>
+                <mat-label>Bitmə tarixi</mat-label>
+                <input matInput [matDatepicker]="pickerEnd" [(ngModel)]='dataSource.endDate' name="endDate" required>
+                <mat-hint>DD.MM.YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #pickerEnd (monthSelected)="setEndDate($event, pickerEnd)"></mat-datepicker>
+            </mat-form-field>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!dataSource.name || !dataSource.startDate || !dataSource.endDate">
+        Yadda saxla
+    </button>
+</mat-dialog-actions>
