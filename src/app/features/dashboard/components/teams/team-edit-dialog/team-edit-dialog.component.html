@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Komandanın redaktə edilməsi</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Ad</mat-label>
+            <input matInput [(ngModel)]='dataSource.name' name="name" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Qısa ad (vacib deyil)</mat-label>
+            <input matInput [(ngModel)]='dataSource.shortName' name="shortName" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Şəhər</mat-label>
+            <input matInput [(ngModel)]='dataSource.city' name="city" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Turnirlər</mat-label>
+            <mat-select [(value)]="selectedTournamentIds" multiple>
+                <mat-option *ngFor="let tournament of tournaments" [value]="tournament._id">
+                    {{ tournament.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!dataSource.name">
+        Yadda saxla
+    </button>
+</mat-dialog-actions>

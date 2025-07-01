@@ -33,3 +33,13 @@ export interface TournamentParams {
     page?: number;
     size?: number;
 }
+
+export interface TeamParams {
+    name?: string;
+    country?: string;
+    city?: string;
+    captain?: string;
+    coach?: string;
+    page?: number;
+    size?: number;
+}

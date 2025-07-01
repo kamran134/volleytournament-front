@@ -9,8 +9,20 @@
                 <span>İstifadəçilər</span>
             </a>
             <a mat-list-item routerLink="/admin/tournaments" *ngIf="isAdminOrSuperAdmin$ | async">
-                <mat-icon matListIcon>star</mat-icon>
+                <mat-icon matListIcon>emoji_events</mat-icon>
                 <span>Yarışlar</span>
+            </a>
+            <a mat-list-item routerLink="/admin/teams">
+                <mat-icon matListIcon>group</mat-icon>
+                <span>Komandalar</span>
+            </a>
+            <a mat-list-item routerLink="/admin/players">
+                <mat-icon matListIcon>person</mat-icon>
+                <span>Oyunçular</span>
+            </a>
+            <a mat-list-item routerLink="/admin/games">
+                <mat-icon matListIcon>sports_volleyball</mat-icon>
+                <span>Oyunlar</span>
             </a>
         </mat-nav-list>
     </mat-sidenav>

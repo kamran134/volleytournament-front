@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ConfigService } from "../../../core/services/config.service";
-import { TournamentParams, UserParams } from "../../../core/models/filterParams.model";
+import { TeamParams, TournamentParams, UserParams } from "../../../core/models/filterParams.model";
 import { Observable } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
 import { TournamentResponse } from "../../../core/models/tournament.model";
@@ -58,25 +58,25 @@ export class DashboardService {
     }
 
 
-    getTournaments(userParams: TournamentParams): Observable<TournamentResponse> {
+    getTournaments(tournamentParams: TournamentParams): Observable<TournamentResponse> {
         let url: string = `${this.configService.getApiUrl()}/tournaments`;
-        if (userParams.page && userParams.size) {
-            url = `${url}?page=${userParams.page}&size=${userParams.size}`;
+        if (tournamentParams.page && tournamentParams.size) {
+            url = `${url}?page=${tournamentParams.page}&size=${tournamentParams.size}`;
         }
-        if (userParams.name) {
-            url = `${url}&name=${userParams.name}`;
+        if (tournamentParams.name) {
+            url = `${url}&name=${tournamentParams.name}`;
         }
-        if (userParams.country) {
-            url = `${url}&country=${userParams.country}`;
+        if (tournamentParams.country) {
+            url = `${url}&country=${tournamentParams.country}`;
         }
-        if (userParams.city) {
-            url = `${url}&city=${userParams.city}`;
+        if (tournamentParams.city) {
+            url = `${url}&city=${tournamentParams.city}`;
         }
-        if (userParams.startDate) {
-            url = `${url}&startDate=${userParams.startDate.toISOString()}`;
+        if (tournamentParams.startDate) {
+            url = `${url}&startDate=${tournamentParams.startDate.toISOString()}`;
         }
-        if (userParams.endDate) {
-            url = `${url}&endDate=${userParams.endDate.toISOString()}`;
+        if (tournamentParams.endDate) {
+            url = `${url}&endDate=${tournamentParams.endDate.toISOString()}`;
         }
         return this.http.get<TournamentResponse>(url, { withCredentials: true });
     }
@@ -93,6 +93,45 @@ export class DashboardService {
 
     deleteTournament(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/tournaments/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+
+    getTeams(teamParams: TeamParams): Observable<any> {
+        let url: string = `${this.configService.getApiUrl()}/teams`;
+        if (teamParams.page && teamParams.size) {
+            url = `${url}?page=${teamParams.page}&size=${teamParams.size}`;
+        }
+        if (teamParams.name) {
+            url = `${url}&name=${teamParams.name}`;
+        }
+        if (teamParams.country) {
+            url = `${url}&country=${teamParams.country}`;
+        }
+        if (teamParams.city) {
+            url = `${url}&city=${teamParams.city}`;
+        }
+        if (teamParams.captain) {
+            url = `${url}&captain=${teamParams.captain}`;
+        }
+        if (teamParams.coach) {
+            url = `${url}&coach=${teamParams.coach}`;
+        }
+        return this.http.get<any>(url, { withCredentials: true });
+    }
+
+    createTeam(team: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/teams`;
+        return this.http.post<any>(url, team, { withCredentials: true });
+    }
+
+    editTeam(team: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/teams`;
+        return this.http.put<any>(url, team, { withCredentials: true });
+    }
+
+    deleteTeam(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/teams/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }

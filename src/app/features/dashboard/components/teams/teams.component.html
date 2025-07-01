@@ -1,0 +1,45 @@
+<h2>Yarışlar</h2>
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Ad</th>
+        <td mat-cell *matCellDef="let team">{{ team.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="shortName">
+        <th mat-header-cell *matHeaderCellDef>Qısa ad</th>
+        <td mat-cell *matCellDef="let team">{{ team.shortName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef>Ölkə</th>
+        <td mat-cell *matCellDef="let team">{{ team.country }}</td>
+    </ng-container>
+    <ng-container matColumnDef="city">
+        <th mat-header-cell *matHeaderCellDef>Şəhər</th>
+        <td mat-cell *matCellDef="let team">{{ team.city }}</td>
+    </ng-container>
+    <ng-container matColumnDef="captain">
+        <th mat-header-cell *matHeaderCellDef>Kapitan</th>
+        <td mat-cell *matCellDef="let team">{{ team.captain?.name || 'Təyin edilməyib' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="tournaments">
+        <th mat-header-cell *matHeaderCellDef>Turnirlər</th>
+        <td mat-cell *matCellDef="let team">
+            <span *ngFor="let tournament of team.tournaments; let last = last">
+                {{ tournament.name }}<span *ngIf="!last">, </span>
+            </span>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+        <td mat-cell *matCellDef="let user">
+            <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onTeamUpdate(user)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onTeamDelete(user)">Sil</button>
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div class="add-user-button">
+    <button mat-raised-button color="primary" (click)="onTeamCreate()">Komanda əlavə et</button>
+</div>

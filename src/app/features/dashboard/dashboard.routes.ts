@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
 import { UsersComponent } from './components/users/users.component';
 import { TournamentsComponent } from './components/tournaments/tournaments.component';
+import { TeamsComponent } from './components/teams/teams.component';
 
 export const routes: Routes = [
     {
@@ -10,6 +11,7 @@ export const routes: Routes = [
         children: [
             { path: 'users', component: UsersComponent },
             { path: 'tournaments', component: TournamentsComponent },
+            { path: 'teams', component: TeamsComponent },
             { path: '', redirectTo: 'users', pathMatch: 'full' }
         ]
     }

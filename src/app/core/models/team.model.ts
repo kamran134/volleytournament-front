@@ -1,3 +1,6 @@
+import { Gamer } from "./gamer.model";
+import { Tournament } from "./tournament.model";
+
 export interface Team {
     _id: string;
     name: string;
@@ -5,11 +8,25 @@ export interface Team {
     logoUrl?: string;
     country: string;
     city: string;
-    players?: string[];
-    coaches?: string[];
-    captain?: string;
+    captain?: Gamer;
+    tournaments?: Tournament[];
     createdAt: string;
     updatedAt: string;
+}
+
+export interface TeamDetailsDto {
+    _id: string;
+    name: string;
+    shortName?: string;
+    logoUrl?: string;
+    country: string;
+    city: string;
+    players?: Gamer[];
+    coaches?: Gamer[];
+    captain?: Gamer;
+    tournaments?: Tournament[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface CreateTeamDto {
@@ -18,20 +35,17 @@ export interface CreateTeamDto {
     logoUrl?: string;
     country: string;
     city: string;
-    players?: string[];
-    coaches?: string[];
-    captain?: string;
+    tournaments?: string[]; // Array of tournament IDs
 }
 
 export interface UpdateTeamDto {
+    _id: string;
     name?: string;
     shortName?: string;
     logoUrl?: string;
     country?: string;
     city?: string;
-    players?: string[];
-    coaches?: string[];
-    captain?: string;
+    tournaments?: string[]; // Array of tournament IDs
 }
 
 export interface TeamFilterDto {
