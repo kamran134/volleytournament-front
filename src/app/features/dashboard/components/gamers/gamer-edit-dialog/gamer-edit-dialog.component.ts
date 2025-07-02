@@ -53,7 +53,7 @@ export class GamerEditDialogComponent implements OnInit {
 
     ngOnInit(): void {
         // Initialize teams if needed
-        this.dashboardService.getTeams({ page: 1, size: 100 }).subscribe(response => {
+        this.dashboardService.getTeams({ page: 1, size: 100, createdBy: this.getUserId()! }).subscribe(response => {
             this.teams = response.data;
             if (this.dataSource.team) {
                 this.selectedTeamId = this.dataSource.team;
@@ -67,6 +67,10 @@ export class GamerEditDialogComponent implements OnInit {
 
     isNewGamer(): boolean {
         return !this.dataSource._id;
+    }
+
+    getUserId(): string | null {
+        return this.authService.getUserId();
     }
 
     onSave(): void {

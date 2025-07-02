@@ -108,7 +108,7 @@ export class TeamsComponent implements OnInit {
     onTeamDelete(team: Team): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {
             width: '350px',
-            data: { title: 'Silinməyə razılıq', text: 'Turniri silmək istədiyinizdən əminsiniz mi?' }
+            data: { title: 'Silinməyə razılıq', text: 'DİQQƏT! Komanda silinərkən onun oyunçuları da silinir. Komandanı silmək istədiyinizdən əminsiniz mi?' }
         });
 
         confirmRef.afterClosed().subscribe((confirmed: boolean) => {

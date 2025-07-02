@@ -67,6 +67,10 @@ export class TeamEditDialogComponent implements OnInit {
         return !this.dataSource._id;
     }
 
+    getUserId(): string | null {
+        return this.authService.getUserId();
+    }
+
     onSave(): void {
         // Create new tournament logic
         if (!this.dataSource.name) {
@@ -84,6 +88,7 @@ export class TeamEditDialogComponent implements OnInit {
             this.dataSource.tournaments = this.selectedTournamentIds;
         }
 
+        this.dataSource.createdBy = this.getUserId()!;
         this.dialogRef.close(this.dataSource);
     }
 

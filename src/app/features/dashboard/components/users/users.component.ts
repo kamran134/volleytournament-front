@@ -46,8 +46,10 @@ export class UsersComponent implements OnInit{
         this.authService.isLoggedIn$.subscribe(isLoggedIn => {
             if (isLoggedIn) {
                 this.authorizedUserRole = this.authService.getRole();
+                console.log('Authorized User Role:', this.authorizedUserRole);
+                console.log('User ID:', this.authService.getUserId());
                 if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadUsers();
-                else this.router.navigate(['/admin/rating-columns']);
+                else this.router.navigate(['/admin/tournaments']);
             } else {
                 this.router.navigate(['/login']);
             }

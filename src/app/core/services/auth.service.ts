@@ -21,6 +21,17 @@ export class AuthService {
         isPlatformBrowser(this.platformId) ? localStorage.getItem('role') : null
     );
 
+    constructor(private configService: ConfigService) {
+        if (isPlatformBrowser(this.platformId)) {
+            const token = this.getToken();
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                this.userRole.next(payload.role || null);
+                this.userId.next(payload.userId || null);
+            }
+        }
+    }
+
     get isLoggedIn$(): Observable<boolean> {
         return this.authStatus.asObservable();
     }
@@ -129,6 +140,9 @@ export class AuthService {
             { withCredentials: true }).pipe(
                 tap(response => {
                     localStorage.setItem('token', response.token);
+                    const payload = JSON.parse(atob(response.token.split('.')[1]));
+                    this.userId.next(payload.userId || null);
+                    this.userRole.next(payload.role || null);
                     this.authStatus.next(true);
                     this.router.navigate(['/admin']);
                 })
@@ -165,16 +179,5 @@ export class AuthService {
                 })
             )
             .subscribe();
-    }
-
-    constructor(private configService: ConfigService) {
-        if (isPlatformBrowser(this.platformId)) {
-            const token = this.getToken();
-            if (token) {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                this.userRole.next(payload.role || null);
-                this.userId.next(payload.userId || null);
-            }
-        }
     }
 }

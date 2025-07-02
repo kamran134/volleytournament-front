@@ -42,6 +42,7 @@ export interface TeamParams {
     coach?: string;
     page?: number;
     size?: number;
+    createdBy?: string;
 }
 
 export interface GamerParams {

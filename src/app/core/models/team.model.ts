@@ -1,5 +1,6 @@
 import { Gamer } from "./gamer.model";
 import { Tournament } from "./tournament.model";
+import { User } from "./user.model";
 
 export interface Team {
     _id: string;
@@ -10,6 +11,7 @@ export interface Team {
     city: string;
     captain?: Gamer;
     tournaments?: Tournament[];
+    createdBy?: string; // User ID of the creator
     createdAt: string;
     updatedAt: string;
 }
@@ -25,6 +27,7 @@ export interface TeamDetailsDto {
     coaches?: Gamer[];
     captain?: Gamer;
     tournaments?: Tournament[];
+    createdBy?: User;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -36,6 +39,7 @@ export interface CreateTeamDto {
     country: string;
     city: string;
     tournaments?: string[]; // Array of tournament IDs
+    createdBy?: string; // User ID of the creator
 }
 
 export interface UpdateTeamDto {
@@ -46,6 +50,7 @@ export interface UpdateTeamDto {
     country?: string;
     city?: string;
     tournaments?: string[]; // Array of tournament IDs
+    createdBy?: string; // User ID of the creator
 }
 
 export interface TeamFilterDto {
@@ -53,6 +58,7 @@ export interface TeamFilterDto {
     country?: string;
     city?: string;
     captain?: string;
+    createdBy?: string;
 }
 
 export interface TeamResponse {

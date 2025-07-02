@@ -117,6 +117,9 @@ export class DashboardService {
         if (teamParams.coach) {
             url = `${url}&coach=${teamParams.coach}`;
         }
+        if (teamParams.createdBy) {
+            url = `${url}&createdBy=${teamParams.createdBy}`;
+        }
         return this.http.get<any>(url, { withCredentials: true });
     }
 
