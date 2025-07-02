@@ -27,7 +27,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill">
             <mat-form-field>
-                <mat-label>Başlanğıc tarixi</mat-label>
+                <mat-label>Doğum tarixi</mat-label>
                 <input matInput [matDatepicker]="picker" [(ngModel)]='dataSource.birthDate' name="birthDate" required>
                 <mat-hint>DD.MM.YYYY</mat-hint>
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -38,7 +38,12 @@
             <mat-label>Boyu (sm)</mat-label>
             <input matInput [(ngModel)]='dataSource.height' name="height" />
         </mat-form-field>
-        
+        <mat-checkbox [(ngModel)]="dataSource.isCaptain" name="isCaptain">
+            Kapitan
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSource.isCoach" name="isCoach">
+            Məşqçi
+        </mat-checkbox>
     </form>
 </mat-dialog-content>
 

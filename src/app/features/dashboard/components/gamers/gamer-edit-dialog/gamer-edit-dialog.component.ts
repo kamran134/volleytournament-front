@@ -34,6 +34,7 @@ import moment, { Moment } from 'moment';
     styleUrl: './gamer-edit-dialog.component.scss'
 })
 export class GamerEditDialogComponent implements OnInit {
+    emailPattern: string = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
     selectedTeamId: string = '';
     teams: Team[] = [];
     matSnackConfig: MatSnackBarConfig = {
@@ -77,6 +78,11 @@ export class GamerEditDialogComponent implements OnInit {
 
         if (this.selectedTeamId) {
             this.dataSource.team = this.selectedTeamId;
+        }
+
+        if (this.dataSource.email && !new RegExp(this.emailPattern).test(this.dataSource.email)) {
+            this.matSnackBar.open('Email formatı düzgün deyil!', '', this.matSnackConfig);
+            return;
         }
 
         this.dialogRef.close(this.dataSource);
