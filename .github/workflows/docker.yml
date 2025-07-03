@@ -18,8 +18,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/kamran134/education-system-frontend:latest .
+          docker build -t ghcr.io/kamran134/volleytournament-front:latest .
 
       - name: Push Docker image to GHCR
         run: |
-          docker push ghcr.io/kamran134/education-system-frontend:latest
+          docker push ghcr.io/kamran134/volleytournament-front:latest
