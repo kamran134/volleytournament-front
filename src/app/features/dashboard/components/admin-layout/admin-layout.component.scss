@@ -1,3 +1,5 @@
+@import "../../../../../variables.scss";
+
 .sidenav-container {
     height: 100vh;
 }
@@ -18,4 +20,34 @@ mat-nav-list a {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.admin-list-item {
+    color: $backgroundColor;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: medium;
+    gap: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: color 0.3s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+        color: $darkWite;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+}
+
+.home-link {
+    color: $white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &:hover {
+        color: $darkWite;
+    }
 }

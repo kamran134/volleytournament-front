@@ -1,34 +1,37 @@
 <mat-sidenav-container class="sidenav-container">
     <mat-sidenav mode="side" opened class="sidenav">
         <mat-toolbar color="primary">
-            <span>İdarəetmə paneli</span>
+            <a routerLink="/" class="home-link">
+                <mat-icon>home</mat-icon>
+                <span>Ana səhifə</span>
+            </a>
         </mat-toolbar>
-        <mat-nav-list>
-            <a mat-list-item routerLink="/admin/users" *ngIf="isAdminOrSuperAdmin$ | async">
+        <div class="sidenav-content">
+            <div mat-list-item routerLink="/admin/users" *ngIf="isAdminOrSuperAdmin$ | async" class="admin-list-item">
                 <mat-icon matListIcon>people</mat-icon>
                 <span>İstifadəçilər</span>
-            </a>
-            <a mat-list-item routerLink="/admin/tournaments" *ngIf="isAdminOrSuperAdmin$ | async">
+            </div>
+            <div mat-list-item routerLink="/admin/tournaments" *ngIf="isAdminOrSuperAdmin$ | async" class="admin-list-item">
                 <mat-icon matListIcon>emoji_events</mat-icon>
                 <span>Yarışlar</span>
-            </a>
-            <a mat-list-item routerLink="/admin/teams">
+            </div>
+            <div mat-list-item routerLink="/admin/teams" class="admin-list-item">
                 <mat-icon matListIcon>group</mat-icon>
                 <span>Komandalar</span>
-            </a>
-            <a mat-list-item routerLink="/admin/players">
+            </div>
+            <div mat-list-item routerLink="/admin/players" class="admin-list-item">
                 <mat-icon matListIcon>person</mat-icon>
                 <span>Oyunçular</span>
-            </a>
-            <a mat-list-item routerLink="/admin/games">
+            </div>
+            <div mat-list-item routerLink="/admin/games" class="admin-list-item">
                 <mat-icon matListIcon>sports_volleyball</mat-icon>
                 <span>Oyunlar</span>
-            </a>
-        </mat-nav-list>
+            </div>
+        </div>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
-            <span>Voleybol Yarışları</span>
+            <span>İdarəetmə paneli</span>
         </mat-toolbar>
         <div class="content">
             <router-outlet></router-outlet>

@@ -49,18 +49,12 @@ body {
             // background-color: $backgroundColor !important;
             background-color: rgba(255,255,255, 0) !important;
             height: 100% !important;
-            color: $white !important;
+            color: $backgroundColor !important;
         }
 
         .mat-drawer-inner-container {
             background-color: $backgroundColorGreen !important;
             color: $white !important;
-        }
-
-        .mdc-list-item {
-            &__primary-text {
-                color: $cyan !important;
-            }
         }
 
         .mdc-tab {
@@ -97,15 +91,6 @@ body {
         .mat-mdc-dialog-surface {
             //background-color: $backgroundColor;
             color: $white !important;
-        }
-    }
-
-    .mdc-list-item {
-        &__primary-text {
-            display: flex;
-            > mat-icon {
-                margin-right: 10px;
-            }
         }
     }
 }

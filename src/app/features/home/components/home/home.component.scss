@@ -1,3 +1,5 @@
+@import '../../../../../variables.scss';
+
 .cover {
     width: 100%;
     height: 100vh;
@@ -11,7 +13,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: calc(100% - 64px); /* Adjust for toolbar height */
+        height: calc(100% - 64px);
+        /* Adjust for toolbar height */
         text-align: center;
         color: white;
     }
@@ -68,13 +71,33 @@
     color: white;
 }
 
-.mobile-menu {
+:host ::ng-deep .mobile-menu {
     width: 250px;
     background-color: rgba(0, 0, 0, 0.9);
-}
 
-.mobile-menu a {
-    color: white;
+    .mat-mdc-nav-list {
+        a.mat-mdc-list-item {
+            color: white !important;
+            /* Цвет текста для пунктов меню */
+
+            .mdc-list-item__primary-text {
+                color: white !important;
+                /* Перебиваем глобальный стиль */
+            }
+
+            mat-icon {
+                color: white !important;
+                /* Цвет иконок */
+                margin-right: 10px;
+            }
+
+            &:hover {
+                background-color: rgba(255, 215, 0, 0.2);
+                /* Золотой ховер */
+                color: #ffd700 !important;
+            }
+        }
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -88,5 +111,28 @@
 
     .toolbar-title {
         font-size: 1rem;
+    }
+}
+
+
+.mdc-list-item__primary-text {
+    color: $white !important;
+}
+
+.mat-drawer-container {
+    //background-color: $backgroundColor !important;
+    background-color: rgba(255, 255, 255, 0) !important;
+    height: 100% !important;
+    color: $white !important;
+
+    .mdc-list-item {
+        &__primary-text {
+            color: $white;
+            display: flex;
+
+            >mat-icon {
+                margin-right: 10px;
+            }
+        }
     }
 }
