@@ -9,6 +9,7 @@ export interface Tournament {
     city: string;
     startDate: Date;
     endDate: Date;
+    statut?: string; // Tournament regulation document
     teams?: Team[];
     createdAt: Date;
     updatedAt: Date;
@@ -22,6 +23,7 @@ export interface CreateTournamentDto {
     city: string;
     startDate: Date;
     endDate: Date;
+    statut?: string; // Tournament regulation document
 }
 
 export interface UpdateTournamentDto {
@@ -33,6 +35,7 @@ export interface UpdateTournamentDto {
     city?: string;
     startDate?: Date;
     endDate?: Date;
+    statut?: string; // Tournament regulation document
     teams?: string[]; // Array of team IDs
 }
 

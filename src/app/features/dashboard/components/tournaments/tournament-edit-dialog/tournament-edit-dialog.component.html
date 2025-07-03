@@ -27,6 +27,12 @@
                 <mat-datepicker #pickerEnd (monthSelected)="setEndDate($event, pickerEnd)"></mat-datepicker>
             </mat-form-field>
         </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Əsasnamə</mat-label>
+            <!-- <input matInput [(ngModel)]='dataSource.statut' name="statut" /> -->
+            <!-- Rich text -->
+            <textarea matInput [(ngModel)]='dataSource.statut' name="statut" rows="5"></textarea>
+        </mat-form-field>
     </form>
 </mat-dialog-content>
 
