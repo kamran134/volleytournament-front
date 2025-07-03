@@ -9,7 +9,11 @@
             <a mat-button routerLink="/tournaments">Yarışlar</a>
             <a mat-button routerLink="/teams">Komandalar</a>
             <a mat-button routerLink="/players">Oyunçular</a>
-            <a mat-button routerLink="/login"><mat-icon>login</mat-icon> Giriş</a>
+            <a mat-button routerLink="/admin" *ngIf="isLoggedIn">Admin paneli</a>
+            <!-- Если loggedIn$ true то /logout -->
+            <a mat-button *ngIf="isLoggedIn" (click)="logInOut()"><mat-icon>logout</mat-icon> Çıxış</a>
+            <!-- Если loggedIn$ false то /login -->
+            <a mat-button *ngIf="!isLoggedIn" routerLink="/login"><mat-icon>login</mat-icon> Giriş</a>
         </div>
     </mat-toolbar>
 
@@ -20,14 +24,27 @@
                 <a mat-list-item routerLink="/tournaments" (click)="sidenav.close()">Yarışlar</a>
                 <a mat-list-item routerLink="/teams" (click)="sidenav.close()">Komandalar</a>
                 <a mat-list-item routerLink="/players" (click)="sidenav.close()">Oyunçular</a>
-                <a mat-list-item routerLink="/login" (click)="sidenav.close()"><mat-icon>login</mat-icon> Giriş</a>
+                <a mat-list-item routerLink="/admin" *ngIf="isLoggedIn" (click)="sidenav.close()">Admin paneli</a>
+                <a mat-list-item *ngIf="isLoggedIn" (click)="logInOut()">
+                    <mat-icon>logout</mat-icon> Çıxış
+                </a>
+                <a mat-list-item *ngIf="!isLoggedIn" routerLink="/login" (click)="sidenav.close()">
+                    <mat-icon>login</mat-icon> Giriş
+                </a>
             </mat-nav-list>
         </mat-sidenav>
+        <mat-sidenav-content>
+            <div class="cover__container">
+                <h1>Voleybol turniri</h1>
+                <p>Bella Cup həvəskar voleybol turniri</p>
+                <button class="cover__button" routerLink="/tournaments">Yarışlara bax</button>
+            </div>
+        </mat-sidenav-content>
     </mat-sidenav-container>
-
+<!-- 
     <div class="cover__container">
         <h1>Voleybol turniri</h1>
         <p>Bella Cup həvəskar voleybol turniri</p>
         <button class="cover__button" routerLink="/tournaments">Yarışlara bax</button>
-    </div>
+    </div> -->
 </div>

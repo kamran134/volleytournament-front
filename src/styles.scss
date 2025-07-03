@@ -46,7 +46,9 @@ body {
         }
 
         .mat-drawer-container {
-            background-color: $backgroundColor !important;
+            // background-color: $backgroundColor !important;
+            background-color: rgba(255,255,255, 0) !important;
+            height: 100% !important;
             color: $white !important;
         }
 

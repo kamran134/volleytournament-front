@@ -46,8 +46,8 @@ export class TournamentsComponent implements OnInit {
         this.authService.isLoggedIn$.subscribe(isLoggedIn => {
             if (isLoggedIn) {
                 this.authorizedUserRole = this.authService.getRole();
-                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadTournaments();
-                else this.router.navigate(['/admin/rating-columns']);
+                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin' || this.authorizedUserRole === 'coach' || this.authorizedUserRole === 'captain') this.loadTournaments();
+                else this.router.navigate(['/']);
             } else {
                 this.router.navigate(['/login']);
             }
