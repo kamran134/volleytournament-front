@@ -6,12 +6,6 @@ import { RegisterComponent } from './features/auth/register/register/register.co
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
-    // { path: 'districts', component: DistrictsListComponent, canActivate: [authGuard] },
-    // { path: 'schools', component: SchoolsListComponent, canActivate: [authGuard] },
-    // { path: 'teachers', component: TeachersListComponent, canActivate: [authGuard] },
-    // { path: 'students', component: StudentsListComponent, canActivate: [authGuard] },
-    // { path: 'students/:id', component: StudentDetailsComponent, canActivate: [authGuard] },
-    // { path: 'exams', component: ExamsListComponent, canActivate: [authGuard] },
     { path: 'admin', loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.routes), canActivate: [authGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },

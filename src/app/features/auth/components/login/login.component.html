@@ -13,6 +13,11 @@
 
         <button type="submit" [disabled]="loginForm.invalid">Daxil ol</button>
 
+        <div class="register-link">
+            <span>Hesabınız yoxdur? </span>
+            <a routerLink="/register">Qeydiyyatdan keçin</a>
+        </div>
+
         <p *ngIf="errorMessage()">{{ errorMessage() }}</p>
     </form>
 </div>

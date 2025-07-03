@@ -11,7 +11,22 @@ input {
 }
   
 button {
-    width: 100%;
+    width: 320px;
     padding: 10px;
     margin-top: 10px;
+}
+
+.register-link {
+    margin-top: 10px;
+    font-size: 14px;
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
