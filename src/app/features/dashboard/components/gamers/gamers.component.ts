@@ -10,6 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { GamerEditDialogComponent } from './gamer-edit-dialog/gamer-edit-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Team, TeamResponse } from '../../../../core/models/team.model';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-gamers',
@@ -17,6 +21,9 @@ import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/co
     imports: [
         MatTableModule,
         MatButtonModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatPaginatorModule,
         CommonModule
     ],
     templateUrl: './gamers.component.html',
@@ -25,6 +32,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/co
 export class GamersComponent implements OnInit{
     displayedColumns: string[] = ['number', 'lastName', 'firstName', 'team', 'role', 'actions'];
     dataSource: Gamer[] = [];
+    teams: Team[] = [];
+    selectedTeams: string[] = [];
     totalCount: number = 0;
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
@@ -32,6 +41,10 @@ export class GamersComponent implements OnInit{
         verticalPosition: 'top'
     }
     authorizedUserRole: string | null = null;
+    pageSize: number = 20;
+    pageIndex: number = 0;
+    pageSizeOptions: number[] = [10, 20, 50, 100];
+    isLoading: boolean = false;
 
     isSuperAdmin$ = this.authService.isSuperAdmin$;
     isLevelUpUser$ = this.authService.isLevelUpUser$;
@@ -56,7 +69,10 @@ export class GamersComponent implements OnInit{
                     this.authorizedUserRole === 'moderator' ||
                     this.authorizedUserRole === 'captain' ||
                     this.authorizedUserRole === 'coach'
-                ) this.loadGamers();
+                ) {
+                    this.loadGamers();
+                    this.loadTeams();
+                }
                 else this.router.navigate(['/']);
             } else {
                 this.router.navigate(['/login']);
@@ -65,13 +81,24 @@ export class GamersComponent implements OnInit{
     }
 
     loadGamers(): void {
-        this.dashboardService.getGamers({ page: 1, size: 10 }).subscribe({
+        this.dashboardService.getGamers({ page: this.pageIndex, size: this.pageSize, teams: this.selectedTeams }).subscribe({
             next: (data: GamerResponse) => {
                 this.dataSource = data.data;
                 this.totalCount = data.totalCount;
             },
             error: (err) => {
                 this.snackBar.open('Oyunçuların yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
+            }
+        });
+    }
+
+    loadTeams(): void {
+        this.dashboardService.getTeams({ page: 1, size: 10 }).subscribe({
+            next: (data: TeamResponse) => {
+                this.teams = data.data;
+            },
+            error: (err) => {
+                this.snackBar.open('Komandaların yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
             }
         });
     }
@@ -162,6 +189,22 @@ export class GamersComponent implements OnInit{
                 });
             }
         });
+    }
+
+    onPageChange(event: any): void {
+        this.pageIndex = event.pageIndex;
+        this.pageSize = event.pageSize;
+        this.loadGamers();
+    }
+
+    onTeamFilterChange(selectedTeams: string[]): void {
+        this.selectedTeams = selectedTeams;
+        this.loadGamers();
+    }
+
+    onFilterReset(): void {
+        this.selectedTeams = [];
+        this.loadGamers();
     }
 
     // openGamerDetails(gamer: Gamer): void {

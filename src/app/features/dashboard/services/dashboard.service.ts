@@ -140,10 +140,12 @@ export class DashboardService {
 
     
     getGamers(gamerParams: GamerParams): Observable<any> {
+        console.log('Fetching gamers with params:', gamerParams);
         let url: string = `${this.configService.getApiUrl()}/gamers`;
-        if (gamerParams.page && gamerParams.size) {
-            url = `${url}?page=${gamerParams.page}&size=${gamerParams.size}`;
-        }
+        
+        console.log(`Using pagination: page=${gamerParams.page}, size=${gamerParams.size}`);
+        url = `${url}?page=${gamerParams.page}&size=${gamerParams.size}`;
+        
         if (gamerParams.number) {
             url = `${url}&number=${gamerParams.number}`;
         }
@@ -161,6 +163,9 @@ export class DashboardService {
         }
         if (gamerParams.team) {
             url = `${url}&team=${gamerParams.team}`;
+        }
+        if (gamerParams.teams && gamerParams.teams.length > 0) {
+            url = `${url}&teams=${gamerParams.teams.join(',')}`;
         }
         return this.http.get<any>(url, { withCredentials: true });
     }
