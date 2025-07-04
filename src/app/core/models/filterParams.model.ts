@@ -52,6 +52,7 @@ export interface GamerParams {
     isCaptain?: boolean;
     isCoach?: boolean;
     team?: string;
+    teams?: string[];
     page?: number;
     size?: number;
 }
