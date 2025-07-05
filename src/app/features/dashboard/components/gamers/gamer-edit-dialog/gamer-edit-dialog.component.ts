@@ -52,13 +52,25 @@ export class GamerEditDialogComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        const filter = {};
         // Initialize teams if needed
-        this.dashboardService.getTeams({ page: 1, size: 100, createdBy: this.getUserId()! }).subscribe(response => {
-            this.teams = response.data;
-            if (this.dataSource.team) {
-                this.selectedTeamId = this.dataSource.team;
-            }
-        });
+        if (this.isSuperAdmin()) {
+            // If the user is a super admin, fetch all teams
+            this.dashboardService.getTeams({ page: 1, size: 100 }).subscribe(response => {
+                this.teams = response.data;
+                if (this.dataSource.team) {
+                    this.selectedTeamId = this.dataSource.team;
+                }
+            });
+        } else {
+            this.dashboardService.getTeams({ page: 1, size: 100, createdBy: this.getUserId()! }).subscribe(response => {
+                this.teams = response.data;
+                if (this.dataSource.team) {
+                    this.selectedTeamId = this.dataSource.team;
+                }
+            });
+        }
+        
     }
 
     isSuperAdmin(): boolean {
