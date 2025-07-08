@@ -18,7 +18,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/co
     templateUrl: './users.component.html',
     styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnInit{
+export class UsersComponent implements OnInit {
     displayedColumns: string[] = ['email', 'role', 'active', 'actions'];
     dataSource: User[] = [];
     totalCount: number = 0;
@@ -28,7 +28,7 @@ export class UsersComponent implements OnInit{
         verticalPosition: 'top'
     }
     authorizedUserRole: string | null = null;
-    
+
     isSuperAdmin$ = this.authService.isSuperAdmin$;
     isLevelUpUser$ = this.authService.isLevelUpUser$;
     isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
@@ -39,20 +39,24 @@ export class UsersComponent implements OnInit{
         private snackBar: MatSnackBar,
         private authService: AuthService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         // Initial load of users or rating columns based on user role
         this.authService.isLoggedIn$.subscribe(isLoggedIn => {
-            if (isLoggedIn) {
+            if (isLoggedIn && this.authService.checkTokenValidity()) {
                 this.authorizedUserRole = this.authService.getRole();
-                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') this.loadUsers();
-                else this.router.navigate(['/admin/tournaments']);
+                if (this.authorizedUserRole === 'admin' || this.authorizedUserRole === 'superadmin') {
+                    this.loadUsers();
+                } else {
+                    this.router.navigate(['/admin/tournaments']);
+                }
             } else {
+                this.authService.logout(); // Выполняем logout, если токен истёк или пользователь не авторизован
                 this.router.navigate(['/login']);
             }
         });
-        
+
     }
 
     isLevelUpUser(user: User): boolean {
@@ -101,7 +105,7 @@ export class UsersComponent implements OnInit{
     }
 
     onUserUpdate(user: User): void {
-        if (this.isAdminOrSuperAdmin$) this.openEditDialog(user);   
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(user);
     }
 
     onUserDelete(user: User): void {

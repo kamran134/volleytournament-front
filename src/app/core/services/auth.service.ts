@@ -95,12 +95,16 @@ export class AuthService {
         return this.isAdmin() || this.isSuperAdmin();
     }
 
+    checkTokenValidity(): boolean {
+        return !this.isTokenExpired();
+    }
+
     get isAuthorized(): boolean {
         return this.authStatus.getValue();
     }
 
     private hasToken(): boolean {
-        return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token');
+        return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token') && !this.isTokenExpired();
     }
 
     private getUserIdFromToken(): string | null {
@@ -130,6 +134,25 @@ export class AuthService {
         catch (error) {
             console.error('Error decoding token:', error);
             return null;
+        }
+    }
+
+    private isTokenExpired(): boolean {
+        const token = this.getToken();
+        if (!token || !isPlatformBrowser(this.platformId)) {
+            return true;
+        }
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const exp = payload.exp;
+            if (!exp) {
+                return true; // No expiration time in token
+            }
+            const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+            return exp < currentTime; // Check if token is expired
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            return true; // Assume expired if there's an error
         }
     }
 

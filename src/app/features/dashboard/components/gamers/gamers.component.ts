@@ -172,7 +172,10 @@ export class GamersComponent implements OnInit{
     openEditDialog(gamer: Gamer): void {
         const dialogRef = this.dialog.open(GamerEditDialogComponent, {
             width: '1000px',
-            data: gamer
+            data: {
+                ...gamer,
+                team: gamer.team ? gamer.team._id : null // Ensure team is set to its ID
+            }
         });
 
         dialogRef.afterClosed().subscribe((result: UpdateGamerDto) => {

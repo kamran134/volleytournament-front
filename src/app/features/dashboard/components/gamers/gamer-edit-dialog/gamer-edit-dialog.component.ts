@@ -87,6 +87,21 @@ export class GamerEditDialogComponent implements OnInit {
 
     onSave(): void {
         // Create new tournament logic
+        if (!this.dataSource.team && !this.selectedTeamId) {
+            this.matSnackBar.open('Komanda mütləq seçilməlidir!', '', this.matSnackConfig);
+            return;
+        }
+
+        if (!this.dataSource.number) {
+            this.matSnackBar.open('Nömrə mütləq yazılmalıdır!', '', this.matSnackConfig);
+            return;
+        }
+
+        if (Number.isNaN(this.dataSource.number) || this.dataSource.number < 0) {
+            this.matSnackBar.open('Nömrə düzgün deyil!', '', this.matSnackConfig);
+            return;
+        }
+
         if (!this.dataSource.firstName || !this.dataSource.lastName) {
             this.matSnackBar.open('Ad və soyad mütləq yazılmalıdır!', '', this.matSnackConfig);
             return;
@@ -101,6 +116,10 @@ export class GamerEditDialogComponent implements OnInit {
             return;
         }
 
+        this.dataSource.number = Number(this.dataSource.number);
+        this.dataSource.height = this.dataSource.height ? Number(this.dataSource.height) : undefined;
+        this.dataSource.team = this.dataSource.team ? this.dataSource.team : this.selectedTeamId;
+        
         this.dialogRef.close(this.dataSource);
     }
 
