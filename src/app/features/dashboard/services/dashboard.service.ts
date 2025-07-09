@@ -5,6 +5,7 @@ import { GamerParams, TeamParams, TournamentParams, UserParams } from "../../../
 import { Observable } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
 import { TournamentResponse } from "../../../core/models/tournament.model";
+import { Game, GameResponse } from "../../../core/models/game.model";
 
 @Injectable({
     providedIn: 'root'
@@ -182,6 +183,30 @@ export class DashboardService {
 
     deleteGamer(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/gamers/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+
+    getGames(params: { page: number; size: number; teams?: string[] }): Observable<GameResponse> {
+        let url: string = `${this.configService.getApiUrl()}/games?page=${params.page}&size=${params.size}`;
+        if (params.teams && params.teams.length > 0) {
+            url = `${url}&teams=${params.teams.join(',')}`;
+        }
+        return this.http.get<any>(url, { withCredentials: true });
+    }
+
+    createGame(game: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/games`;
+        return this.http.post<any>(url, game, { withCredentials: true });
+    }
+
+    editGame(game: any): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/games`;
+        return this.http.put<any>(url, game, { withCredentials: true });
+    }
+
+    deleteGame(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/games/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }
