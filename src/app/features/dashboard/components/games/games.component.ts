@@ -5,13 +5,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { Game } from '../../../../core/models/game.model';
+import { CreateGameDto, Game, UpdateGameDto } from '../../../../core/models/game.model';
 import { Team } from '../../../../core/models/team.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { GamesEditDialogComponent } from './games-edit-dialog/games-edit-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { AzeDateTimePipe } from '../../../../shared/pipes/aze-date-time.pipe';
 
 @Component({
     selector: 'app-games',
@@ -22,13 +25,14 @@ import { Router } from '@angular/router';
         MatFormFieldModule,
         MatSelectModule,
         MatPaginatorModule,
-        CommonModule
+        CommonModule,
+        AzeDateTimePipe,
     ],
     templateUrl: './games.component.html',
     styleUrl: './games.component.scss'
 })
 export class GamesComponent {
-    displayedColumns: string[] = ['name', 'tournament', 'team1', 'team2', 'startDate', 'endDate', 'actions'];
+    displayedColumns: string[] = ['tournament', 'team1', 'team2', 'startDate', 'endDate', 'actions'];
     dataSource: Game[] = [];
     teams1: Team[] = [];
     teams2: Team[] = [];
@@ -88,4 +92,93 @@ export class GamesComponent {
         });
     }
 
+    openEditDialog(game: CreateGameDto | UpdateGameDto): void {
+        const dialogRef = this.dialog.open(GamesEditDialogComponent, {
+            width: '1000px',
+            data: game
+        });
+
+        dialogRef.afterClosed().subscribe((result: CreateGameDto | UpdateGameDto) => {
+            if (result) {
+                if (result.isNewGame) {
+                    this.dashboardService.createGame(result).subscribe({
+                        next: () => {
+                            this.snackBar.open('Oyun yaradıldı', '', this.matSnackConfig);
+                            this.loadGames();
+                        },
+                        error: (err) => {
+                            this.snackBar.open('Oyun yaradılmadı: ' + err.message, '', this.matSnackConfig);
+                        }
+                    });
+                } else {
+                    this.dashboardService.editGame(result).subscribe({
+                        next: () => {
+                            this.snackBar.open('Oyun yeniləndi', '', this.matSnackConfig);
+                            this.loadGames();
+                        },
+                        error: (err) => {
+                            this.snackBar.open('Oyun yenilənmədi: ' + err.message, '', this.matSnackConfig);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    onGameCreate(): void {
+        const newGame: CreateGameDto = {
+            name: '',
+            startDate: new Date(),
+            endDate: new Date(),
+            tournament: '',
+            team1: '',
+            team2: '',
+            isNewGame: true
+        };
+        this.openEditDialog(newGame);
+    }
+
+    onGameUpdate(game: Game): void {
+        const updateGame: UpdateGameDto = {
+            _id: game._id,
+            name: game.name,
+            startDate: game.startDate,
+            endDate: game.endDate,
+            tournament: game.tournament._id,
+            team1: game.team1._id,
+            team2: game.team2._id,
+            isNewGame: false
+        };
+        this.openEditDialog(updateGame);
+    }
+
+    onGameDelete(game: Game): void {
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: {
+                title: 'Oyun silinsin?',
+                text: 'Bu oyunu silmək istədiyinizə əminsinizmi?'
+            }
+        });
+
+        confirmRef.afterClosed().subscribe((confirmed: boolean) => {
+            if (confirmed) {
+                this.dashboardService.deleteGame(game._id).subscribe({
+                    next: () => {
+                        this.snackBar.open('Oyun silindi', '', this.matSnackConfig);
+                        this.loadGames();
+                    },
+                    error: (err) => {
+                        this.snackBar.open('Oyun silinmədi: ' + err.message, '', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
+    onPageChange(event: any): void {
+        this.pageIndex = event.pageIndex;
+        this.pageSize = event.pageSize;
+        this.loadGames();
+    }
 }

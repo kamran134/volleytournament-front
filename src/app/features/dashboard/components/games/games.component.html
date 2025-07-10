@@ -1,41 +1,48 @@
-<h2>Oyunçular</h2>
+<h2>Oyunlar</h2>
 <!-- Ниже надо сделать фильтр, мультиселект для фильтрации по командам -->
-<div class="filter-container">
+<!-- <div class="filter-container">
     <mat-form-field appearance="fill">
         <mat-label>Oyunlar</mat-label>
         <mat-select [(value)]="selectedTeams" (selectionChange)="onTeamFilterChange($event.value)" multiple>
-            <mat-option value="">Hamısı</mat-option>
             <mat-option *ngFor="let team of teams" [value]="team._id">{{ team.name }}</mat-option>
         </mat-select>
     </mat-form-field>
-</div>
+</div> -->
 <table mat-table [dataSource]="dataSource">
-    <ng-container matColumnDef="number">
-        <th mat-header-cell *matHeaderCellDef>№</th>
-        <td mat-cell *matCellDef="let gamer">{{ gamer.number }}</td>
+    <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Oyun başlama vaxtı</th>
+        <td mat-cell *matCellDef="let game">{{ game.startDate | azeDateTime}}</td>
     </ng-container>
-    <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef>Soyadı</th>
-        <td mat-cell *matCellDef="let gamer">{{ gamer.lastName }}</td>
+    <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef>Oyun bitmə vaxtı</th>
+        <td mat-cell *matCellDef="let game">{{ game.endDate | azeDateTime}}</td>
     </ng-container>
-    <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef>Adı</th>
-        <td mat-cell *matCellDef="let gamer">{{ gamer.firstName }}</td>
+    <ng-container matColumnDef="team1">
+        <th mat-header-cell *matHeaderCellDef>Komanda 1</th>
+        <td mat-cell *matCellDef="let game">{{ game.team1.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="team2">
+        <th mat-header-cell *matHeaderCellDef>Komanda 2</th>
+        <td mat-cell *matCellDef="let game">{{ game.team2.name }}</td>
     </ng-container>
     <ng-container matColumnDef="team">
-        <th mat-header-cell *matHeaderCellDef>Komandası</th>
-        <td mat-cell *matCellDef="let gamer">{{ gamer.team?.name || 'Qeyd olunmayıb' }}</td>
+        <th mat-header-cell *matHeaderCellDef>Hesab</th>
+        <td mat-cell *matCellDef="let game">{{ game.team?.name || 'Qeyd olunmayıb' }}</td>
     </ng-container>
     <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef>Vəzifəsi</th>
         <td mat-cell *matCellDef="let gamer">{{ gamer.isCaptain ? 'Kapitan' : gamer.isCoach ? 'Məşqçi' : '' }}</td>
     </ng-container>
+    <ng-container matColumnDef="tournament">
+        <th mat-header-cell *matHeaderCellDef>Turnir</th>
+        <td mat-cell *matCellDef="let game">{{ game.tournament.name }}</td>
+    </ng-container>
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
         <td mat-cell *matCellDef="let user">
             <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
-                <button mat-raised-button color="primary" (click)="onGamerUpdate(user)">Redaktə</button>
-                <button mat-raised-button color="warn" (click)="onGamerDelete(user)">Sil</button>
+                <button mat-raised-button color="primary" (click)="onGameUpdate(user)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onGameDelete(user)">Sil</button>
             </div>
         </td>
     </ng-container>
@@ -47,8 +54,8 @@
         (page)="onPageChange($event)"></mat-paginator>
 </div>
 <div class="no-data-message" *ngIf="dataSource.length === 0">
-    <p>Oyunçu məlumatları mövcud deyil.</p>
+    <p>Oyun məlumatları mövcud deyil.</p>
 </div>
 <div class="add-user-button">
-    <button mat-raised-button color="primary" (click)="onGamerCreate()">Oyunçu əlavə et</button>
+    <button mat-raised-button color="primary" (click)="onGameCreate()">Oyun əlavə et</button>
 </div>

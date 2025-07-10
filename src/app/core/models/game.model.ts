@@ -1,23 +1,29 @@
 import { Team } from "./team.model";
+import { Tournament } from "./tournament.model";
 
 export interface Game {
     _id: string;
-    name: string;
+    name?: string;
     startDate: Date;
     endDate: Date;
-    tournament: string; // Tournament ID
+    tournament: Tournament; // Tournament ID
     team1: Team;
     team2: Team;
-
+    scoreTeam1?: number; // Optional score for team 1
+    scoreTeam2?: number; // Optional score for team 2
 }
 
 export interface CreateGameDto {
-    name: string;
+    name?: string;
     startDate: Date;
     endDate: Date;
     tournament: string; // Tournament ID
     team1: string; // Team 1 ID
     team2: string; // Team 2 ID
+    scoreTeam1?: number; // Optional score for team 1
+    scoreTeam2?: number; // Optional score for team 2
+    isNewGame?: boolean; // Flag to indicate if this is a new game
+    winner?: string; // Winner ID, optional for new games
 }
 
 export interface UpdateGameDto {
@@ -28,6 +34,10 @@ export interface UpdateGameDto {
     tournament?: string; // Tournament ID
     team1?: string; // Team 1 ID
     team2?: string; // Team 2 ID
+    scoreTeam1?: number; // Optional score for team 1
+    scoreTeam2?: number; // Optional score for team 2
+    winner?: string; // Winner ID, optional for updates
+    isNewGame?: boolean; // Flag to indicate if this is a new game
 }
 
 export interface GameFilterDto {
