@@ -141,10 +141,7 @@ export class DashboardService {
 
     
     getGamers(gamerParams: GamerParams): Observable<any> {
-        console.log('Fetching gamers with params:', gamerParams);
         let url: string = `${this.configService.getApiUrl()}/gamers`;
-        
-        console.log(`Using pagination: page=${gamerParams.page}, size=${gamerParams.size}`);
         url = `${url}?page=${gamerParams.page}&size=${gamerParams.size}`;
         
         if (gamerParams.number) {

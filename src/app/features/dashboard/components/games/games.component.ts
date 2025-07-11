@@ -32,7 +32,7 @@ import { AzeDateTimePipe } from '../../../../shared/pipes/aze-date-time.pipe';
     styleUrl: './games.component.scss'
 })
 export class GamesComponent {
-    displayedColumns: string[] = ['tournament', 'team1', 'team2', 'startDate', 'endDate', 'actions'];
+    displayedColumns: string[] = ['tournament', 'team1', 'team2', 'score', 'winner', 'startDate', 'endDate', 'actions'];
     dataSource: Game[] = [];
     teams1: Team[] = [];
     teams2: Team[] = [];
@@ -117,7 +117,7 @@ export class GamesComponent {
                             this.loadGames();
                         },
                         error: (err) => {
-                            this.snackBar.open('Oyun yenilənmədi: ' + err.message, '', this.matSnackConfig);
+                            this.snackBar.open('Oyun yenilənmədi: ' + err.message + ': ' + err.error.message, '', this.matSnackConfig);
                         }
                     });
                 }
@@ -144,9 +144,12 @@ export class GamesComponent {
             name: game.name,
             startDate: game.startDate,
             endDate: game.endDate,
-            tournament: game.tournament._id,
-            team1: game.team1._id,
-            team2: game.team2._id,
+            tournament: game.tournament,
+            team1: game.team1,
+            team2: game.team2,
+            scoreTeam1: game.scoreTeam1,
+            scoreTeam2: game.scoreTeam2,
+            winner: game.winner,
             isNewGame: false
         };
         this.openEditDialog(updateGame);

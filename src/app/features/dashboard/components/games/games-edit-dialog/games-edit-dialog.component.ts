@@ -60,9 +60,25 @@ export class GamesEditDialogComponent implements OnInit {
         this.dashboardService.getTeams({ page: 1, size: 100 }).subscribe(response => {
             this.teams1 = response.data;
             this.teams2 = response.data;
+            if (this.dataSource.team1) {
+                this.selectedTeam1Id = typeof this.dataSource.team1 === 'string' ? this.dataSource.team1 : this.dataSource.team1._id || '';
+            }
+            if (this.dataSource.team2) {
+                this.selectedTeam2Id = typeof this.dataSource.team2 === 'string' ? this.dataSource.team2 : this.dataSource.team2._id || '';
+            }
+            if (this.dataSource.team1 && this.dataSource.team2) {
+                this.winnerTeams = [this.teams1.find(team => team._id === this.selectedTeam1Id)!, this.teams2.find(team => team._id === this.selectedTeam2Id)!];
+                if (this.dataSource.winner) {
+                    this.selectedWinnerId = typeof this.dataSource.winner === 'string' ? this.dataSource.winner : this.dataSource.winner._id || '';
+                }
+            }
         });
         this.dashboardService.getTournaments({ page: 1, size: 100 }).subscribe(response => {
             this.tournaments = response.data;
+
+            if (this.dataSource.tournament) {
+                this.selectedTournamentId = typeof this.dataSource.tournament === 'string' ? this.dataSource.tournament : this.dataSource.tournament._id || '';
+            }
         });
         if (this.dataSource.startDate) {
             this.gameStartTime = new Date(this.dataSource.startDate).toLocaleTimeString('en-US', {
@@ -117,8 +133,6 @@ export class GamesEditDialogComponent implements OnInit {
         this.dataSource.team2 = this.selectedTeam2Id;
         this.dataSource.tournament = this.selectedTournamentId;
         this.dataSource.winner = this.selectedWinnerId;
-
-        console.log('Saving Game:', this.dataSource);
 
         this.dialogRef.close(this.dataSource);
     }

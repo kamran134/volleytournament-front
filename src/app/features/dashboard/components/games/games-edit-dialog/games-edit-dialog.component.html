@@ -29,22 +29,36 @@
             <input matInput type="time" [(ngModel)]='gameEndTime' name="endTime" required />
             <mat-hint>HH:mm</mat-hint>
         </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Komanda 1</mat-label>
-            <mat-select [(value)]="selectedTeam1Id" name="team1" required (selectionChange)="setTeam1($event.value)">
-                <mat-option *ngFor="let team of teams1" [value]="team._id">
-                    {{ team.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-            <mat-label>Komanda 2</mat-label>
-            <mat-select [(value)]="selectedTeam2Id" name="team2" required (selectionChange)="setTeam2($event.value)">
-                <mat-option *ngFor="let team of teams2" [value]="team._id">
-                    {{ team.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+        
+        <div class="team-selection">
+            <mat-form-field appearance="fill">
+                <mat-label>Komanda 1</mat-label>
+                <mat-select [(value)]="selectedTeam1Id" name="team1" required (selectionChange)="setTeam1($event.value)">
+                    <mat-option *ngFor="let team of teams1" [value]="team._id">
+                        {{ team.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Hesab</mat-label>
+                <input matInput type="number" [(ngModel)]="dataSource.scoreTeam1" name="scoreTeam1" />
+            </mat-form-field>
+        </div>
+        
+        <div class="team-selection">
+            <mat-form-field appearance="fill">
+                <mat-label>Komanda 2</mat-label>
+                <mat-select [(value)]="selectedTeam2Id" name="team2" required (selectionChange)="setTeam2($event.value)">
+                    <mat-option *ngFor="let team of teams2" [value]="team._id">
+                        {{ team.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Hesab</mat-label>
+                <input matInput type="number" [(ngModel)]="dataSource.scoreTeam2" name="scoreTeam2" />
+            </mat-form-field>
+        </div>
         <mat-form-field appearance="fill">
             <mat-label>Qalib komanda</mat-label>
             <mat-select [(value)]="selectedWinnerId" name="winner">

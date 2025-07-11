@@ -11,6 +11,7 @@ export interface Game {
     team2: Team;
     scoreTeam1?: number; // Optional score for team 1
     scoreTeam2?: number; // Optional score for team 2
+    winner?: Team; // Winner ID, optional for updates
 }
 
 export interface CreateGameDto {
@@ -31,12 +32,12 @@ export interface UpdateGameDto {
     name?: string;
     startDate?: Date;
     endDate?: Date;
-    tournament?: string; // Tournament ID
-    team1?: string; // Team 1 ID
-    team2?: string; // Team 2 ID
+    tournament?: Tournament; // Tournament ID
+    team1?: Team; // Team 1 ID
+    team2?: Team; // Team 2 ID
     scoreTeam1?: number; // Optional score for team 1
     scoreTeam2?: number; // Optional score for team 2
-    winner?: string; // Winner ID, optional for updates
+    winner?: Team; // Winner ID, optional for updates
     isNewGame?: boolean; // Flag to indicate if this is a new game
 }
 
