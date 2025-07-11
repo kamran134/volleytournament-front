@@ -1,0 +1,14 @@
+<!-- Needs to tournament cards, centred, grided, 3 tournament on the row, clickable, with details, with a button to join the tournament -->
+<div class="home-tournaments">
+    <h2>Yarışlar</h2>
+    <div class="tournament-cards">
+        <div class="tournament-card" *ngFor="let tournament of tournaments" (click)="onTournamentClick(tournament)">
+            <img [src]="" alt="{{ tournament.name }}" class="tournament-image">
+            <div class="tournament-details">
+                <h3 class="tournament-name">{{ tournament.name }}</h3>
+                <p class="tournament-date">{{ tournament.startDate | date }}</p>
+                <button mat-button color="primary" (click)="joinTournament(tournament)">Yarışa qoşul</button>
+            </div>
+        </div>
+    </div>
+</div>

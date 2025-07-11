@@ -16,9 +16,11 @@ export interface Tournament {
 }
 
 export interface CreateTournamentDto {
+    isNewTournament: boolean;
     name: string;
     shortName?: string;
     logoUrl?: string;
+    logo?: File;
     country: string;
     city: string;
     startDate: Date;
@@ -28,9 +30,11 @@ export interface CreateTournamentDto {
 
 export interface UpdateTournamentDto {
     _id: string;
-    name?: string;
+    isNewTournament: boolean;
+    name: string;
     shortName?: string;
     logoUrl?: string;
+    logo?: File;
     country?: string;
     city?: string;
     startDate?: Date;

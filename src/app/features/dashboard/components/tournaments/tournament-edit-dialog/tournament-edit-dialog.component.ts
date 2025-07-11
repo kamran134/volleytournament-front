@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { UpdateTournamentDto } from '../../../../../core/models/tournament.model';
+import { CreateTournamentDto, UpdateTournamentDto } from '../../../../../core/models/tournament.model';
 import { AuthService } from '../../../../../core/services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,20 +39,35 @@ export class TournamentEditDialogComponent {
         horizontalPosition: 'center',
         verticalPosition: 'top'
     };
+    previewUrl: string | null = null;
 
     constructor(
         public dialogRef: MatDialogRef<TournamentEditDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public dataSource: UpdateTournamentDto,
+        @Inject(MAT_DIALOG_DATA) public dataSource: CreateTournamentDto | UpdateTournamentDto,
         private matSnackBar: MatSnackBar,
         private authService: AuthService
-    ) { }
+    ) {
+        if (dataSource.logoUrl) {
+            this.previewUrl = dataSource.logoUrl;
+        }
+    }
 
     isSuperAdmin(): boolean {
         return this.authService.isSuperAdmin();
     }
 
-    isNewTournament(): boolean {
-        return !this.dataSource._id;
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            this.dataSource.logo = file;
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                //this.dataSource.logoUrl = e.target.result;
+                this.previewUrl = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     onSave(): void {
@@ -71,6 +86,15 @@ export class TournamentEditDialogComponent {
             this.dataSource.city = 'Baku'; // Default city
         }
         
+        const formData = new FormData();
+        Object.keys(this.dataSource).forEach(key => {
+            if (key === 'logo' && this.dataSource.logo) {
+                formData.append(key, this.dataSource.logo);
+            } else if (key === 'startDate' || key === 'endDate') {
+                formData.append(key, (this.dataSource[key] as Date).toISOString());
+            }
+        });
+
         this.dialogRef.close(this.dataSource);
     }
 

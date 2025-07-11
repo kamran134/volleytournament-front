@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../../../core/services/auth.service';
+import { HomeTournamentsComponent } from "../home-tournaments/home-tournaments.component";
 
 @Component({
     selector: 'app-home',
@@ -19,10 +20,11 @@ import { AuthService } from '../../../../core/services/auth.service';
         MatSidenavModule,
         MatListModule,
         CommonModule,
-        RouterModule
+        RouterModule,
+        HomeTournamentsComponent
     ],
     templateUrl: './home.component.html',
-    styleUrl: './home.component.scss'
+    styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
     authorizedUserRole: string | null = null;

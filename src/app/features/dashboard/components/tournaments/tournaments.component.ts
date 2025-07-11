@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { Tournament, TournamentResponse } from '../../../../core/models/tournament.model';
+import { CreateTournamentDto, Tournament, TournamentResponse, UpdateTournamentDto } from '../../../../core/models/tournament.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -67,36 +67,36 @@ export class TournamentsComponent implements OnInit {
     }
 
     onTournamentCreate(): void {
-        const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
-            width: '1000px',
-            data: {
-                name: '',
-                shortName: '',
-                country: '',
-                city: '',
-                startDate: '',
-                endDate: ''
-            }
-        });
+        const newTournament: CreateTournamentDto = {
+            name: '',
+            shortName: undefined,
+            country: '',
+            city: '',
+            startDate: new Date(),
+            endDate: new Date(),
+            logo: undefined,
+            logoUrl: undefined,
+            isNewTournament: true
+        };
 
-        dialogRef.afterClosed().subscribe((result: Tournament) => {
-            if (result) {
-                this.dashboardService.createTournament(result).subscribe({
-                    next: () => {
-                        this.loadTournaments();
-                        this.snackBar.open('Yeni istifadəçi yaradıldı', 'Bağla', this.matSnackConfig);
-                    },
-                    error: (error) => {
-                        console.error(error);
-                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-                    }
-                });
-            }
-        });
+        this.openEditDialog(newTournament);
     }
 
     onTournamentUpdate(tournament: Tournament): void {
-        if (this.isAdminOrSuperAdmin$) this.openEditDialog(tournament);
+        const updateTournament: UpdateTournamentDto = {
+            _id: tournament._id,
+            isNewTournament: false,
+            name: tournament.name,
+            shortName: tournament.shortName,
+            logoUrl: tournament.logoUrl,
+            country: tournament.country,
+            city: tournament.city,
+            startDate: new Date(tournament.startDate),
+            endDate: new Date(tournament.endDate),
+            statut: tournament.statut,
+            teams: tournament.teams?.map(team => team._id) || []
+        };
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(updateTournament);
     }
 
     onTournamentDelete(tournament: Tournament): void {
@@ -121,46 +121,59 @@ export class TournamentsComponent implements OnInit {
         });
     }
 
-    openEditDialog(tournament: Tournament): void {
+    openEditDialog(tournament: CreateTournamentDto | UpdateTournamentDto): void {
         const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
             width: '1000px',
             data: tournament
         });
 
-        dialogRef.afterClosed().subscribe((result: Tournament) => {
+        dialogRef.afterClosed().subscribe((result: CreateTournamentDto | UpdateTournamentDto) => {
             if (result) {
-                this.dashboardService.editTournament(result).subscribe({
-                    next: () => {
-                        this.loadTournaments();
-                        this.snackBar.open('Turnir məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
-                    },
-                    error: (error) => {
-                        console.error(error);
-                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-                    }
-                });
+                if (result.isNewTournament) {
+                    this.dashboardService.createTournament(result as CreateTournamentDto).subscribe({
+                        next: () => {
+                            this.loadTournaments();
+                            this.snackBar.open('Turnir yaradıldı', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                } else {
+                    this.dashboardService.editTournament(result as UpdateTournamentDto).subscribe({
+                        next: () => {
+                            this.loadTournaments();
+                            this.snackBar.open('Turnir məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                }
             }
         });
     }
 
     openTournamentDetails(tournament: Tournament): void {
-        const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
-            width: '1000px',
-            data: tournament
-        });
+        // const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
+        //     width: '1000px',
+        //     data: tournament
+        // });
 
-        dialogRef.afterClosed().subscribe((result: Tournament) => {
-            if (result) {
-                this.dashboardService.editTournament(result).subscribe({
-                    next: () => {
-                        this.loadTournaments();
-                    },
-                    error: (error) => {
-                        console.error(error);
-                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-                    }
-                });
-            }
-        });
+        // dialogRef.afterClosed().subscribe((result: Tournament) => {
+        //     if (result) {
+        //         this.dashboardService.editTournament(result).subscribe({
+        //             next: () => {
+        //                 this.loadTournaments();
+        //             },
+        //             error: (error) => {
+        //                 console.error(error);
+        //                 this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+        //             }
+        //         });
+        //     }
+        // });
     }
 }

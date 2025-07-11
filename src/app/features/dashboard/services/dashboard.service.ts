@@ -4,7 +4,7 @@ import { ConfigService } from "../../../core/services/config.service";
 import { GamerParams, TeamParams, TournamentParams, UserParams } from "../../../core/models/filterParams.model";
 import { Observable } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
-import { TournamentResponse } from "../../../core/models/tournament.model";
+import { CreateTournamentDto, TournamentResponse, UpdateTournamentDto } from "../../../core/models/tournament.model";
 import { Game, GameResponse } from "../../../core/models/game.model";
 
 @Injectable({
@@ -82,14 +82,14 @@ export class DashboardService {
         return this.http.get<TournamentResponse>(url, { withCredentials: true });
     }
 
-    createTournament(tournament: any): Observable<any> {
+    createTournament(tournament: CreateTournamentDto): Observable<TournamentResponse> {
         const url = `${this.configService.getApiUrl()}/tournaments`;
-        return this.http.post<any>(url, tournament, { withCredentials: true });
+        return this.http.post<TournamentResponse>(url, tournament, { withCredentials: true });
     }
 
-    editTournament(tournament: any): Observable<any> {
+    editTournament(tournament: UpdateTournamentDto): Observable<TournamentResponse> {
         const url = `${this.configService.getApiUrl()}/tournaments`;
-        return this.http.put<any>(url, tournament, { withCredentials: true });
+        return this.http.put<TournamentResponse>(url, tournament, { withCredentials: true });
     }
 
     deleteTournament(id: string): Observable<{message: string}> {

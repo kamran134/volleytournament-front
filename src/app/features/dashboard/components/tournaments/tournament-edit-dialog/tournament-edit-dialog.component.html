@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Turnirin redaktə edilməsi</h2>
+<h2 mat-dialog-title>{{ dataSource.isNewTournament ? 'Turnirin yaradılması' : 'Turnirin redaktə edilməsi' }}</h2>
 <mat-dialog-content>
     <form>
         <mat-form-field appearance="fill">
@@ -9,10 +9,19 @@
             <mat-label>Qısa ad (vacib deyil)</mat-label>
             <input matInput [(ngModel)]='dataSource.shortName' name="shortName" />
         </mat-form-field>
+
+        <div class="logo-upload">
+            <mat-label>Logo yüklə</mat-label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput />
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Turnir logosu" class="logo-preview" />
+            <span *ngIf="!previewUrl">Logo yüklənməyib</span>
+        </div>
+
         <mat-form-field appearance="fill">
             <mat-form-field>
                 <mat-label>Başlanğıc tarixi</mat-label>
-                <input matInput [matDatepicker]="pickerStart" [(ngModel)]='dataSource.startDate' name="startDate" required>
+                <input matInput [matDatepicker]="pickerStart" [(ngModel)]='dataSource.startDate' name="startDate"
+                    required>
                 <mat-hint>DD.MM.YYYY</mat-hint>
                 <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart (monthSelected)="setStartDate($event, pickerStart)"></mat-datepicker>
@@ -38,7 +47,8 @@
 
 <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
-    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!dataSource.name || !dataSource.startDate || !dataSource.endDate">
+    <button mat-raised-button color="primary" (click)="onSave()"
+        [disabled]="!dataSource.name || !dataSource.startDate || !dataSource.endDate">
         Yadda saxla
     </button>
 </mat-dialog-actions>
