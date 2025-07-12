@@ -2,9 +2,9 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ConfigService } from "../../../core/services/config.service";
 import { GamerParams, TeamParams, TournamentParams, UserParams } from "../../../core/models/filterParams.model";
-import { Observable } from "rxjs";
+import { Observable, of, switchMap } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
-import { CreateTournamentDto, TournamentResponse, UpdateTournamentDto } from "../../../core/models/tournament.model";
+import { CreateTournamentDto, Tournament, TournamentResponse, UpdateTournamentDto } from "../../../core/models/tournament.model";
 import { Game, GameResponse } from "../../../core/models/game.model";
 
 @Injectable({
@@ -83,13 +83,42 @@ export class DashboardService {
     }
 
     createTournament(tournament: CreateTournamentDto): Observable<TournamentResponse> {
+        const formData = new FormData();
+        formData.append('name', tournament.name);
+        formData.append('shortName', tournament.shortName || tournament.name);
+        formData.append('country', tournament.country || 'Azerbaijan');
+        formData.append('city', tournament.city || 'Baku');
+        formData.append('statut', tournament.statut || 'active');
+        formData.append('startDate', tournament.startDate.toISOString());
+        formData.append('endDate', tournament.endDate.toISOString());
+        
+        if (tournament.logo instanceof File) {
+            formData.append('logo', tournament.logo);
+        }
+
         const url = `${this.configService.getApiUrl()}/tournaments`;
-        return this.http.post<TournamentResponse>(url, tournament, { withCredentials: true });
+        return this.http.post<TournamentResponse>(url, formData, { withCredentials: true });
     }
 
     editTournament(tournament: UpdateTournamentDto): Observable<TournamentResponse> {
+        const formData = new FormData();
+        if (tournament._id) formData.append('_id', tournament._id);
+        if (tournament.name) formData.append('name', tournament.name);
+        if (tournament.shortName) formData.append('shortName', tournament.shortName);
+        if (tournament.country) formData.append('country', tournament.country);
+        if (tournament.city) formData.append('city', tournament.city);
+        if (tournament.statut) formData.append('statut', tournament.statut);
+        if (tournament.startDate) formData.append('startDate', tournament.startDate.toISOString());
+        if (tournament.endDate) formData.append('endDate', tournament.endDate.toISOString());
+        if (tournament.teams && tournament.teams.length > 0) {
+            formData.append('teams', JSON.stringify(tournament.teams)); // Отправляем массив как JSON-строку
+        }
+        if (tournament.logo instanceof File) {
+            formData.append('logo', tournament.logo);
+        }
+
         const url = `${this.configService.getApiUrl()}/tournaments`;
-        return this.http.put<TournamentResponse>(url, tournament, { withCredentials: true });
+        return this.http.put<TournamentResponse>(url, formData, { withCredentials: true });
     }
 
     deleteTournament(id: string): Observable<{message: string}> {

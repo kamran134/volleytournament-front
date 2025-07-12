@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import moment, { Moment } from 'moment';
+import { ConfigService } from '../../../../../core/services/config.service';
 
 @Component({
     selector: 'app-tournament-edit-dialog',
@@ -32,23 +33,25 @@ import moment, { Moment } from 'moment';
     styleUrl: './tournament-edit-dialog.component.scss'
 })
 export class TournamentEditDialogComponent {
-    repeatedPassword: string = '';
-    emailPattern: string = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
         horizontalPosition: 'center',
         verticalPosition: 'top'
     };
     previewUrl: string | null = null;
+    baseUrl: string = this.configService.getApiUrl();
+    imageUrl: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<TournamentEditDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public dataSource: CreateTournamentDto | UpdateTournamentDto,
         private matSnackBar: MatSnackBar,
-        private authService: AuthService
+        private authService: AuthService,
+        private configService: ConfigService
     ) {
         if (dataSource.logoUrl) {
             this.previewUrl = dataSource.logoUrl;
+            this.imageUrl = `${this.baseUrl.replace('/api', '')}${dataSource.logoUrl}`;
         }
     }
 
@@ -81,20 +84,11 @@ export class TournamentEditDialogComponent {
             return;
         }
         // Additional validation for new tournament
-        if (!this.dataSource.country || !this.dataSource.city) {
-            this.dataSource.country = 'Azerbaijan'; // Default country
-            this.dataSource.city = 'Baku'; // Default city
-        }
+        this.dataSource.country = this.dataSource.country || 'Azerbaijan';
+        this.dataSource.city = this.dataSource.city || 'Baku';
+        this.dataSource.shortName = this.dataSource.shortName || this.dataSource.name;
+        this.dataSource.statut = this.dataSource.statut || 'active';
         
-        const formData = new FormData();
-        Object.keys(this.dataSource).forEach(key => {
-            if (key === 'logo' && this.dataSource.logo) {
-                formData.append(key, this.dataSource.logo);
-            } else if (key === 'startDate' || key === 'endDate') {
-                formData.append(key, (this.dataSource[key] as Date).toISOString());
-            }
-        });
-
         this.dialogRef.close(this.dataSource);
     }
 
