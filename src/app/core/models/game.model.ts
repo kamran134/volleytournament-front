@@ -12,6 +12,7 @@ export interface Game {
     scoreTeam1?: number; // Optional score for team 1
     scoreTeam2?: number; // Optional score for team 2
     winner?: Team; // Winner ID, optional for updates
+    location: Location;
 }
 
 export interface CreateGameDto {
@@ -25,6 +26,7 @@ export interface CreateGameDto {
     scoreTeam2?: number; // Optional score for team 2
     isNewGame?: boolean; // Flag to indicate if this is a new game
     winner?: string; // Winner ID, optional for new games
+    location: string; // Location ID
 }
 
 export interface UpdateGameDto {
@@ -38,6 +40,7 @@ export interface UpdateGameDto {
     scoreTeam1?: number; // Optional score for team 1
     scoreTeam2?: number; // Optional score for team 2
     winner?: Team; // Winner ID, optional for updates
+    location?: Location; // Location ID
     isNewGame?: boolean; // Flag to indicate if this is a new game
 }
 

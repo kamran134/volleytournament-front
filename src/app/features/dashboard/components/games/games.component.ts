@@ -12,7 +12,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { GamesEditDialogComponent } from './games-edit-dialog/games-edit-dialog.component';
+import { GameEditDialogComponent } from './game-edit-dialog/game-edit-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { AzeDateTimePipe } from '../../../../shared/pipes/aze-date-time.pipe';
 
@@ -93,7 +93,7 @@ export class GamesComponent {
     }
 
     openEditDialog(game: CreateGameDto | UpdateGameDto): void {
-        const dialogRef = this.dialog.open(GamesEditDialogComponent, {
+        const dialogRef = this.dialog.open(GameEditDialogComponent, {
             width: '1000px',
             data: game
         });
@@ -133,7 +133,9 @@ export class GamesComponent {
             tournament: '',
             team1: '',
             team2: '',
-            isNewGame: true
+            location: '',
+            isNewGame: true,
+            
         };
         this.openEditDialog(newGame);
     }
@@ -150,7 +152,8 @@ export class GamesComponent {
             scoreTeam1: game.scoreTeam1,
             scoreTeam2: game.scoreTeam2,
             winner: game.winner,
-            isNewGame: false
+            location: game.location,
+            isNewGame: false,
         };
         this.openEditDialog(updateGame);
     }

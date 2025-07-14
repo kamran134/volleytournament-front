@@ -6,6 +6,7 @@ import { Observable, of, switchMap } from "rxjs";
 import { UserData, UserEdit } from "../../../core/models/user.model";
 import { CreateTournamentDto, Tournament, TournamentResponse, UpdateTournamentDto } from "../../../core/models/tournament.model";
 import { Game, GameResponse } from "../../../core/models/game.model";
+import { CreateLocationDto, LocationResponse, UpdateLocationDto } from "../../../core/models/location.model";
 
 @Injectable({
     providedIn: 'root'
@@ -233,6 +234,27 @@ export class DashboardService {
 
     deleteGame(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/games/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+
+    getLocations(params: { page: number; size: number; }): Observable<LocationResponse> {
+        let url: string = `${this.configService.getApiUrl()}/locations?page=${params.page}&size=${params.size}`;
+        return this.http.get<LocationResponse>(url, { withCredentials: true });
+    }
+
+    createLocation(location: CreateLocationDto): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/locations`;
+        return this.http.post<any>(url, location, { withCredentials: true });
+    }
+
+    editLocation(location: UpdateLocationDto): Observable<any> {
+        const url = `${this.configService.getApiUrl()}/locations`;
+        return this.http.put<any>(url, location, { withCredentials: true });
+    }
+
+    deleteLocation(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/locations/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }

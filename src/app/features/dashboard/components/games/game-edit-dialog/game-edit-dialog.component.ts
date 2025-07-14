@@ -29,10 +29,10 @@ import { Moment } from 'moment';
         FormsModule,
         CommonModule
     ],
-    templateUrl: './games-edit-dialog.component.html',
-    styleUrl: './games-edit-dialog.component.scss'
+    templateUrl: './game-edit-dialog.component.html',
+    styleUrl: './game-edit-dialog.component.scss'
 })
-export class GamesEditDialogComponent implements OnInit {
+export class GameEditDialogComponent implements OnInit {
     selectedTeam1Id: string = '';
     selectedTeam2Id: string = '';
     selectedWinnerId?: string = undefined;
@@ -50,7 +50,7 @@ export class GamesEditDialogComponent implements OnInit {
     gameEndTime: string = '';
 
     constructor(
-        public dialogRef: MatDialogRef<GamesEditDialogComponent>,
+        public dialogRef: MatDialogRef<GameEditDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public dataSource: CreateGameDto | UpdateGameDto,
         private dashboardService: DashboardService,
         private matSnackBar: MatSnackBar

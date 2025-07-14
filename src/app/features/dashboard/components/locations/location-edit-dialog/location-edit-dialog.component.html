@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>{{ dataSource.isNewLocation ? 'Məkanın yaradılması' : 'Məkanın redaktə edilməsi' }}</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Məkanın adı</mat-label>
+            <input matInput [(ngModel)]='dataSource.name' name="name" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Məkanın ünvanı</mat-label>
+            <input matInput [(ngModel)]='dataSource.address' name="address" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Məkanın linki</mat-label>
+            <input matInput [(ngModel)]='dataSource.url' name="url" required />
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
+    <button mat-raised-button color="primary" (click)="onSave()"
+        [disabled]="!dataSource.name || !dataSource.url || !dataSource.address">
+        Yadda saxla
+    </button>
+</mat-dialog-actions>

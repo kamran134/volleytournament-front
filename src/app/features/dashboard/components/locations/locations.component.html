@@ -1,0 +1,36 @@
+<h2>Oyun məkanları</h2>
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Məkan adı</th>
+        <td mat-cell *matCellDef="let location">{{ location.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef>Ünvan</th>
+        <td mat-cell *matCellDef="let location">{{ location.address }}</td>
+    </ng-container>
+    <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef>URL</th>
+        <td mat-cell *matCellDef="let location">{{ location.url }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+        <td mat-cell *matCellDef="let location">
+            <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onLocationUpdate(location)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onLocationDelete(location)">Sil</button>
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<div class="pagination-container">
+    <mat-paginator [length]="totalCount" [pageSize]="20" [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPageChange($event)"></mat-paginator>
+</div>
+<div class="no-data-message" *ngIf="dataSource.length === 0">
+    <p>Oyun məlumatları mövcud deyil.</p>
+</div>
+<div class="add-user-button">
+    <button mat-raised-button color="primary" (click)="onLocationCreate()">Məkan əlavə et</button>
+</div>

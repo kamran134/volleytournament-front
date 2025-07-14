@@ -5,6 +5,7 @@ import { TournamentsComponent } from './components/tournaments/tournaments.compo
 import { TeamsComponent } from './components/teams/teams.component';
 import { GamersComponent } from './components/gamers/gamers.component';
 import { GamesComponent } from './components/games/games.component';
+import { LocationsComponent } from './components/locations/locations.component';
 
 export const routes: Routes = [
     {
@@ -16,6 +17,7 @@ export const routes: Routes = [
             { path: 'teams', component: TeamsComponent },
             { path: 'players', component: GamersComponent },
             { path: 'games', component: GamesComponent },
+            { path: 'locations', component: LocationsComponent },
             { path: '', redirectTo: 'users', pathMatch: 'full' }
         ]
     }
