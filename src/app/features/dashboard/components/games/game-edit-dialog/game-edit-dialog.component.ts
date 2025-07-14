@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Tournament } from '../../../../../core/models/tournament.model';
 import { Moment } from 'moment';
+import { Location } from '../../../../../core/models/location.model';
 
 @Component({
     selector: 'app-games-edit-dialog',
@@ -36,10 +37,12 @@ export class GameEditDialogComponent implements OnInit {
     selectedTeam1Id: string = '';
     selectedTeam2Id: string = '';
     selectedWinnerId?: string = undefined;
+    selectedLocationId: string = '';
     selectedTournamentId: string = '';
     teams1: Team[] = [];
     teams2: Team[] = [];
     winnerTeams: Team[] = [];
+    locations: Location[] = [];
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
         horizontalPosition: 'center',
@@ -73,11 +76,20 @@ export class GameEditDialogComponent implements OnInit {
                 }
             }
         });
+
         this.dashboardService.getTournaments({ page: 1, size: 100 }).subscribe(response => {
             this.tournaments = response.data;
 
             if (this.dataSource.tournament) {
                 this.selectedTournamentId = typeof this.dataSource.tournament === 'string' ? this.dataSource.tournament : this.dataSource.tournament._id || '';
+            }
+        });
+
+        this.dashboardService.getLocations({ page: 1, size: 100 }).subscribe(response => {
+            this.locations = response.data;
+
+            if (this.dataSource.location) {
+                this.selectedLocationId = typeof this.dataSource.location === 'string' ? this.dataSource.location : this.dataSource.location._id || '';
             }
         });
         if (this.dataSource.startDate) {
@@ -133,6 +145,7 @@ export class GameEditDialogComponent implements OnInit {
         this.dataSource.team2 = this.selectedTeam2Id;
         this.dataSource.tournament = this.selectedTournamentId;
         this.dataSource.winner = this.selectedWinnerId;
+        this.dataSource.location = this.selectedLocationId;
 
         this.dialogRef.close(this.dataSource);
     }

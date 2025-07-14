@@ -1,3 +1,4 @@
+import { Location } from "./location.model";
 import { Team } from "./team.model";
 import { Tournament } from "./tournament.model";
 
