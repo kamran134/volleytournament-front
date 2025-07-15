@@ -20,7 +20,7 @@ export class HomeTournamentsComponent implements OnInit {
     baseUrl: string = '';
 
     constructor(private homeService: HomeService, private configService: ConfigService) {
-        this.baseUrl = this.configService.getApiUrl().replace('/api', '');
+        this.baseUrl = this.configService.getStaticUrl();
     }
 
     ngOnInit(): void {

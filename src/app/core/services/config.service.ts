@@ -12,4 +12,12 @@ export class ConfigService {
     getAuthUrl(): string {
         return environment.authUrl;
     }
+
+    getUploadsUrl(): string {
+        return environment.uploadsUrl;
+    }
+
+    getStaticUrl(): string {
+        return environment.staticUrl;
+    }
 }
