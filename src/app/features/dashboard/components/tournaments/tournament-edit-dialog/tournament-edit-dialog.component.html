@@ -13,8 +13,8 @@
         <div>
             <label>Loqo</label>
             <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-            <img *ngIf="previewUrl && !dataSource.logoUrl" [src]="previewUrl" alt="Logo Preview" style="max-width: 100px; margin-top: 10px;" />
-            <img *ngIf="dataSource.logoUrl" [src]="imageUrl" alt="Logo" style="max-width: 100px; margin-top: 10px;" />
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Logo Preview" style="max-width: 100px; margin-top: 10px;" />
+            <img *ngIf="!previewUrl && dataSource.logoUrl" [src]="imageUrl" alt="Logo" style="max-width: 100px; margin-top: 10px;" />
         </div>
 
         <mat-form-field appearance="fill">

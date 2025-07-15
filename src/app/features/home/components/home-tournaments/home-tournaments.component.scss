@@ -7,8 +7,9 @@
     }
 
     .tournament-cards {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 16px;
 
         .tournament-card {
@@ -22,8 +23,8 @@
             }
 
             .tournament-image {
-                width: 100%;
-                height: 150px;
+                width: 150px;
+                height: 187px;
                 object-fit: cover;
             }
 

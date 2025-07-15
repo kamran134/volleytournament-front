@@ -1,0 +1,20 @@
+<div class="home-games">
+    <h2>Növbəti Oyunlar</h2>
+    <div class="game-cards">
+        <mat-card class="game-card" *ngFor="let game of games" (click)="onGameClick(game)">
+            <mat-card-header>
+                <mat-card-title>{{ game.team1.name }} - {{ game.team2.name }}</mat-card-title>
+                <mat-card-subtitle>{{ game.startDate | azeFullDate : true }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p><mat-icon>location_on</mat-icon> {{ game.location.name }}</p>
+                <p>{{ game.location.address }}</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <a mat-button color="primary" [href]="game.location.url" target="_blank">
+                    <mat-icon>map</mat-icon> Google Xəritədə bax
+                </a>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

@@ -50,7 +50,7 @@ export class TournamentEditDialogComponent {
         private configService: ConfigService
     ) {
         if (dataSource.logoUrl) {
-            this.previewUrl = dataSource.logoUrl;
+            // this.previewUrl = dataSource.logoUrl;
             this.imageUrl = `${this.baseUrl.replace('/api', '')}${dataSource.logoUrl}`;
         }
     }

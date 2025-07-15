@@ -1,0 +1,40 @@
+<div class="layout-container">
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #sidenav mode="over" class="mobile-menu">
+            <mat-nav-list>
+                <a mat-list-item routerLink="/" (click)="sidenav.close()">Ana səhifə</a>
+                <a mat-list-item routerLink="/tournaments" (click)="sidenav.close()">Yarışlar</a>
+                <a mat-list-item routerLink="/teams" (click)="sidenav.close()">Komandalar</a>
+                <a mat-list-item routerLink="/players" (click)="sidenav.close()">Oyunçular</a>
+                <a mat-list-item routerLink="/admin" *ngIf="isLoggedIn" (click)="sidenav.close()">Admin paneli</a>
+                <a mat-list-item *ngIf="isLoggedIn" (click)="logInOut(); sidenav.close()">
+                    <mat-icon>logout</mat-icon> Çıxış
+                </a>
+                <a mat-list-item *ngIf="!isLoggedIn" routerLink="/login" (click)="sidenav.close()">
+                    <mat-icon>login</mat-icon> Giriş
+                </a>
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <mat-toolbar class="navigation">
+                <button mat-icon-button class="nav-toggle" (click)="sidenav.toggle()" aria-label="Toggle menu">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <span class="toolbar-title">VOLLEYTOUR.AZ</span>
+                <div class="desktop-menu">
+                    <a mat-button routerLink="/">Ana səhifə</a>
+                    <a mat-button routerLink="/tournaments">Yarışlar</a>
+                    <a mat-button routerLink="/teams">Komandalar</a>
+                    <a mat-button routerLink="/players">Oyunçular</a>
+                    <a mat-button routerLink="/admin" *ngIf="isLoggedIn">Admin paneli</a>
+                    <a mat-button *ngIf="isLoggedIn" (click)="logInOut()"><mat-icon>logout</mat-icon> Çıxış</a>
+                    <a mat-button *ngIf="!isLoggedIn" routerLink="/login"><mat-icon>login</mat-icon> Giriş</a>
+                </div>
+            </mat-toolbar>
+            <main class="content">
+                <router-outlet></router-outlet>
+            </main>
+            <app-footer></app-footer>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

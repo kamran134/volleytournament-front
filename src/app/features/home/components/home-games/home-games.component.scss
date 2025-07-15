@@ -1,0 +1,80 @@
+.home-games {
+    padding: 32px 16px;
+    background-color: #f5f5f5;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 24px;
+        font-size: 2rem;
+        color: #333;
+    }
+
+    .game-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+        max-width: 1200px;
+        margin: 0 auto;
+
+        .game-card {
+            width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            mat-card-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #3f51b5; // Primary color from Angular Material
+            }
+
+            mat-card-subtitle {
+                font-size: 1rem;
+                color: #666;
+            }
+
+            mat-card-content {
+                p {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 8px 0;
+                    font-size: 0.9rem;
+                    color: #444;
+
+                    mat-icon {
+                        color: #ff4081; // Accent color
+                    }
+                }
+            }
+
+            mat-card-actions {
+                display: flex;
+                justify-content: center;
+
+                a {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .game-cards {
+            flex-direction: column;
+            align-items: center;
+
+            .game-card {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    }
+}

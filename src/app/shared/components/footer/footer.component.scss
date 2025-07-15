@@ -1,0 +1,109 @@
+.footer {
+    height: 100%;
+    padding: 40px 20px;
+    background-color: #3f51b5;
+    color: white;
+
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+
+            h3 {
+                font-size: 1.2rem;
+                margin-bottom: 16px;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+
+                li {
+                    margin-bottom: 8px;
+
+                    a {
+                        color: white;
+                        text-decoration: none;
+                        transition: color 0.3s;
+
+                        &:hover {
+                            color: #ff4081;
+                        }
+                    }
+                }
+            }
+
+            p {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 8px 0;
+
+                a {
+                    color: white;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: #ff4081;
+                    }
+                }
+            }
+
+            .social-icons {
+                display: flex;
+                gap: 16px;
+
+                a {
+                    color: white;
+                    transition: color 0.3s;
+
+                    &:hover {
+                        color: #ff4081;
+                    }
+
+                    mat-icon {
+                        font-size: 24px;
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            }
+        }
+
+        .footer-bottom {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+            p {
+                margin: 0;
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .footer-section {
+            min-width: unset;
+        }
+
+        .social-icons {
+            justify-content: center;
+        }
+    }
+}
