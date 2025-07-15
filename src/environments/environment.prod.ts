@@ -3,5 +3,5 @@ export const environment = {
     apiUrl: '/api',
     authUrl: '/auth',
     uploadsUrl: '/uploads',
-    staticUrl: 'https://volleytourn.az'
+    staticUrl: 'https://volleytour.az'
 };
