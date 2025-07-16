@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { Tournament } from '../../../../../core/models/tournament.model';
 import { Moment } from 'moment';
 import { Location } from '../../../../../core/models/location.model';
+import { Tour } from '../../../../../core/models/tour.model';
 
 @Component({
     selector: 'app-games-edit-dialog',
@@ -39,6 +40,7 @@ export class GameEditDialogComponent implements OnInit {
     selectedWinnerId?: string = undefined;
     selectedLocationId: string = '';
     selectedTournamentId: string = '';
+    selectedTourId: string = '';
     teams1: Team[] = [];
     teams2: Team[] = [];
     winnerTeams: Team[] = [];
@@ -49,6 +51,7 @@ export class GameEditDialogComponent implements OnInit {
         verticalPosition: 'top'
     };
     tournaments: Tournament[] = [];
+    tours: Tour[] = [];
     gameStartTime: string = '';
     gameEndTime: string = '';
 
@@ -92,6 +95,15 @@ export class GameEditDialogComponent implements OnInit {
                 this.selectedLocationId = typeof this.dataSource.location === 'string' ? this.dataSource.location : this.dataSource.location._id || '';
             }
         });
+
+        this.dashboardService.getTours({ page: 1, size: 100 }).subscribe(response => {
+            this.tours = response.data;
+
+            if (this.dataSource.tour) {
+                this.selectedTourId = typeof this.dataSource.tour === 'string' ? this.dataSource.tour : this.dataSource.tour._id || '';
+            }
+        });
+
         if (this.dataSource.startDate) {
             this.gameStartTime = new Date(this.dataSource.startDate).toLocaleTimeString('en-US', {
                 hour: '2-digit',
@@ -146,6 +158,7 @@ export class GameEditDialogComponent implements OnInit {
         this.dataSource.tournament = this.selectedTournamentId;
         this.dataSource.winner = this.selectedWinnerId;
         this.dataSource.location = this.selectedLocationId;
+        this.dataSource.tour = this.selectedTourId;
 
         this.dialogRef.close(this.dataSource);
     }

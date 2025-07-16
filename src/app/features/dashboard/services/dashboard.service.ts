@@ -7,6 +7,7 @@ import { UserData, UserEdit } from "../../../core/models/user.model";
 import { CreateTournamentDto, Tournament, TournamentResponse, UpdateTournamentDto } from "../../../core/models/tournament.model";
 import { Game, GameResponse } from "../../../core/models/game.model";
 import { CreateLocationDto, LocationResponse, UpdateLocationDto } from "../../../core/models/location.model";
+import { CreateTourDto, Tour, TourResponse, UpdateTourDto } from "../../../core/models/tour.model";
 
 @Injectable({
     providedIn: 'root'
@@ -255,6 +256,35 @@ export class DashboardService {
 
     deleteLocation(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/locations/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+
+    getTours(params: { page: number; size: number; tournament?: string }): Observable<TourResponse> {
+        let url: string = `${this.configService.getApiUrl()}/tours?page=${params.page}&size=${params.size}`;
+        if (params.tournament) {
+            url = `${url}&tournament=${params.tournament}`;
+        }
+        return this.http.get<TourResponse>(url, { withCredentials: true });
+    }
+
+    getTourById(id: string): Observable<Tour> {
+        const url = `${this.configService.getApiUrl()}/tours/${id}`;
+        return this.http.get<Tour>(url, { withCredentials: true });
+    }
+
+    createTour(tour: CreateTourDto): Observable<Tour> {
+        const url = `${this.configService.getApiUrl()}/tours`;
+        return this.http.post<Tour>(url, tour, { withCredentials: true });
+    }
+
+    editTour(tour: UpdateTourDto): Observable<Tour> {
+        const url = `${this.configService.getApiUrl()}/tours`;
+        return this.http.put<Tour>(url, tour, { withCredentials: true });
+    }
+
+    deleteTour(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/tours/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }

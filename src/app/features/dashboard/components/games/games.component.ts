@@ -32,7 +32,7 @@ import { AzeDateTimePipe } from '../../../../shared/pipes/aze-date-time.pipe';
     styleUrl: './games.component.scss'
 })
 export class GamesComponent {
-    displayedColumns: string[] = ['tournament', 'team1', 'team2', 'score', 'winner', 'startDate', 'endDate', 'actions'];
+    displayedColumns: string[] = ['tournament', 'tour', 'team1', 'team2', 'score', 'winner', 'startDate', 'endDate', 'actions'];
     dataSource: Game[] = [];
     teams1: Team[] = [];
     teams2: Team[] = [];
@@ -131,6 +131,7 @@ export class GamesComponent {
             startDate: new Date(),
             endDate: new Date(),
             tournament: '',
+            tour: '',
             team1: '',
             team2: '',
             location: '',
@@ -147,6 +148,7 @@ export class GamesComponent {
             startDate: game.startDate,
             endDate: game.endDate,
             tournament: game.tournament,
+            tour: game.tour,
             team1: game.team1,
             team2: game.team2,
             scoreTeam1: game.scoreTeam1,

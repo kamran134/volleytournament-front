@@ -10,6 +10,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { TournamentEditDialogComponent } from './tournament-edit-dialog/tournament-edit-dialog.component';
+import { CreateTourDto, UpdateTourDto } from '../../../../core/models/tour.model';
+import { TourEditDialogComponent } from './tour-edit-dialog/tour-edit-dialog.component';
 
 @Component({
     selector: 'app-tournaments',
@@ -121,6 +123,18 @@ export class TournamentsComponent implements OnInit {
         });
     }
 
+    onTourCreate(tournament: Tournament): void {
+        const newTour: CreateTourDto = {
+            name: '',
+            startDate: new Date(),
+            endDate: new Date(),
+            tournament: tournament._id,
+            isNewTour: true
+        };
+
+        this.openTourDialog(newTour);
+    }
+
     openEditDialog(tournament: CreateTournamentDto | UpdateTournamentDto): void {
         const dialogRef = this.dialog.open(TournamentEditDialogComponent, {
             width: '1000px',
@@ -145,6 +159,41 @@ export class TournamentsComponent implements OnInit {
                         next: () => {
                             this.loadTournaments();
                             this.snackBar.open('Turnir məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    openTourDialog(tournament: CreateTourDto | UpdateTourDto): void {
+        const dialogRef = this.dialog.open(TourEditDialogComponent, {
+            width: '1000px',
+            data: tournament
+        });
+
+        dialogRef.afterClosed().subscribe((result: CreateTourDto | UpdateTourDto) => {
+            if (result) {
+                if (result.isNewTour) {
+                    this.dashboardService.createTour(result as CreateTourDto).subscribe({
+                        next: () => {
+                            this.loadTournaments();
+                            this.snackBar.open('Tur yaradıldı', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                } else {
+                    this.dashboardService.editTour(result as UpdateTourDto).subscribe({
+                        next: () => {
+                            this.loadTournaments();
+                            this.snackBar.open('Tur məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
                         },
                         error: (error) => {
                             console.error(error);

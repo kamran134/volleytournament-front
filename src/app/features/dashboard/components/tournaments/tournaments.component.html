@@ -28,6 +28,7 @@
         <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
         <td mat-cell *matCellDef="let tournament">
             <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onTourCreate(tournament)">Tur əlavə et</button>
                 <button mat-raised-button color="primary" (click)="onTournamentUpdate(tournament)">Redaktə</button>
                 <button mat-raised-button color="warn" (click)="onTournamentDelete(tournament)">Sil</button>
             </div>

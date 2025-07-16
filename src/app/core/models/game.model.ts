@@ -1,5 +1,6 @@
 import { Location } from "./location.model";
 import { Team } from "./team.model";
+import { Tour } from "./tour.model";
 import { Tournament } from "./tournament.model";
 
 export interface Game {
@@ -7,7 +8,8 @@ export interface Game {
     name?: string;
     startDate: Date;
     endDate: Date;
-    tournament: Tournament; // Tournament ID
+    tournament: Tournament; // Tournament
+    tour: Tour; // Tour
     team1: Team;
     team2: Team;
     scoreTeam1?: number; // Optional score for team 1
@@ -21,6 +23,7 @@ export interface CreateGameDto {
     startDate: Date;
     endDate: Date;
     tournament: string; // Tournament ID
+    tour: string; // Tour ID
     team1: string; // Team 1 ID
     team2: string; // Team 2 ID
     scoreTeam1?: number; // Optional score for team 1
@@ -36,6 +39,7 @@ export interface UpdateGameDto {
     startDate?: Date;
     endDate?: Date;
     tournament?: Tournament; // Tournament ID
+    tour?: Tour; // Tour ID
     team1?: Team; // Team 1 ID
     team2?: Team; // Team 2 ID
     scoreTeam1?: number; // Optional score for team 1

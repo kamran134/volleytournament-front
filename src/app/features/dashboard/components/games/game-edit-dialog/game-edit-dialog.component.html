@@ -10,6 +10,14 @@
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill">
+            <mat-label>Tur</mat-label>
+            <mat-select [(value)]="selectedTourId" name="tour">
+                <mat-option *ngFor="let tour of tours" [value]="tour._id">
+                    {{ tour.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
             <mat-form-field>
                 <mat-label>Oyun tarixi</mat-label>
                 <input matInput [matDatepicker]="picker" [(ngModel)]='dataSource.startDate' name="date"
