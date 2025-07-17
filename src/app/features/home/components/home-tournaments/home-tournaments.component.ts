@@ -4,6 +4,7 @@ import { Tournament } from '../../../../core/models/tournament.model';
 import { HomeService } from '../../services/home.service';
 import { ConfigService } from '../../../../core/services/config.service';
 import { AzeFullDatePipe } from '../../../../shared/pipes/aze-full-date.pipe';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-home-tournaments',
@@ -19,7 +20,7 @@ export class HomeTournamentsComponent implements OnInit {
     tournaments: Tournament[] = [];
     baseUrl: string = '';
 
-    constructor(private homeService: HomeService, private configService: ConfigService) {
+    constructor(private homeService: HomeService, private configService: ConfigService, private router: Router) {
         this.baseUrl = this.configService.getStaticUrl();
     }
 
@@ -39,8 +40,8 @@ export class HomeTournamentsComponent implements OnInit {
     }
 
     onTournamentClick(tournament: Tournament): void {
-        console.log('Tournament clicked:', tournament);
-        // Add your logic here to handle the tournament click
+        // Navigate to the tournament details page
+        this.router.navigate(['/tournament', tournament.shortName]);
     }
 
     joinTournament(tournament: Tournament): void {

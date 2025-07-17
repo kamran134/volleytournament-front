@@ -1,0 +1,11 @@
+.tournament-main {
+    padding: 84px 20px;
+
+    &__tournament-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+}

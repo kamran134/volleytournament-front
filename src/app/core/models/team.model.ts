@@ -16,6 +16,15 @@ export interface Team {
     updatedAt: string;
 }
 
+export interface TeamStats {
+    team: Team;
+    points: number; // Очки
+    matchesPlayed: number; // Сыграно матчей
+    matchesWon: number; // Выиграно матчей
+    matchesLost: number; // Проиграно матчей
+    matchesDrawn: number; // Ничьи
+}
+
 export interface TeamDetailsDto {
     _id: string;
     name: string;
