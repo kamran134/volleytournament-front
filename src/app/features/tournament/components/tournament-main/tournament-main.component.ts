@@ -81,6 +81,7 @@ export class TournamentMainComponent implements OnInit {
         this.tournamentService.getTournamentTable(this.tournament._id).subscribe({
             next: (response) => {
                 // Handle the tournament table data
+                console.log('Tournament table loaded:', response.data);
                 this.tournamentTable = response.data;
             },
             error: (error) => {
