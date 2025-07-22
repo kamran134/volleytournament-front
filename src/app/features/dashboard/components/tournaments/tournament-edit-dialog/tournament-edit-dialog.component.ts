@@ -87,8 +87,8 @@ export class TournamentEditDialogComponent {
         this.dataSource.country = this.dataSource.country || 'Azerbaijan';
         this.dataSource.city = this.dataSource.city || 'Baku';
         this.dataSource.shortName = this.dataSource.shortName || this.dataSource.name;
-        this.dataSource.statut = this.dataSource.statut || 'active';
-        
+        this.dataSource.statute = this.dataSource.statute || '';
+        this.dataSource.isActive = this.dataSource.isActive !== undefined ? this.dataSource.isActive : true;
         this.dialogRef.close(this.dataSource);
     }
 

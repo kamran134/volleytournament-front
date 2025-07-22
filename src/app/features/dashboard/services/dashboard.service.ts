@@ -90,9 +90,10 @@ export class DashboardService {
         formData.append('shortName', tournament.shortName || tournament.name);
         formData.append('country', tournament.country || 'Azerbaijan');
         formData.append('city', tournament.city || 'Baku');
-        formData.append('statut', tournament.statut || 'active');
+        formData.append('isActive', tournament.isActive ? 'true' : 'false');
         formData.append('startDate', tournament.startDate.toISOString());
         formData.append('endDate', tournament.endDate.toISOString());
+        formData.append('statute', tournament.statute || '')
         
         if (tournament.logo instanceof File) {
             formData.append('logo', tournament.logo);
@@ -109,7 +110,7 @@ export class DashboardService {
         if (tournament.shortName) formData.append('shortName', tournament.shortName);
         if (tournament.country) formData.append('country', tournament.country);
         if (tournament.city) formData.append('city', tournament.city);
-        if (tournament.statut) formData.append('statut', tournament.statut);
+        if (tournament.statute) formData.append('statute', tournament.statute);
         if (tournament.startDate) formData.append('startDate', tournament.startDate.toISOString());
         if (tournament.endDate) formData.append('endDate', tournament.endDate.toISOString());
         if (tournament.teams && tournament.teams.length > 0) {

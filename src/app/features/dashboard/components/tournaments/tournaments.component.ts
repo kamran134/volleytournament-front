@@ -95,7 +95,7 @@ export class TournamentsComponent implements OnInit {
             city: tournament.city,
             startDate: new Date(tournament.startDate),
             endDate: new Date(tournament.endDate),
-            statut: tournament.statut,
+            statute: tournament.statute,
             teams: tournament.teams?.map(team => team._id) || []
         };
         if (this.isAdminOrSuperAdmin$) this.openEditDialog(updateTournament);
