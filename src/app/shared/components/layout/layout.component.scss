@@ -48,6 +48,21 @@
     flex: 1;
 }
 
+.toolbar-title {
+    .logo {
+        height: 90px;
+        margin-top: 10px;
+        cursor: pointer;
+
+        // animation for hover effect (scale and opacity)
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        &:hover {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+    }
+}
+
 :host ::ng-deep .mobile-menu {
     width: 250px;
     background-color: rgba(0, 0, 0, 0.9);
