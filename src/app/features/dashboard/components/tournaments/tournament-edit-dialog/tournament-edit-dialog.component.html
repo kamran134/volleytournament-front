@@ -36,12 +36,21 @@
                 <mat-datepicker #pickerEnd (monthSelected)="setEndDate($event, pickerEnd)"></mat-datepicker>
             </mat-form-field>
         </mat-form-field>
-        <mat-form-field appearance="fill">
+        <div>
+            <label style="margin-bottom: 5px; display: block;">Əsasnamə</label>
+            <quill-editor
+                [(ngModel)]="dataSource.statute"
+                name="statute"
+                [placeholder]="'Turnirin əsasnaməsini daxil edin...'"
+                [styles]="{ height: '200px' }"
+            >
+            </quill-editor>
+        </div>
+        <!-- <mat-form-field appearance="fill">
             <mat-label>Əsasnamə</mat-label>
-            <!-- <input matInput [(ngModel)]='dataSource.statut' name="statut" /> -->
-            <!-- Rich text -->
-            <textarea matInput [(ngModel)]='dataSource.statute' name="statut" rows="5"></textarea>
-        </mat-form-field>
+            <mat-hint>Turnirin əsasnaməsini daxil edin</mat-hint>
+            <textarea matInput [(ngModel)]='dataSource.statute' name="statute" rows="5"></textarea>
+        </mat-form-field> -->
     </form>
 </mat-dialog-content>
 

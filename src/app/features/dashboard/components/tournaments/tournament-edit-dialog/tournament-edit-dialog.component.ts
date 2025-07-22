@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import moment, { Moment } from 'moment';
 import { ConfigService } from '../../../../../core/services/config.service';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
     selector: 'app-tournament-edit-dialog',
@@ -27,6 +28,7 @@ import { ConfigService } from '../../../../../core/services/config.service';
         MatCheckboxModule,
         MatDatepickerModule,
         FormsModule,
+        QuillModule,
         CommonModule
     ],
     templateUrl: './tournament-edit-dialog.component.html',

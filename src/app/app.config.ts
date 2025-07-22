@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/material/core';
 import { CustomDateAdapter } from './core/adapters/custom-date-adapter';
 import { CUSTOM_DATE_FORMATS } from './core/services/custom-date-formats';
+import { provideQuillConfig } from 'ngx-quill';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -34,6 +35,16 @@ export const appConfig: ApplicationConfig = {
         ),
         { provide: DateAdapter, useClass: CustomDateAdapter },
         { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
-        { provide: 'NG_HYDRATION', useValue: false }
+        { provide: 'NG_HYDRATION', useValue: false },
+        provideQuillConfig({
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link']
+                ]
+            }
+        })
     ]
 };

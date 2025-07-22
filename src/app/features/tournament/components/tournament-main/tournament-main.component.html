@@ -3,7 +3,6 @@
     <div class="tournament-main__tournament-info">
         <h1>{{ tournament.name }}</h1>
         <h2>Başlanma tarixi: {{ tournament.startDate | azeFullDate}}</h2>
-        <h3>Əsasnamə: {{ tournament.statute }}</h3>
     </div>
     <!-- We need two tabs Turnir cədvəli and Oyunlar -->
     <div class="tournament-main__tabs">
@@ -73,6 +72,14 @@
                             <tr mat-header-row *matHeaderRowDef="['tour', 'team1', 'team2', 'score', 'date']"></tr>
                             <tr mat-row *matRowDef="let row; columns: ['tour', 'team1', 'team2', 'score', 'date']"></tr>
                         </table>
+                    </div>
+                </ng-template>
+            </mat-tab>
+            <mat-tab label="Əsasnamə">
+                <ng-template matTabContent>
+                    <div class="tournament-main__statute">
+                        <h2>Turnirin Əsasnaməsi</h2>
+                        <div [innerHTML]="(tournament.statute || '') | safeHtml"></div>
                     </div>
                 </ng-template>
             </mat-tab>

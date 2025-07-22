@@ -12,6 +12,7 @@ import { TournamentService } from '../../services/tournament.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AzeFullDatePipe } from '../../../../shared/pipes/aze-full-date.pipe';
 import { TournamentTable } from '../../../../core/models/tournamentTable';
+import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
 
 @Component({
     selector: 'app-tournament-main',
@@ -26,7 +27,8 @@ import { TournamentTable } from '../../../../core/models/tournamentTable';
         MatTabsModule,
         CommonModule,
         AzeFullDatePipe,
-        RouterModule
+        SafeHtmlPipe,
+        RouterModule,
     ],
     templateUrl: './tournament-main.component.html',
     styleUrl: './tournament-main.component.scss'
@@ -80,8 +82,6 @@ export class TournamentMainComponent implements OnInit {
     loadTournamentTable(): void {
         this.tournamentService.getTournamentTable(this.tournament._id).subscribe({
             next: (response) => {
-                // Handle the tournament table data
-                console.log('Tournament table loaded:', response.data);
                 this.tournamentTable = response.data;
             },
             error: (error) => {
