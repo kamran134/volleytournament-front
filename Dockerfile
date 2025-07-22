@@ -9,7 +9,7 @@ COPY package.json package-lock.json ./
 # Устанавливаем зависимости
 #RUN npm install && npm install -g @angular/cli
 # Устанавливаем зависимости и кешируем их
-RUN npm ci && npm install -g @angular/cli
+RUN npm ci --legacy-peer-deps && npm install -g @angular/cli
 
 # Копируем весь проект
 COPY . .
