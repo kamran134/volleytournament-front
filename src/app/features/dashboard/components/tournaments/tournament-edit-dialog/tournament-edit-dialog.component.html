@@ -10,9 +10,11 @@
             <input matInput [(ngModel)]='dataSource.shortName' name="shortName" />
         </mat-form-field>
 
-        <div>
-            <label>Loqo</label>
-            <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+        <div class="tournament-edit__logo">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" #fileInput />
+            <div (click)="fileInput.click()">
+                {{ dataSource.logo ? 'Loqonu dəyiş' : 'Loqo yüklə' }}
+            </div>
             <img *ngIf="previewUrl" [src]="previewUrl" alt="Logo Preview" style="max-width: 100px; margin-top: 10px;" />
             <img *ngIf="!previewUrl && dataSource.logoUrl" [src]="imageUrl" alt="Logo" style="max-width: 100px; margin-top: 10px;" />
         </div>
@@ -46,11 +48,6 @@
             >
             </quill-editor>
         </div>
-        <!-- <mat-form-field appearance="fill">
-            <mat-label>Əsasnamə</mat-label>
-            <mat-hint>Turnirin əsasnaməsini daxil edin</mat-hint>
-            <textarea matInput [(ngModel)]='dataSource.statute' name="statute" rows="5"></textarea>
-        </mat-form-field> -->
     </form>
 </mat-dialog-content>
 

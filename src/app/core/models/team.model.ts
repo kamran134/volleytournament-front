@@ -42,9 +42,11 @@ export interface TeamDetailsDto {
 }
 
 export interface CreateTeamDto {
+    isNewTeam: boolean;
     name: string;
     shortName?: string;
     logoUrl?: string;
+    logo?: File;
     country: string;
     city: string;
     tournaments?: string[]; // Array of tournament IDs
@@ -53,9 +55,11 @@ export interface CreateTeamDto {
 
 export interface UpdateTeamDto {
     _id: string;
+    isNewTeam: boolean;
     name?: string;
     shortName?: string;
     logoUrl?: string;
+    logo?: File;
     country?: string;
     city?: string;
     tournaments?: string[]; // Array of tournament IDs

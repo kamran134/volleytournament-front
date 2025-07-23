@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { UpdateTeamDto } from '../../../../../core/models/team.model';
+import { CreateTeamDto, UpdateTeamDto } from '../../../../../core/models/team.model';
 import { AuthService } from '../../../../../core/services/auth.service';
 import { Tournament } from '../../../../../core/models/tournament.model';
 import { DashboardService } from '../../../services/dashboard.service';
@@ -40,14 +40,21 @@ export class TeamEditDialogComponent implements OnInit {
         horizontalPosition: 'center',
         verticalPosition: 'top'
     };
+    previewUrl: string | null = null;
+    imageUrl: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<TeamEditDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public dataSource: UpdateTeamDto,
+        @Inject(MAT_DIALOG_DATA) public dataSource: CreateTeamDto | UpdateTeamDto,
         private matSnackBar: MatSnackBar,
         private authService: AuthService,
         private dashboardService: DashboardService
-    ) { }
+    ) {
+        if (dataSource.logoUrl) {
+            // this.previewUrl = dataSource.logoUrl;
+            this.imageUrl = `${dataSource.logoUrl}`;
+        }
+    }
 
     ngOnInit(): void {
         // Initialize tournaments if needed
@@ -64,11 +71,25 @@ export class TeamEditDialogComponent implements OnInit {
     }
 
     isNewTeam(): boolean {
-        return !this.dataSource._id;
+        return !('_id' in this.dataSource && this.dataSource._id);
     }
 
     getUserId(): string | null {
         return this.authService.getUserId();
+    }
+
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            this.dataSource.logo = file;
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.dataSource.logoUrl = e.target.result;
+                this.previewUrl = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     onSave(): void {

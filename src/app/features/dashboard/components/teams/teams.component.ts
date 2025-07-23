@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CreateTeamDto, Team, TeamResponse } from '../../../../core/models/team.model';
+import { CreateTeamDto, Team, TeamResponse, UpdateTeamDto } from '../../../../core/models/team.model';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { DashboardService } from '../../services/dashboard.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -73,36 +73,34 @@ export class TeamsComponent implements OnInit {
     }
 
     onTeamCreate(): void {
-        const dialogRef = this.dialog.open(TeamEditDialogComponent, {
-            width: '1000px',
-            data: {
-                name: '',
-                shortName: '',
-                country: '',
-                city: '',
-                tournaments: [],
-            }
-        });
+        const newTeam: CreateTeamDto = {
+            name: '',
+            shortName: undefined,
+            country: 'Azerbaijan',
+            city: 'Baku',
+            logoUrl: undefined,
+            logo: undefined,
+            tournaments: [],
+            isNewTeam: true
+        };
 
-        dialogRef.afterClosed().subscribe((result: CreateTeamDto) => {
-            if (result) {
-                console.log('Yeni komanda yaradılır:', result);
-                this.dashboardService.createTeam(result).subscribe({
-                    next: () => {
-                        this.loadTeams();
-                        this.snackBar.open('Yeni komanda yaradıldı', 'Bağla', this.matSnackConfig);
-                    },
-                    error: (error) => {
-                        console.error(error);
-                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-                    }
-                });
-            }
-        });
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(newTeam);
     }
 
     onTeamUpdate(team: Team): void {
-        if (this.isAdminOrSuperAdmin$) this.openEditDialog(team);
+        const updateTeam: UpdateTeamDto = {
+            _id: team._id,
+            isNewTeam: false,
+            name: team.name,
+            shortName: team.shortName,
+            country: team.country,
+            city: team.city,
+            logoUrl: team.logoUrl,
+            logo: undefined, // Logo can be updated separately
+            tournaments: team.tournaments?.map(t => t._id) || [] // Safely handle undefined tournaments
+        };
+        
+        if (this.isAdminOrSuperAdmin$) this.openEditDialog(updateTeam);
     }
 
     onTeamDelete(team: Team): void {
@@ -127,24 +125,37 @@ export class TeamsComponent implements OnInit {
         });
     }
 
-    openEditDialog(team: Team): void {
+    openEditDialog(team: CreateTeamDto | UpdateTeamDto): void {
         const dialogRef = this.dialog.open(TeamEditDialogComponent, {
             width: '1000px',
             data: team
         });
 
-        dialogRef.afterClosed().subscribe((result: Team) => {
+        dialogRef.afterClosed().subscribe((result: CreateTeamDto | UpdateTeamDto) => {
             if (result) {
-                this.dashboardService.editTeam(result).subscribe({
-                    next: () => {
-                        this.loadTeams();
-                        this.snackBar.open('Komanda məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
-                    },
-                    error: (error) => {
-                        console.error(error);
-                        this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
-                    }
-                });
+                if (result.isNewTeam) {
+                    this.dashboardService.createTeam(result as CreateTeamDto).subscribe({
+                        next: () => {
+                            this.loadTeams();
+                            this.snackBar.open('Komanda yaradıldı', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                } else {
+                    this.dashboardService.editTeam(result as UpdateTeamDto).subscribe({
+                        next: () => {
+                            this.loadTeams();
+                            this.snackBar.open('Komanda məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        },
+                        error: (error) => {
+                            console.error(error);
+                            this.snackBar.open(error.error.message, 'Bağla', this.matSnackConfig);
+                        }
+                    });
+                }
             }
         });
     }

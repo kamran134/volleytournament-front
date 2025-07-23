@@ -8,6 +8,7 @@ import { CreateTournamentDto, Tournament, TournamentResponse, UpdateTournamentDt
 import { Game, GameResponse } from "../../../core/models/game.model";
 import { CreateLocationDto, LocationResponse, UpdateLocationDto } from "../../../core/models/location.model";
 import { CreateTourDto, Tour, TourResponse, UpdateTourDto } from "../../../core/models/tour.model";
+import { CreateTeamDto, TeamResponse, UpdateTeamDto } from "../../../core/models/team.model";
 
 @Injectable({
     providedIn: 'root'
@@ -156,14 +157,39 @@ export class DashboardService {
         return this.http.get<any>(url, { withCredentials: true });
     }
 
-    createTeam(team: any): Observable<any> {
+    createTeam(team: CreateTeamDto): Observable<TeamResponse> {
+        const formData = new FormData();
+        formData.append('name', team.name);
+        formData.append('shortName', team.shortName || team.name);
+        formData.append('country', team.country || 'Azerbaijan');
+        formData.append('city', team.city || 'Baku');
+        if (team.logo instanceof File) {
+            formData.append('logo', team.logo);
+        }
+        if (team.tournaments && team.tournaments.length > 0) {
+            formData.append('tournaments', JSON.stringify(team.tournaments)); // Отправляем массив как JSON-строку
+        }
+        
         const url = `${this.configService.getApiUrl()}/teams`;
-        return this.http.post<any>(url, team, { withCredentials: true });
+        return this.http.post<TeamResponse>(url, formData, { withCredentials: true });
     }
 
-    editTeam(team: any): Observable<any> {
+    editTeam(team: UpdateTeamDto): Observable<TeamResponse> {
+        const formData = new FormData();
+        if (team._id) formData.append('_id', team._id);
+        if (team.name) formData.append('name', team.name);
+        if (team.shortName) formData.append('shortName', team.shortName);
+        if (team.country) formData.append('country', team.country);
+        if (team.city) formData.append('city', team.city);
+        if (team.logo instanceof File) {
+            formData.append('logo', team.logo);
+        }
+        if (team.tournaments && team.tournaments.length > 0) {
+            formData.append('tournaments', JSON.stringify(team.tournaments)); // Отправляем массив как JSON-строку
+        }
+        
         const url = `${this.configService.getApiUrl()}/teams`;
-        return this.http.put<any>(url, team, { withCredentials: true });
+        return this.http.put<TeamResponse>(url, formData, { withCredentials: true });
     }
 
     deleteTeam(id: string): Observable<{message: string}> {
