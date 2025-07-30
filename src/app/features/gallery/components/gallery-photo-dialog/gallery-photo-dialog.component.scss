@@ -1,0 +1,31 @@
+.photo-dialog {
+    padding: 16px;
+    text-align: center;
+
+    h2 {
+        margin-bottom: 12px;
+    }
+
+    img {
+        max-width: 50%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    button {
+        margin-top: 12px;
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+    }
+}
+
+.gallery-photo-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,8 @@
+<div class="photo-dialog">
+    <h2>{{ photo?.description }}</h2>
+    <img [src]="photo?.url" [alt]="photo?.description" />
+    <button mat-button (click)="downloadImage()">
+        <mat-icon>download</mat-icon>
+        Yüklə
+    </button>
+</div>

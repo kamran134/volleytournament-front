@@ -6,6 +6,7 @@
                 <a mat-list-item routerLink="/tournaments" (click)="sidenav.close()">Yarışlar</a>
                 <a mat-list-item routerLink="/teams" (click)="sidenav.close()">Komandalar</a>
                 <a mat-list-item routerLink="/players" (click)="sidenav.close()">Oyunçular</a>
+                <a mat-list-item routerLink="/gallery" (click)="sidenav.close()">Qalereya</a>
                 <a mat-list-item routerLink="/admin" *ngIf="isLoggedIn" (click)="sidenav.close()">Admin paneli</a>
                 <a mat-list-item *ngIf="isLoggedIn" (click)="logInOut(); sidenav.close()">
                     <mat-icon>logout</mat-icon> Çıxış
@@ -28,6 +29,7 @@
                     <a mat-button routerLink="/tournaments">Yarışlar</a>
                     <a mat-button routerLink="/teams">Komandalar</a>
                     <a mat-button routerLink="/players">Oyunçular</a>
+                    <a mat-button routerLink="/gallery">Qalereya</a>
                     <a mat-button routerLink="/admin" *ngIf="isLoggedIn">Admin paneli</a>
                     <a mat-button *ngIf="isLoggedIn" (click)="logInOut()"><mat-icon>logout</mat-icon> Çıxış</a>
                     <a mat-button *ngIf="!isLoggedIn" routerLink="/login"><mat-icon>login</mat-icon> Giriş</a>

@@ -1,0 +1,30 @@
+.gallery-main {
+    padding: 20px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.gallery-item {
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+
+        width: 100%;
+        height: auto;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+    }
+}
