@@ -16,6 +16,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { PhotoAddDialogComponent } from './photo-add-dialog/photo-add-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-gallery',
@@ -115,7 +116,15 @@ export class GalleryComponent implements OnInit{
     }
 
     loadPhotos(): void {
-        this.dashboardService.getPhotos({ page: 1, size: 10 }).subscribe({
+        const filters = {
+            tournaments: this.selectedTournaments,
+            tours: this.selectedTours,
+            teams: this.selectedTeams,
+            page: 1,
+            size: 10
+        };
+
+        this.dashboardService.getPhotos(filters).subscribe({
             next: (data) => {
                 this.dataSource = data.data;
             },
@@ -125,18 +134,19 @@ export class GalleryComponent implements OnInit{
         });
     }
 
-    onTournamentChange(tournamentId: string): void {
-        this.selectedTournaments = tournamentId ? [tournamentId] : [];
-        this.loadTours();
+    onTournamentChange(tournamentIds: string[]): void {
+        console.log('Selected Tournament IDs:', tournamentIds);
+        this.selectedTournaments = tournamentIds;
+        this.loadPhotos();
     }
 
-    onTourChange(tourId: string): void {
-        this.selectedTours = tourId ? [tourId] : [];
-        this.loadTeams();
+    onTourChange(tourIds: string[]): void {
+        this.selectedTours = tourIds;
+        this.loadPhotos();
     }
 
-    onTeamChange(teamId: string): void {
-        this.selectedTeams = teamId ? [teamId] : [];
+    onTeamChange(teamIds: string[]): void {
+        this.selectedTeams = teamIds;
         this.loadPhotos();
     }
 
@@ -168,13 +178,22 @@ export class GalleryComponent implements OnInit{
     onPhotoUpdate(photo: Photo): void {}
 
     onPhotoDelete(photo: Photo): void {
-        this.dashboardService.deletePhoto(photo._id).subscribe({
-            next: () => {
-                this.snackBar.open('Foto silindi!', '', this.matSnackConfig);
-                this.loadPhotos();
-            },
-            error: (err) => {
-                this.snackBar.open('Foto silinmədi: ' + err.message, 'Bağla', this.matSnackConfig);
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Şəkli silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.dashboardService.deletePhoto(photo._id).subscribe({
+                    next: () => {
+                        this.snackBar.open('Foto silindi!', '', this.matSnackConfig);
+                        this.loadPhotos();
+                    },
+                    error: (err) => {
+                        this.snackBar.open('Foto silinmədi: ' + err.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
             }
         });
     }

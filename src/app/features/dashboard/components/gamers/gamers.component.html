@@ -4,7 +4,6 @@
     <mat-form-field appearance="fill">
         <mat-label>Komanda</mat-label>
         <mat-select [(value)]="selectedTeams" (selectionChange)="onTeamFilterChange($event.value)" multiple>
-            <mat-option value="">Hamısı</mat-option>
             <mat-option *ngFor="let team of teams" [value]="team._id">{{ team.name }}</mat-option>
         </mat-select>
     </mat-form-field>
