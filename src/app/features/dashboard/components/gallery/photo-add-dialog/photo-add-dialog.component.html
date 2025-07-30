@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>Şəkillərin əlavə edilməsi</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Təsvir</mat-label>
+            <input matInput [(ngModel)]='dataSource.description' name="description" />
+        </mat-form-field>
+
+        <div class="gallery-add__photos">
+            <!-- We need to multy select on input file -->
+            <input type="file" (change)="onFilesSelected($event)" accept="image/*" multiple style="display: none;" #fileInput />
+            <div (click)="fileInput.click()">
+                Şəkilləri yüklə (maksimum 50 şəkil)
+            </div>
+            <div *ngIf="dataSource.files && dataSource.files.length > 0" class="image-previews">
+                <img *ngFor="let previewUrl of previewUrls" [src]="previewUrl" alt="Image Preview" style="max-width: 100px; margin-top: 10px;" />
+            </div>
+        </div>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Turnirlər</mat-label>
+            <mat-select [(value)]="selectedTournamentId" name="tournament" (selectionChange)="onTournamentChange($event.value)" required>
+                <mat-option *ngFor="let tournament of tournaments" [value]="tournament._id">
+                    {{ tournament.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+                <mat-form-field appearance="fill">
+            <mat-label>Tur</mat-label>
+            <mat-select [(value)]="dataSource.tour" name="tour" (selectionChange)="onTourChange($event.value)" required>
+                <mat-option *ngFor="let tour of tours" [value]="tour._id">{{ tour.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+                <mat-form-field appearance="fill">
+            <mat-label>Komandalar</mat-label>
+            <mat-select [(value)]="dataSource.teams" name="team" (selectionChange)="onTeamsChange($event.value)" multiple>
+                <mat-option *ngFor="let team of teams" [value]="team._id">{{ team.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!previewUrls">
+        Yadda saxla
+    </button>
+</mat-dialog-actions>

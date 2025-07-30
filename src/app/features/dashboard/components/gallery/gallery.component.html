@@ -1,0 +1,67 @@
+<div class="gallery-header">
+    <h2>Foto Qalereya</h2>
+    <button mat-raised-button color="primary" (click)="onAddPhoto()">Foto Əlavə Et</button>
+</div>
+
+<div class="filter-container">
+    <mat-form-field appearance="fill">
+        <mat-label>Turnirlər</mat-label>
+        <mat-select [(value)]="selectedTournaments" (selectionChange)="onTournamentChange($event.value)" multiple>
+            <mat-option *ngFor="let tournament of tournaments" [value]="tournament._id">{{ tournament.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Turlar</mat-label>
+        <mat-select [(value)]="selectedTours" (selectionChange)="onTourChange($event.value)" multiple>
+            <mat-option *ngFor="let tour of tours" [value]="tour._id">{{ tour.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Komandalar</mat-label>
+        <mat-select [(value)]="selectedTeams" (selectionChange)="onTeamChange($event.value)" multiple>
+            <mat-option *ngFor="let team of teams" [value]="team._id">{{ team.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef>№</th>
+        <td mat-cell *matCellDef="let photo; let i = index">{{ i + 1 }}</td>
+    </ng-container>
+    <ng-container matColumnDef="image">
+        <th mat-header-cell *matHeaderCellDef>Şəkil</th>
+        <td mat-cell *matCellDef="let photo">
+            <img [src]="photo.imageUrl" alt="Photo" class="photo-image">
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="tournament">
+        <th mat-header-cell *matHeaderCellDef>Turnir</th>
+        <td mat-cell *matCellDef="let photo">{{ photo.tournament }}</td>
+    </ng-container>
+    <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Təsvir</th>
+        <td mat-cell *matCellDef="let photo">{{ photo.description }}</td>
+    </ng-container>
+    <ng-container matColumnDef="tour">
+        <th mat-header-cell *matHeaderCellDef>Tur</th>
+        <td mat-cell *matCellDef="let photo">{{ photo.tour }}</td>
+    </ng-container>
+    <!-- Photo -->
+    <ng-container matColumnDef="photo">
+        <th mat-header-cell *matHeaderCellDef>Şəkil</th>
+        <td mat-cell *matCellDef="let photo">
+            <img [src]="photo.url" alt="Photo" class="photo-image">
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+        <td mat-cell *matCellDef="let photo">
+            <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
+                <button mat-raised-button color="primary" (click)="onPhotoUpdate(photo)">Redaktə</button>
+                <button mat-raised-button color="warn" (click)="onPhotoDelete(photo)">Sil</button>
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

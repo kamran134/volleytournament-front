@@ -9,6 +9,7 @@ import { Game, GameResponse } from "../../../core/models/game.model";
 import { CreateLocationDto, LocationResponse, UpdateLocationDto } from "../../../core/models/location.model";
 import { CreateTourDto, Tour, TourResponse, UpdateTourDto } from "../../../core/models/tour.model";
 import { CreateTeamDto, TeamResponse, UpdateTeamDto } from "../../../core/models/team.model";
+import { CreatePhotoDto, CreatePhotosDto, Photo, PhotoResponse, UpdatePhotoDto } from "../../../core/models/photo.model";
 
 @Injectable({
     providedIn: 'root'
@@ -23,6 +24,7 @@ export class DashboardService {
      * @returns An observable containing user data.
      */
 
+    // USERS
     getUsers(userParams: UserParams): Observable<UserData> {
         let url: string = `${this.configService.getApiUrl()}/users`;
         if (userParams.page && userParams.size) {
@@ -62,6 +64,7 @@ export class DashboardService {
     }
 
 
+    // TOURNAMENTS
     getTournaments(tournamentParams: TournamentParams): Observable<TournamentResponse> {
         let url: string = `${this.configService.getApiUrl()}/tournaments`;
         if (tournamentParams.page && tournamentParams.size) {
@@ -131,6 +134,7 @@ export class DashboardService {
     }
 
 
+    // TEAMS
     getTeams(teamParams: TeamParams): Observable<any> {
         let url: string = `${this.configService.getApiUrl()}/teams`;
         if (teamParams.page && teamParams.size) {
@@ -198,6 +202,7 @@ export class DashboardService {
     }
 
     
+    // GAMERS
     getGamers(gamerParams: GamerParams): Observable<any> {
         let url: string = `${this.configService.getApiUrl()}/gamers`;
         url = `${url}?page=${gamerParams.page}&size=${gamerParams.size}`;
@@ -242,6 +247,7 @@ export class DashboardService {
     }
 
 
+    // GAMES
     getGames(params: { page: number; size: number; teams?: string[] }): Observable<GameResponse> {
         let url: string = `${this.configService.getApiUrl()}/games?page=${params.page}&size=${params.size}`;
         if (params.teams && params.teams.length > 0) {
@@ -266,6 +272,7 @@ export class DashboardService {
     }
 
 
+    // LOCATIONS
     getLocations(params: { page: number; size: number; }): Observable<LocationResponse> {
         let url: string = `${this.configService.getApiUrl()}/locations?page=${params.page}&size=${params.size}`;
         return this.http.get<LocationResponse>(url, { withCredentials: true });
@@ -287,6 +294,7 @@ export class DashboardService {
     }
 
 
+    // TOURS
     getTours(params: { page: number; size: number; tournament?: string }): Observable<TourResponse> {
         let url: string = `${this.configService.getApiUrl()}/tours?page=${params.page}&size=${params.size}`;
         if (params.tournament) {
@@ -312,6 +320,77 @@ export class DashboardService {
 
     deleteTour(id: string): Observable<{message: string}> {
         const url = `${this.configService.getApiUrl()}/tours/${id}`;
+        return this.http.delete<{message: string}>(url, { withCredentials: true });
+    }
+
+
+    // GALLERY
+    getPhotos(params: { page: number; size: number; tournaments?: string[]; teams?: string[]; tours?: string[] }): Observable<PhotoResponse> {
+        let url: string = `${this.configService.getApiUrl()}/photos?page=${params.page}&size=${params.size}`;
+        if (params.tournaments && params.tournaments.length > 0) {
+            url = `${url}&tournaments=${params.tournaments.join(',')}`;
+        }
+        if (params.teams && params.teams.length > 0) {
+            url = `${url}&teams=${params.teams.join(',')}`;
+        }
+        if (params.tours && params.tours.length > 0) {
+            url = `${url}&tours=${params.tours.join(',')}`;
+        }
+        return this.http.get<PhotoResponse>(url, { withCredentials: true });
+    }
+
+    getPhotoById(id: string): Observable<Photo> {
+        const url = `${this.configService.getApiUrl()}/photos/${id}`;
+        return this.http.get<Photo>(url, { withCredentials: true });
+    }
+
+    createPhoto(photo: CreatePhotoDto): Observable<Photo> {
+        const formData = new FormData();
+        formData.append('description', photo.description || '');
+        formData.append('tournament', photo.tournament);
+        formData.append('tour', photo.tour);
+        if (photo.teams && photo.teams.length > 0) {
+            formData.append('teams', JSON.stringify(photo.teams)); // Отправляем массив как JSON-строку
+        }
+        formData.append('file', photo.file);
+        
+        const url = `${this.configService.getApiUrl()}/photos`;
+        return this.http.post<Photo>(url, formData, { withCredentials: true });
+    }
+
+    createPhotos(photos: CreatePhotosDto): Observable<PhotoResponse> {
+        const formData = new FormData();
+        formData.append('description', photos.description || '');
+        formData.append('tournament', photos.tournament);
+        formData.append('tour', photos.tour);
+        if (photos.teams && photos.teams.length > 0) {
+            formData.append('teams', JSON.stringify(photos.teams)); // Отправляем массив как JSON-строку
+        }
+        photos.files.forEach(file => {
+            formData.append('files', file);
+        });
+        const url = `${this.configService.getApiUrl()}/photos/bulk`;
+        return this.http.post<PhotoResponse>(url, formData, { withCredentials: true });
+    }
+
+    editPhoto(photo: UpdatePhotoDto): Observable<Photo> {
+        const formData = new FormData();
+        formData.append('description', photo.description || '');
+        formData.append('tournament', photo.tournament || '');
+        formData.append('tour', photo.tour || '');
+        if (photo.teams && photo.teams.length > 0) {
+            formData.append('teams', JSON.stringify(photo.teams)); // Отправляем массив как JSON-строку
+        }
+        if (photo.file) {
+            formData.append('file', photo.file);
+        }
+
+        const url = `${this.configService.getApiUrl()}/photos`;
+        return this.http.put<Photo>(url, formData, { withCredentials: true });
+    }
+
+    deletePhoto(id: string): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/photos/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
 }
