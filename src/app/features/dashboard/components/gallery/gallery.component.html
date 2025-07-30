@@ -36,7 +36,7 @@
     </ng-container>
     <ng-container matColumnDef="tournament">
         <th mat-header-cell *matHeaderCellDef>Turnir</th>
-        <td mat-cell *matCellDef="let photo">{{ photo.tournament }}</td>
+        <td mat-cell *matCellDef="let photo">{{ photo.tournament.name }}</td>
     </ng-container>
     <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Təsvir</th>
@@ -44,7 +44,7 @@
     </ng-container>
     <ng-container matColumnDef="tour">
         <th mat-header-cell *matHeaderCellDef>Tur</th>
-        <td mat-cell *matCellDef="let photo">{{ photo.tour }}</td>
+        <td mat-cell *matCellDef="let photo">{{ photo.tour.name }}</td>
     </ng-container>
     <!-- Photo -->
     <ng-container matColumnDef="photo">
