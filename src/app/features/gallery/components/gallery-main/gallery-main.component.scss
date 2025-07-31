@@ -37,3 +37,13 @@
         flex: 1;
     }
 }
+
+.last-photos {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}

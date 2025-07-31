@@ -75,10 +75,10 @@ export class GalleryMainComponent implements OnInit {
                 this.lastPhotos = response.data;
 
                 //временная заглушка для тестирования
-                this.lastPhotos = this.lastPhotos.map(photo => ({
-                    ...photo,
-                    url: 'https://volleytour.az/' + photo.url // Assuming the URL is relative and needs to be prefixed
-                }));
+                // this.lastPhotos = this.lastPhotos.map(photo => ({
+                //     ...photo,
+                //     url: 'https://volleytour.az/' + photo.url // Assuming the URL is relative and needs to be prefixed
+                // }));
             },
             error: (error) => {
                 console.error('Error loading last photos:', error);
@@ -100,10 +100,10 @@ export class GalleryMainComponent implements OnInit {
                 this.photos = response.data;
 
                 //временная заглушка для тестирования
-                this.photos = this.photos.map(photo => ({
-                    ...photo,
-                    url: 'https://volleytour.az/' + photo.url // Assuming the URL is relative and needs to be prefixed
-                }));
+                // this.photos = this.photos.map(photo => ({
+                //     ...photo,
+                //     url: 'https://volleytour.az/' + photo.url // Assuming the URL is relative and needs to be prefixed
+                // }));
             },
             error: (error) => {
                 console.error('Error loading photos:', error);

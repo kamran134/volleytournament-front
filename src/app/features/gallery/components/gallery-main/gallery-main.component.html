@@ -1,10 +1,12 @@
 <div class="gallery-main">
     <h1>Qalereya</h1>
     <!-- Last photos -->
-    <p>Son fotoşəkillər</p>
-    <div class="gallery-grid">
-        <div class="gallery-item" *ngFor="let photo of lastPhotos">
-            <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
+    <div class="last-photos">
+        <p>Son fotoşəkillər</p>
+        <div class="gallery-grid">
+            <div class="gallery-item" *ngFor="let photo of lastPhotos">
+                <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
+            </div>
         </div>
     </div>
 
