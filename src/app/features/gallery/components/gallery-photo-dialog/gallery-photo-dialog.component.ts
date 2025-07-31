@@ -74,5 +74,4 @@ export class GalleryPhotoDialogComponent implements OnInit {
             })
             .catch(err => console.error('Ошибка при загрузке изображения:', err));
     }
-
 }

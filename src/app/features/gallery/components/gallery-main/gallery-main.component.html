@@ -1,49 +1,37 @@
 <div class="gallery-main">
     <h1>Qalereya</h1>
-    <!-- don't use <mat-grid-list> we need responsive grid. max columns are 8, min is 1 for mobile, they can be wrapped -->
+    <!-- Last photos -->
+    <p>Son fotoşəkillər</p>
+    <div class="gallery-grid">
+        <div class="gallery-item" *ngFor="let photo of lastPhotos">
+            <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
+        </div>
+    </div>
+
+    <div class="gallery-filters">
+        <!-- Select tournament, tour -->
+        <mat-form-field appearance="fill">
+            <mat-label>Yarış</mat-label>
+            <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentChange($event.value)">
+                <mat-option *ngFor="let tournament of tournaments" [value]="tournament._id">
+                    {{ tournament.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Tur</mat-label>
+            <mat-select [(value)]="selectedTour" (selectionChange)="onTourChange($event.value)">
+                <mat-option *ngFor="let tour of tours" [value]="tour._id">
+                    {{ tour.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    
     <div class="gallery-grid">
         <div class="gallery-item" *ngFor="let photo of photos">
             <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
         </div>
     </div>
-    <p *ngIf="photos.length === 0">Gələcəkdə burada fotoşəkillər olacaq.</p>
+    <p *ngIf="photos.length === 0">Filtrdən yarışı və turu seçərək şəkillərə baxa bilərsiniz.</p>
 </div>
-
-<style>
-    .gallery-main {
-        padding: 20px;
-    }
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 10px;
-    }
-    .gallery-item img {
-        width: 100%;
-        height: auto;
-        cursor: pointer;
-    }
-    .gallery-item img:hover {
-        transform: scale(1.05);
-        transition: transform 0.2s;
-    }
-    .gallery-item {
-        overflow: hidden;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .gallery-item img {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-    .gallery-item img:hover {
-        transform: scale(1.05);
-        transition: transform 0.2s;
-    }
-    .gallery-item {
-        overflow: hidden;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-</style>

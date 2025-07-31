@@ -1,6 +1,17 @@
 <div class="photo-dialog">
     <h2>{{ photo?.description }}</h2>
     <img [src]="photo?.url" [alt]="photo?.description" />
+    <!-- Next and prev buttons -->
+    <!-- <div class="navigation-buttons">
+        <button mat-button (click)="prevPhoto()" [disabled]="!hasPrev()">
+            <mat-icon>chevron_left</mat-icon>
+            Əvvəlki
+        </button>
+        <button mat-button (click)="nextPhoto()" [disabled]="!hasNext()">
+            Növbəti
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div> -->
     <button mat-button (click)="downloadImage()">
         <mat-icon>download</mat-icon>
         Yüklə
