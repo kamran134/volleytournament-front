@@ -393,4 +393,12 @@ export class DashboardService {
         const url = `${this.configService.getApiUrl()}/photos/${id}`;
         return this.http.delete<{message: string}>(url, { withCredentials: true });
     }
+
+    deletePhotos(ids: string[]): Observable<{message: string}> {
+        const url = `${this.configService.getApiUrl()}/photos/bulk`;
+        return this.http.request<{message: string}>('DELETE', url, {
+            withCredentials: true,
+            body: { ids }
+        });
+    }
 }

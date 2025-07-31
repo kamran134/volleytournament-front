@@ -5,6 +5,7 @@ export interface Photo {
     tournament: string; // Tournament ID associated with the photo
     tour: string; // Tour ID associated with the photo
     team?: string[]; // Optional Team ID associated with the photo
+    selected?: boolean; // For selection in UI, e.g., for bulk actions
     createdBy?: string; // User ID of the creator
     createdAt: Date; // Creation date
     updatedAt: Date; // Last update date

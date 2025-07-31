@@ -23,6 +23,14 @@
         </mat-select>
     </mat-form-field>
 </div>
+<!-- Select all (for delete for example) -->
+<div class="select-all">
+    <mat-checkbox [(ngModel)]="selectAll" (change)="onSelectAllChange($event.checked)">Hamısını seç</mat-checkbox>
+    <button mat-raised-button color="warn" (click)="onDeleteSelected()" [disabled]="hasNoSelectedPhotos()">
+        Seçilmişləri Sil
+    </button>
+</div>
+
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="index">
         <th mat-header-cell *matHeaderCellDef>№</th>
@@ -59,6 +67,7 @@
             <div class="action-buttons" *ngIf="isAdminOrSuperAdmin$ | async">
                 <button mat-raised-button color="primary" (click)="onPhotoUpdate(photo)">Redaktə</button>
                 <button mat-raised-button color="warn" (click)="onPhotoDelete(photo)">Sil</button>
+                <mat-checkbox [(ngModel)]="photo.selected" (ngModelChange)="onPhotoSelect(photo, $event)"></mat-checkbox>
             </div>
         </td>
     </ng-container>

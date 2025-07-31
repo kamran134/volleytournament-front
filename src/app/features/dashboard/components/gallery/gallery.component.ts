@@ -17,6 +17,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { PhotoAddDialogComponent } from './photo-add-dialog/photo-add-dialog.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
+import { MatCheckbox } from "@angular/material/checkbox";
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-gallery',
@@ -30,7 +32,9 @@ import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/co
         MatDialogModule,
         MatIconModule,
         MatSnackBarModule,
-        CommonModule
+        MatCheckbox,
+        FormsModule,
+        CommonModule,
     ],
     templateUrl: './gallery.component.html',
     styleUrl: './gallery.component.scss'
@@ -54,6 +58,8 @@ export class GalleryComponent implements OnInit{
         horizontalPosition: 'center',
         verticalPosition: 'top'
     }
+
+    selectAll: boolean = false;
 
     constructor(
         private authService: AuthService,
@@ -196,5 +202,47 @@ export class GalleryComponent implements OnInit{
                 });
             }
         });
+    }
+
+    onDeleteSelected(): void {
+        const selectedPhotos = this.dataSource.filter(photo => photo.selected);
+        if (selectedPhotos.length === 0) {
+            this.snackBar.open('Heç bir foto seçilməyib!', 'Bağla', this.matSnackConfig);
+            return;
+        }
+        const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '350px',
+            data: { title: 'Silinməyə razılıq', text: 'Seçilmiş şəkilləri silmək istədiyinizdən əminsiniz mi?' }
+        });
+
+        confirmRef.afterClosed().subscribe(result => {
+            if (result) {
+                const ids = selectedPhotos.map(photo => photo._id);
+                this.dashboardService.deletePhotos(ids).subscribe({
+                    next: () => {
+                        this.snackBar.open('Seçilmiş fotolar silindi!', '', this.matSnackConfig);
+                        this.loadPhotos();
+                    },
+                    error: (err) => {
+                        this.snackBar.open('Fotolar silinmədi: ' + err.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
+
+    onPhotoSelect(photo: Photo, isSelected: boolean): void {
+        photo.selected = isSelected;
+    }
+
+    onSelectAllChange(isSelected: boolean): void {
+        this.selectAll = isSelected;
+        this.dataSource.forEach(photo => {
+            photo.selected = isSelected;
+        });
+    }
+
+    hasNoSelectedPhotos(): boolean {
+        return this.dataSource.every(photo => !photo.selected);
     }
 }
