@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Tournament } from '../../../../core/models/tournament.model';
 import { Tour } from '../../../../core/models/tour.model';
 import { Team } from '../../../../core/models/team.model';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
     selector: 'app-gallery-main',
@@ -20,6 +21,18 @@ import { Team } from '../../../../core/models/team.model';
         MatFormFieldModule,
         MatSelectModule,
         CommonModule
+    ],
+    animations: [
+        trigger('skeletonAnimation', [
+            state('in', style({ opacity: 1 })),
+            transition(':enter', [
+                style({ opacity: 0.3 }),
+                animate('800ms ease-in-out', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('800ms ease-in-out', style({ opacity: 0.3 }))
+            ])
+        ])
     ],
     templateUrl: './gallery-main.component.html',
     styleUrl: './gallery-main.component.scss'
@@ -44,7 +57,7 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
     hasMore = true; // Tracks if more photos are available
     private observer: IntersectionObserver | null = null;
 
-    @ViewChild('sentinel') sentinel!: ElementRef;
+    @ViewChild('galleryMain') galleryMain!: ElementRef;
 
     constructor(
         private galleryService: GalleryService,
@@ -73,20 +86,33 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setupIntersectionObserver(): void {
-        const options = {
-            root: null, // Use the viewport as the root
-            threshold: 0, // Trigger as soon as sentinel is visible
-            rootMargin: '200px' // Trigger 200px before sentinel reaches viewport
-        };
+        // const options = {
+        //     root: null, // Use the viewport as the root
+        //     threshold: 0, // Trigger as soon as sentinel is visible
+        //     rootMargin: '200px' // Trigger 200px before sentinel reaches viewport
+        // };
 
-        this.observer = new IntersectionObserver((entries) => {
-            console.log('IntersectionObserver entries:', entries);
-            if (entries[0].isIntersecting && this.hasMore && !this.isLoading) {
-                this.loadMorePhotos();
-            }
-        }, options);
+        // this.observer = new IntersectionObserver((entries) => {
+        //     if (entries[0].isIntersecting && this.hasMore && !this.isLoading) {
+        //         this.loadMorePhotos();
+        //     }
+        // }, options);
         
-        this.observer.observe(this.sentinel.nativeElement);
+        // this.observer.observe(this.sentinel.nativeElement);
+        window.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
+    }
+
+    private handleScroll(): void {
+        if (this.isLoading || !this.hasMore) return;
+
+        const galleryElement = this.galleryMain.nativeElement;
+        const rect = galleryElement.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const isAtBottom = rect.bottom <= windowHeight + 200; // Trigger 200px before bottom
+
+        if (isAtBottom) {
+            this.loadMorePhotos();
+        }
     }
 
     loadTournaments(): void {
@@ -131,12 +157,12 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.galleryService.getPhotos(params).subscribe({
             next: (response) => {
-                const newPhotos = response.data;
+                const newPhotos = response.data
                 // Uncomment the following line if you need to prepend the base URL to photo URLs
-                // .map(photo => ({
-                //     ...photo,
-                //     url: 'https://volleytour.az/' + photo.url
-                // }));
+                .map(photo => ({
+                    ...photo,
+                    url: 'https://volleytour.az/' + photo.url
+                }));
 
                 if (page === 1) {
                     this.photos = newPhotos;
@@ -188,12 +214,12 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onTourChange(tourId: string): void {
         this.selectedTour = tourId;
-        this.resetAndLoadPhotos();
+        this.loadPhotos();
     }
 
     onTeamChange(teamId: string): void {
         this.selectedTeam = teamId;
-        this.resetAndLoadPhotos();
+        this.loadPhotos();
     }
 
     private disableScroll(): void {

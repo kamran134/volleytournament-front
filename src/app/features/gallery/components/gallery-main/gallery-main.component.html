@@ -1,15 +1,5 @@
-<div class="gallery-main">
+<div class="gallery-main" #galleryMain>
     <h1>Qalereya</h1>
-    <!-- Last photos -->
-    <!-- <div class="last-photos">
-        <p>Son fotoşəkillər</p>
-        <div class="gallery-grid">
-            <div class="gallery-item" *ngFor="let photo of lastPhotos">
-                <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
-            </div>
-        </div>
-    </div> -->
-
     <div class="gallery-filters">
         <!-- Select tournament, tour -->
         <mat-form-field appearance="fill">
@@ -43,9 +33,22 @@
         <div class="gallery-item" *ngFor="let photo of photos">
             <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
         </div>
+        <!-- Skeleton placeholders during loading -->
+        <div class="gallery-item skeleton" *ngIf="isLoading" @skeletonAnimation>
+            <div class="skeleton-image"></div>
+        </div>
+        <div class="gallery-item skeleton" *ngIf="isLoading" @skeletonAnimation>
+            <div class="skeleton-image"></div>
+        </div>
+        <div class="gallery-item skeleton" *ngIf="isLoading" @skeletonAnimation>
+            <div class="skeleton-image"></div>
+        </div>
+        <div class="gallery-item skeleton" *ngIf="isLoading" @skeletonAnimation>
+            <div class="skeleton-image"></div>
+        </div>
     </div>
     <!-- Add loading indicator and sentinel -->
     <div *ngIf="isLoading" class="loading">Yüklənir...</div>
     <p *ngIf="photos.length === 0">Filtrdən yarışı və turu seçərək şəkillərə baxa bilərsiniz.</p>
-    <div #sentinel class="sentinel"></div>
+    <!-- <div #sentinel class="sentinel"></div> -->
 </div>
