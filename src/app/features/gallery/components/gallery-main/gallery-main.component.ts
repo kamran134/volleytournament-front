@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Photo } from '../../../../core/models/photo.model';
 import { GalleryService } from '../../services/gallery.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GalleryPhotoDialogComponent } from '../gallery-photo-dialog/gallery-photo-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -46,7 +46,11 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('sentinel') sentinel!: ElementRef;
 
-    constructor(private galleryService: GalleryService, private dialog: MatDialog) { }
+    constructor(
+        private galleryService: GalleryService,
+        private dialog: MatDialog,
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) { }
 
     ngOnInit(): void {
         this.loadTournaments();
@@ -54,12 +58,17 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        this.setupIntersectionObserver();
+        if (isPlatformBrowser(this.platformId)) {
+            this.setupIntersectionObserver();
+        }
     }
 
     ngOnDestroy(): void {
         if (this.observer) {
             this.observer.disconnect();
+        }
+        if (isPlatformBrowser(this.platformId)) {
+            this.enableScroll();
         }
     }
 
@@ -71,6 +80,7 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
         };
 
         this.observer = new IntersectionObserver((entries) => {
+            console.log('IntersectionObserver entries:', entries);
             if (entries[0].isIntersecting && this.hasMore && !this.isLoading) {
                 this.loadMorePhotos();
             }
@@ -105,6 +115,12 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     loadPhotos(page: number = 1): void {
+        if (this.isLoading) return; // Prevent multiple simultaneous requests
+        this.isLoading = true;
+        if (isPlatformBrowser(this.platformId)) {
+            this.disableScroll();
+        }
+
         const params = {
             page,
             size: 10,
@@ -132,27 +148,15 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.hasMore = newPhotos.length === this.pageSize;
                 this.currentPage = page;
                 this.isLoading = false;
+                this.enableScroll();
             },
             error: (error) => {
                 console.error('Error loading photos:', error);
                 this.isLoading = false;
+                this.enableScroll();
             }
         });
     }
-
-    // checkContentHeight(): void {
-    //     if (!this.galleryGrid || !this.hasMore || this.isLoading) return;
-
-    //     const galleryElement = this.galleryGrid.nativeElement;
-    //     const viewportHeight = window.innerHeight;
-    //     const galleryHeight = galleryElement.getBoundingClientRect().height;
-    //     console.log('Gallery Height:', galleryHeight, 'Viewport Height:', viewportHeight);
-
-    //     // If gallery height is less than viewport, load more
-    //     if (galleryHeight < viewportHeight && this.hasMore) {
-    //         this.loadMorePhotos();
-    //     }
-    // }
 
     loadMorePhotos(): void {
         if (this.hasMore) {
@@ -184,11 +188,21 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onTourChange(tourId: string): void {
         this.selectedTour = tourId;
-        this.loadPhotos();
+        this.resetAndLoadPhotos();
     }
 
     onTeamChange(teamId: string): void {
         this.selectedTeam = teamId;
-        this.loadPhotos();
+        this.resetAndLoadPhotos();
+    }
+
+    private disableScroll(): void {
+        if (!isPlatformBrowser(this.platformId)) return;
+        document.body.style.overflow = 'hidden';
+    }
+
+    private enableScroll(): void {
+        if (!isPlatformBrowser(this.platformId)) return;
+        document.body.style.overflow = '';
     }
 }
