@@ -1,14 +1,14 @@
 <div class="gallery-main">
     <h1>Qalereya</h1>
     <!-- Last photos -->
-    <div class="last-photos">
+    <!-- <div class="last-photos">
         <p>Son fotoşəkillər</p>
         <div class="gallery-grid">
             <div class="gallery-item" *ngFor="let photo of lastPhotos">
                 <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="gallery-filters">
         <!-- Select tournament, tour -->
@@ -28,12 +28,24 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Komanda</mat-label>
+            <mat-select [(value)]="selectedTeam" (selectionChange)="onTeamChange($event.value)">
+                <mat-option value="">Hamısı</mat-option>
+                <mat-option *ngFor="let team of teams" [value]="team._id">
+                    {{ team.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
     
-    <div class="gallery-grid">
+    <div #galleryGrid class="gallery-grid">
         <div class="gallery-item" *ngFor="let photo of photos">
             <img [src]="photo.url" [alt]="photo.description" (click)="openPhoto(photo)" />
         </div>
     </div>
+    <!-- Add loading indicator and sentinel -->
+    <div *ngIf="isLoading" class="loading">Yüklənir...</div>
     <p *ngIf="photos.length === 0">Filtrdən yarışı və turu seçərək şəkillərə baxa bilərsiniz.</p>
+    <div #sentinel class="sentinel"></div>
 </div>

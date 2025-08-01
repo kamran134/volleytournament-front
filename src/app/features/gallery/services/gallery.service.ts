@@ -38,11 +38,6 @@ export class GalleryService {
         return this.http.get<TournamentResponse>(url, { withCredentials: true });
     }
 
-    getTeams(): Observable<TeamResponse> {
-        const url: string = `${this.configService.getApiUrl()}/teams`;
-        return this.http.get<TeamResponse>(url, { withCredentials: true });
-    }
-
     getTours(tournament: string): Observable<TourResponse> {
         console.log('Fetching tours for tournament:', tournament);
         if (!tournament) {
@@ -50,5 +45,13 @@ export class GalleryService {
         }
         const url: string = `${this.configService.getApiUrl()}/tours`;
         return this.http.get<TourResponse>(url, { params: { tournament }, withCredentials: true });
+    }
+
+    getTeams(tournament: string): Observable<TeamResponse> {
+        if (!tournament) {
+            throw new Error('Tournament ID is required to fetch teams');
+        }
+        const url: string = `${this.configService.getApiUrl()}/teams`;
+        return this.http.get<TeamResponse>(url, { params: { tournament }, withCredentials: true });
     }
 }
