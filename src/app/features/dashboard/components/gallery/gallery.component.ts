@@ -10,7 +10,7 @@ import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule } from '@angular/mate
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { Photo } from '../../../../core/models/photo.model';
+import { Photo, UpdatePhotoDto } from '../../../../core/models/photo.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
@@ -19,6 +19,7 @@ import { PhotoAddDialogComponent } from './photo-add-dialog/photo-add-dialog.com
 import { ConfirmDialogComponent } from '../../../../shared/components/dialogs/confirm-dialog/confirm-dialog.component';
 import { MatCheckbox } from "@angular/material/checkbox";
 import { FormsModule } from '@angular/forms';
+import { PhotoEditDialogComponent } from './photo-edit-dialog/photo-edit-dialog.component';
 
 @Component({
     selector: 'app-gallery',
@@ -133,6 +134,13 @@ export class GalleryComponent implements OnInit{
         this.dashboardService.getPhotos(filters).subscribe({
             next: (data) => {
                 this.dataSource = data.data;
+                this.totalCount = data.totalCount;
+                this.selectAll = false; // Reset select all after loading new data
+                // временный показ фото в локале
+                this.dataSource = this.dataSource.map(photo => ({
+                    ...photo,
+                    url: 'https://volleytour.az/' + photo.url // Пример добавления базового URL
+                }));
             },
             error: (err) => {
                 this.snackBar.open('Şəkillərin yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
@@ -181,7 +189,36 @@ export class GalleryComponent implements OnInit{
         });
     }
 
-    onPhotoUpdate(photo: Photo): void {}
+    onPhotoUpdate(photo: Photo): void {
+        const updatePhoto: UpdatePhotoDto = {
+            _id: photo._id,
+            description: photo.description,
+            tournament: photo.tournament,
+            tour: photo.tour,
+            teams: photo.teams,
+            url: photo.url
+        };
+
+        const dialogRef = this.dialog.open(PhotoEditDialogComponent, {
+            width: '600px',
+            data: updatePhoto
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.dashboardService.editPhoto(result).subscribe({
+                    next: () => {
+                        this.snackBar.open('Foto məlumatları yeniləndi', 'Bağla', this.matSnackConfig);
+                        this.loadPhotos();
+                    },
+                    error: (error) => {
+                        console.error(error);
+                        this.snackBar.open('Foto məlumatları yenilənmədi: ' + error.message, 'Bağla', this.matSnackConfig);
+                    }
+                });
+            }
+        });
+    }
 
     onPhotoDelete(photo: Photo): void {
         const confirmRef = this.dialog.open(ConfirmDialogComponent, {

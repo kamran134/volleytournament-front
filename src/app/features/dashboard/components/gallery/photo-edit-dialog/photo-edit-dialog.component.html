@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>Şəklin redaktə edilməsi</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field appearance="fill">
+            <mat-label>Turnir</mat-label>
+            <mat-select [(value)]='tournamentId' name="tournamentId" required (selectionChange)="onChangeTournament()">
+                <mat-option *ngFor="let tournament of tournaments" [value]="tournament._id">
+                    {{ tournament.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Tur</mat-label>
+            <mat-select [(value)]='tourId' name="tourId" required>
+                <mat-option *ngFor="let tour of tours" [value]="tour._id">
+                    {{ tour.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>Komanda</mat-label>
+            <mat-select [(value)]='teamIds' name="teamIds" multiple>
+                <mat-option *ngFor="let team of teams" [value]="team._id">
+                    {{ team.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="photo-edit__logo">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" #fileInput />
+            <div (click)="fileInput.click()">
+                Şəkili dəyiş
+            </div>
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Logo Preview" style="max-width: 100px; margin-top: 10px;" />
+            <img *ngIf="!previewUrl && dataSource.url" [src]="dataSource.url" alt="Logo"
+                style="max-width: 100px; margin-top: 10px;" />
+        </div>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Təsvir</mat-label>
+            <input matInput [(ngModel)]='dataSource.description' name="description" required />
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="onClose()">Ləğv et</button>
+    <button mat-raised-button color="primary" (click)="onSave()"
+        [disabled]="!dataSource.description || (!previewUrl && !dataSource.url) || !tournamentId || !tourId">
+        Yadda saxla
+    </button>
+</mat-dialog-actions>

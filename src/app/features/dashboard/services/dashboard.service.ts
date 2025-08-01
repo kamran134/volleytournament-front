@@ -375,11 +375,12 @@ export class DashboardService {
 
     editPhoto(photo: UpdatePhotoDto): Observable<Photo> {
         const formData = new FormData();
+        formData.append('_id', photo._id);
         formData.append('description', photo.description || '');
-        formData.append('tournament', photo.tournament || '');
-        formData.append('tour', photo.tour || '');
+        formData.append('tournament', photo.tournament?._id || '');
+        formData.append('tour', photo.tour?._id || '');
         if (photo.teams && photo.teams.length > 0) {
-            formData.append('teams', JSON.stringify(photo.teams)); // Отправляем массив как JSON-строку
+            formData.append('teams', JSON.stringify(photo.teams.map(team => team._id))); // Отправляем массив как JSON-строку
         }
         if (photo.file) {
             formData.append('file', photo.file);

@@ -11,7 +11,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { CreateTourDto, UpdateTourDto } from '../../../../../core/models/tour.model';
 import { AuthService } from '../../../../../core/services/auth.service';
-import { ConfigService } from '../../../../../core/services/config.service';
 import moment, { Moment } from 'moment';
 import { Tournament } from '../../../../../core/models/tournament.model';
 import { DashboardService } from '../../../services/dashboard.service';
