@@ -86,19 +86,6 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setupIntersectionObserver(): void {
-        // const options = {
-        //     root: null, // Use the viewport as the root
-        //     threshold: 0, // Trigger as soon as sentinel is visible
-        //     rootMargin: '200px' // Trigger 200px before sentinel reaches viewport
-        // };
-
-        // this.observer = new IntersectionObserver((entries) => {
-        //     if (entries[0].isIntersecting && this.hasMore && !this.isLoading) {
-        //         this.loadMorePhotos();
-        //     }
-        // }, options);
-        
-        // this.observer.observe(this.sentinel.nativeElement);
         window.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
     }
 
@@ -157,12 +144,12 @@ export class GalleryMainComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.galleryService.getPhotos(params).subscribe({
             next: (response) => {
-                const newPhotos = response.data
+                const newPhotos = response.data;
                 // Uncomment the following line if you need to prepend the base URL to photo URLs
-                .map(photo => ({
-                    ...photo,
-                    url: 'https://volleytour.az/' + photo.url
-                }));
+                // .map(photo => ({
+                //     ...photo,
+                //     url: 'https://volleytour.az/' + photo.url
+                // }));
 
                 if (page === 1) {
                     this.photos = newPhotos;

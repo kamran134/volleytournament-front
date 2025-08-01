@@ -137,10 +137,10 @@ export class GalleryComponent implements OnInit{
                 this.totalCount = data.totalCount;
                 this.selectAll = false; // Reset select all after loading new data
                 // временный показ фото в локале
-                this.dataSource = this.dataSource.map(photo => ({
-                    ...photo,
-                    url: 'https://volleytour.az/' + photo.url // Пример добавления базового URL
-                }));
+                // this.dataSource = this.dataSource.map(photo => ({
+                //     ...photo,
+                //     url: 'https://volleytour.az/' + photo.url // Пример добавления базового URL
+                // }));
             },
             error: (err) => {
                 this.snackBar.open('Şəkillərin yüklənməsində xəta baş verdi: ' + err.message, 'Bağla', this.matSnackConfig);
