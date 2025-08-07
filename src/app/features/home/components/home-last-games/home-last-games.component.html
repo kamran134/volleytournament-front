@@ -1,0 +1,34 @@
+<div class="home-last-games">
+    <mat-card>
+        <mat-card-title>Son Oyunlar</mat-card-title>
+        <mat-divider></mat-divider>
+
+        <div class="game-list" *ngIf="lastGames && lastGames.length > 0">
+            <div *ngFor="let game of lastGames">
+                <div matLine class="game">
+                    <div class="team" [ngClass]="{ 'winner': game.team1.name === (game.winner || {}).name }">
+                        <div class="team-name">
+                            <!-- <img *ngIf="game.team1.logoUrl" [src]="game.team1.logoUrl" alt="{{ game.team1.name }} logo" class="team-logo"> -->
+                            <span>{{ game.team1.name }}</span>
+                        </div>
+                        <div class="team-score">
+                            {{ game.scoreTeam1 }}
+                        </div>
+                    </div>
+                    <div class="team" [ngClass]="{ 'winner': game.team2.name === (game.winner || {}).name }">
+                        <div class="team-name">
+                            <!-- <img *ngIf="game.team2.logoUrl" [src]="game.team2.logoUrl" alt="{{ game.team2.name }} logo" class="team-logo"> -->
+                            <span>{{ game.team2.name }}</span>
+                        </div>
+                        <div class="team-score">
+                            {{ game.scoreTeam2 }}
+                        </div>
+                    </div>
+                    <div matLine class="game__date">
+                        {{ game.startDate | date: 'dd.MM.yyyy, HH:mm' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card>
+</div>

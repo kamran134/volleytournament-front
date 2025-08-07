@@ -6,6 +6,7 @@
     </div>
     <!-- We need two tabs Turnir cədvəli and Oyunlar -->
     <div class="tournament-main__tabs">
+        <!-- Can we change to dark theme? -->
         <mat-tab-group>
             <mat-tab label="Turnir Cədvəli">
                 <ng-template matTabContent>
@@ -45,7 +46,7 @@
             </mat-tab>
             <mat-tab label="Oyunlar">
                 <ng-template matTabContent>
-                    <div class="tournament-main__games">
+                    <div class="tournament-main__tournament-games">
                         <h2>Oyunlar</h2>
                         <table mat-table [dataSource]="tournamentTable?.games || []" class="mat-elevation-z8">
                             <ng-container matColumnDef="tour">
@@ -79,7 +80,7 @@
                 <ng-template matTabContent>
                     <div class="tournament-main__statute">
                         <h2>Turnirin Əsasnaməsi</h2>
-                        <div [innerHTML]="(tournament.statute || '') | safeHtml"></div>
+                        <div class="tournament-main__statute-content" [innerHTML]="(tournament.statute || '') | safeHtml"></div>
                     </div>
                 </ng-template>
             </mat-tab>

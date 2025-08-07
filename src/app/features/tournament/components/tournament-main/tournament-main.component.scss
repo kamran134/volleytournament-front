@@ -1,5 +1,9 @@
+@import '../../../../../variables.scss';
+
 .tournament-main {
     padding: 84px 20px;
+    background: url('/assets/background.png') no-repeat center center fixed;
+    color: $darkWhite;
 
     &__tournament-info {
         display: flex;
@@ -14,4 +18,79 @@
             word-break: break-word;
         }
     }
+
+    &__statute-content {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 16px;
+    }
+
+    .mat-mdc-table {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .mat-mdc-table tbody, 
+    .mat-mdc-table tfoot, 
+    .mat-mdc-table thead, 
+    .mat-mdc-cell, .mat-mdc-footer-cell, 
+    .mat-mdc-header-row, .mat-mdc-row, 
+    .mat-mdc-footer-row, .mat-mdc-table 
+    .mat-mdc-header-cell {
+        color: $darkWhite;
+    }
+
+    // .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    //     color: $tabActiveDarkThemeColor !important;
+    // }
+
+    ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+        color: $tabActiveDarkThemeColor !important;
+    }
+
+    ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
+        color: $darkWhite !important;
+    }
+
+    &__tournament-table {
+        margin-top: 16px;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+
+        h2 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        table {
+            th, td {
+                padding: 8px;
+                text-align: center;
+                // border-bottom: 1px solid #ccc;
+            }
+
+            th {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            tr:first-child {
+                font-weight: bold;
+                td {
+                    color: #09C87C;
+                }
+            }
+        }
+    }
+
+    &__tournament-games {
+        margin-top: 16px;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+
+        h2 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+    }
+
 }

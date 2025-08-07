@@ -1,0 +1,47 @@
+.home-last-games {
+    padding: 16px;
+    padding-top: 100px;
+    padding-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    // background: url('/assets/background.png') no-repeat center center;
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+
+    .game {
+        border-bottom: 1px solid #ccc;
+        padding: 16px;
+
+        &__date {
+            color: gray;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+    }
+
+    .team {
+        font-weight: bold;
+        font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        gap: 100px;
+    }
+
+    .winner {
+        color: #09C87C;
+    }
+
+    .date {
+        color: gray;
+    }
+    
+    mat-card {
+        padding: 16px;
+    }
+    
+}

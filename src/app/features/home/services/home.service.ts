@@ -20,4 +20,9 @@ export class HomeService {
         const apiUrl = this.configService.getApiUrl();
         return this.http.get<{data:Game[] }>(`${apiUrl}/games/upcoming`);
     }
+
+    getLastGames() {
+        const apiUrl = this.configService.getApiUrl();
+        return this.http.get<{data:Game[] }>(`${apiUrl}/games?isLastTournament=true&isLastTour=true`);
+    }
 }
