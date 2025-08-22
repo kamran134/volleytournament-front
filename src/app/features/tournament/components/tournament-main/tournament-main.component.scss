@@ -93,4 +93,16 @@
         }
     }
 
+    ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+        background-color: rgba(0, 0, 0, 0.1) !important;
+        border-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    ::ng-deep mat-label {
+        color: $darkWhite !important;
+    }
+
+    ::ng-deep mat-select {
+        color: $darkWhite !important;
+    }
 }

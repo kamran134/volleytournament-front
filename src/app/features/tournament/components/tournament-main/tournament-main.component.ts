@@ -13,6 +13,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AzeFullDatePipe } from '../../../../shared/pipes/aze-full-date.pipe';
 import { TournamentTable } from '../../../../core/models/tournamentTable';
 import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Game } from '../../../../core/models/game.model';
 
 @Component({
     selector: 'app-tournament-main',
@@ -20,6 +23,8 @@ import { SafeHtmlPipe } from '../../../../shared/pipes/safe-html.pipe';
     imports: [
         MatCardModule,
         MatTableModule,
+        MatFormFieldModule,
+        MatSelectModule,
         MatSortModule,
         MatPaginatorModule,
         MatButtonModule,
@@ -47,6 +52,8 @@ export class TournamentMainComponent implements OnInit {
     };
     shortName: string = '';
     tournamentTable: TournamentTable | null = null;
+    allGames: Game[] = [];
+    selectedTeamId: string | null = null;
 
     constructor(private tournamentService: TournamentService, private route: ActivatedRoute) { }
 
@@ -83,6 +90,7 @@ export class TournamentMainComponent implements OnInit {
         this.tournamentService.getTournamentTable(this.tournament._id).subscribe({
             next: (response) => {
                 this.tournamentTable = response.data;
+                this.allGames = structuredClone(this.tournamentTable.games); // сохраняем все игры в переменную
             },
             error: (error) => {
                 console.error('Error loading tournament table:', error);
@@ -90,4 +98,21 @@ export class TournamentMainComponent implements OnInit {
         });
     }
 
+    onTeamSelectChange(teamId: string): void {
+        this.selectedTeamId = teamId;
+        this.filterGamesByTeam();
+    }
+
+    filterGamesByTeam(): void {
+        if (this.tournamentTable && this.selectedTeamId) {
+            const allGames = this.tournamentTable.games;
+            this.allGames = allGames.filter(game =>
+                game.team1._id === this.selectedTeamId || game.team2._id === this.selectedTeamId
+
+            );
+        } else if (this.tournamentTable) {
+            // Если команда не выбрана, показываем все игры
+            this.allGames = structuredClone(this.tournamentTable.games);
+        }
+    }
 }

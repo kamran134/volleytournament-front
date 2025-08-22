@@ -48,7 +48,19 @@
                 <ng-template matTabContent>
                     <div class="tournament-main__tournament-games">
                         <h2>Oyunlar</h2>
-                        <table mat-table [dataSource]="tournamentTable?.games || []" class="mat-elevation-z8">
+                        <!-- Filter for team -->
+                        <div class="tournament-main__tournament-games-filter">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Komanda</mat-label>
+                                <mat-select [(value)]="selectedTeamId" (selectionChange)="onTeamSelectChange($event.value)">
+                                    <mat-option [value]="null">Hamısı</mat-option>
+                                    <mat-option *ngFor="let team of tournamentTable?.teams" [value]="team.team._id">
+                                        {{ team.team.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <table mat-table [dataSource]="allGames" class="mat-elevation-z8">
                             <ng-container matColumnDef="tour">
                                 <th mat-header-cell *matHeaderCellDef>Mərhələ</th>
                                 <td mat-cell *matCellDef="let game">{{ game.tour.name }}</td>
