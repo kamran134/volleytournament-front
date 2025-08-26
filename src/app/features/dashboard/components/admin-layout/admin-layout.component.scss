@@ -16,6 +16,10 @@ mat-toolbar {
     margin-bottom: 20px;
 }
 
+.spacer {
+    flex: 1 1 auto;
+}
+
 mat-nav-list a {
     display: flex;
     align-items: center;

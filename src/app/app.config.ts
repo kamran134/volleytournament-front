@@ -16,13 +16,17 @@ import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule } from '@angular/mat
 import { CustomDateAdapter } from './core/adapters/custom-date-adapter';
 import { CUSTOM_DATE_FORMATS } from './core/services/custom-date-formats';
 import { provideQuillConfig } from 'ngx-quill';
+// REFRESH TOKEN IMPLEMENTATION:
+// Import the auth interceptor
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(routes), 
         provideClientHydration(),
-        // provideHttpClient(withInterceptors([authInterceptor])),
-        provideHttpClient(),
+        // REFRESH TOKEN IMPLEMENTATION:
+        // Enable the auth interceptor to handle automatic token refresh
+        provideHttpClient(withInterceptors([authInterceptor])),
         provideAnimationsAsync(),
         importProvidersFrom(
             BrowserAnimationsModule,

@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap, catchError, switchMap, throwError, filter, take } from 'rxjs';
 import { ConfigService } from './config.service';
 import { isPlatformBrowser } from '@angular/common';
+import { AuthResponse, RefreshTokenResponse } from '../models/response.model';
 
 @Injectable({
     providedIn: 'root'
@@ -13,9 +14,14 @@ export class AuthService {
     private router = inject(Router);
     private platformId = inject(PLATFORM_ID);
 
+    // Refresh token management
+    private isRefreshing = new BehaviorSubject<boolean>(false);
+    private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+    private tokenRefreshTimer: any = null;
+
     private authStatus = new BehaviorSubject<boolean>(this.hasToken());
     private userId = new BehaviorSubject<string | null>(
-        isPlatformBrowser(this.platformId) ? localStorage.getItem('id') : null
+        isPlatformBrowser(this.platformId) ? localStorage.getItem('userId') : null
     );
     private userRole = new BehaviorSubject<string | null>(
         isPlatformBrowser(this.platformId) ? localStorage.getItem('role') : null
@@ -24,10 +30,23 @@ export class AuthService {
     constructor(private configService: ConfigService) {
         if (isPlatformBrowser(this.platformId)) {
             const token = this.getToken();
-            if (token) {
+            const refreshToken = this.getRefreshToken();
+            
+            if (token && refreshToken && !this.isTokenExpired()) {
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 this.userRole.next(payload.role || null);
-                this.userId.next(payload.userId || null);
+                this.userId.next(payload.userId || payload.sub || null);
+                this.authStatus.next(true);
+                this.scheduleTokenRefresh();
+            } else if (refreshToken && this.isTokenExpired()) {
+                // Token expired but we have refresh token, try to refresh
+                this.refreshAccessToken().subscribe({
+                    next: () => console.log('Token refreshed on service init'),
+                    error: () => this.clearTokens()
+                });
+            } else {
+                // No valid tokens, clear everything
+                this.clearTokens();
             }
         }
     }
@@ -104,7 +123,49 @@ export class AuthService {
     }
 
     private hasToken(): boolean {
-        return isPlatformBrowser(this.platformId) && !!localStorage.getItem('token') && !this.isTokenExpired();
+        return isPlatformBrowser(this.platformId) && 
+               !!localStorage.getItem('accessToken') && 
+               !this.isTokenExpired();
+    }
+
+    getRefreshToken(): string | null {
+        if (isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('refreshToken');
+        }
+        return null;
+    }
+
+    saveTokens(accessToken: string, refreshToken: string): void {
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            
+            // Extract user info from token
+            try {
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                localStorage.setItem('userId', payload.userId || payload.sub || '');
+                localStorage.setItem('role', payload.role || '');
+                this.userId.next(payload.userId || payload.sub || null);
+                this.userRole.next(payload.role || null);
+            } catch (error) {
+                console.error('Error parsing token:', error);
+            }
+            
+            this.scheduleTokenRefresh();
+        }
+    }
+
+    clearTokens(): void {
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('role');
+            this.clearTokenRefreshTimer();
+        }
+        this.authStatus.next(false);
+        this.userId.next(null);
+        this.userRole.next(null);
     }
 
     private getUserIdFromToken(): string | null {
@@ -114,7 +175,7 @@ export class AuthService {
         }
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.userId || null;
+            return payload.userId || payload.sub || null;
         }
         catch (error) {
             console.error('Error decoding token:', error);
@@ -156,20 +217,123 @@ export class AuthService {
         }
     }
 
-    login(credentials: { email: string; password: string }): Observable<{ token: string }> {
-        return this.http.post<{ token: string }>(
-            `${this.configService.getAuthUrl()}/login`,
+    private isTokenExpiringSoon(): boolean {
+        const token = this.getToken();
+        if (!token || !isPlatformBrowser(this.platformId)) {
+            return true;
+        }
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const exp = payload.exp;
+            if (!exp) {
+                return true;
+            }
+            const currentTime = Math.floor(Date.now() / 1000);
+            const bufferTime = 5 * 60; // 5 minutes in seconds
+            return (exp - currentTime) <= bufferTime;
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            return true;
+        }
+    }
+
+    private scheduleTokenRefresh(): void {
+        const token = this.getToken();
+        if (!token) return;
+        
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const exp = payload.exp;
+            if (!exp) return;
+            
+            const currentTime = Math.floor(Date.now() / 1000);
+            const timeUntilRefresh = (exp - currentTime - 5 * 60) * 1000; // Refresh 5 minutes before expiry
+            
+            if (timeUntilRefresh > 0) {
+                this.clearTokenRefreshTimer();
+                this.tokenRefreshTimer = setTimeout(() => {
+                    this.refreshAccessToken().subscribe({
+                        next: () => console.log('Token refreshed automatically'),
+                        error: (error) => {
+                            console.error('Auto refresh failed:', error);
+                            this.logout();
+                        }
+                    });
+                }, timeUntilRefresh);
+            }
+        } catch (error) {
+            console.error('Error scheduling token refresh:', error);
+        }
+    }
+
+    private clearTokenRefreshTimer(): void {
+        if (this.tokenRefreshTimer) {
+            clearTimeout(this.tokenRefreshTimer);
+            this.tokenRefreshTimer = null;
+        }
+    }
+
+    login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+        return this.http.post<AuthResponse>(
+            `${this.configService.getAuthUrl()}/login-refresh`,
             credentials,
-            { withCredentials: true }).pipe(
-                tap(response => {
-                    localStorage.setItem('token', response.token);
-                    const payload = JSON.parse(atob(response.token.split('.')[1]));
-                    this.userId.next(payload.userId || null);
-                    this.userRole.next(payload.role || null);
-                    this.authStatus.next(true);
-                    this.router.navigate(['/admin']);
-                })
+            { withCredentials: true }
+        ).pipe(
+            tap(response => {
+                this.saveTokens(response.accessToken, response.refreshToken);
+                this.authStatus.next(true);
+                this.router.navigate(['/admin']);
+            }),
+            catchError(error => {
+                console.error('Login failed:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    refreshAccessToken(): Observable<RefreshTokenResponse> {
+        const refreshToken = this.getRefreshToken();
+        
+        if (!refreshToken) {
+            this.logout();
+            return throwError(() => new Error('No refresh token available'));
+        }
+        
+        if (this.isRefreshing.value) {
+            // If already refreshing, wait for the current refresh to complete
+            return this.refreshTokenSubject.pipe(
+                filter(token => token !== null),
+                take(1),
+                switchMap(() => throwError(() => new Error('Retry after refresh')))
             );
+        }
+        
+        this.isRefreshing.next(true);
+        this.refreshTokenSubject.next(null);
+        
+        return this.http.post<RefreshTokenResponse>(
+            `${this.configService.getAuthUrl()}/refresh-token`,
+            { refreshToken },
+            { withCredentials: true }
+        ).pipe(
+            tap(response => {
+                if (response.accessToken && response.refreshToken) {
+                    this.saveTokens(response.accessToken, response.refreshToken);
+                } else if (response.accessToken) {
+                    // Only access token returned
+                    localStorage.setItem('accessToken', response.accessToken);
+                }
+                this.refreshTokenSubject.next(response.accessToken);
+                this.isRefreshing.next(false);
+                this.scheduleTokenRefresh();
+            }),
+            catchError(error => {
+                console.error('Token refresh failed:', error);
+                this.isRefreshing.next(false);
+                this.logout();
+                return throwError(() => error);
+            })
+        );
     }
 
     register(credentials: { email: string; password: string; confirmPassword: string }): Observable<any> {
@@ -178,29 +342,48 @@ export class AuthService {
 
     getToken(): string | null {
         if (isPlatformBrowser(this.platformId)) {
-            return localStorage.getItem('token');
+            return localStorage.getItem('accessToken');
         }
         return null;
     }
 
     saveToken(token: string): void {
         if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('token', token);
+            localStorage.setItem('accessToken', token);
         }
     }
 
     logout(): void {
-        this.http.post(`${this.configService.getAuthUrl()}/logout`, {}, { withCredentials: true })
+        this.clearTokenRefreshTimer();
+        
+        // Send logout request to backend if we have a refresh token
+        const refreshToken = this.getRefreshToken();
+        if (refreshToken) {
+            this.http.post(`${this.configService.getAuthUrl()}/logout-refresh`, { refreshToken }, { withCredentials: true })
+                .subscribe({
+                    next: () => console.log('Logout successful'),
+                    error: (error) => console.error('Logout error:', error)
+                });
+        }
+        
+        this.clearTokens();
+        this.router.navigate(['/login']);
+    }
+
+    logoutAllDevices(): Observable<any> {
+        return this.http.post(`${this.configService.getAuthUrl()}/logout-all`, {}, { withCredentials: true })
             .pipe(
                 tap(() => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        localStorage.removeItem('token');
-                    }
-                    this.userRole.next(null);
-                    this.authStatus.next(false);
+                    this.clearTokens();
                     this.router.navigate(['/login']);
+                }),
+                catchError(error => {
+                    console.error('Logout all devices failed:', error);
+                    // Even if the request fails, clear local tokens
+                    this.clearTokens();
+                    this.router.navigate(['/login']);
+                    return throwError(() => error);
                 })
-            )
-            .subscribe();
+            );
     }
 }

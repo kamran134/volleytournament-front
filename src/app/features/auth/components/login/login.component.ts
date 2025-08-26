@@ -28,11 +28,17 @@ export class LoginComponent {
 
         this.authService.login(this.loginForm.getRawValue()).subscribe({
             next: (response) => {
-                // this.authService.saveToken(response.token);
+                // Token handling is done automatically in the auth service
                 this.router.navigate(['/admin']);
             },
             error: (error) => {
-                this.errorMessage.set(error.error.message || 'Girişdə xəta');
+                if (error.status === 401) {
+                    this.errorMessage.set('Invalid credentials. Please check your email and password.');
+                } else if (error.status === 429) {
+                    this.errorMessage.set('Too many login attempts. Please try again later.');
+                } else {
+                    this.errorMessage.set(error.error?.message || 'Login failed. Please try again.');
+                }
             }
         });
     }

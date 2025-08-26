@@ -45,6 +45,20 @@
     <mat-sidenav-content>
         <mat-toolbar color="primary">
             <span>İdarəetmə paneli</span>
+            <span class="spacer"></span>
+            <button mat-icon-button [matMenuTriggerFor]="userMenu">
+                <mat-icon>account_circle</mat-icon>
+            </button>
+            <mat-menu #userMenu="matMenu">
+                <button mat-menu-item (click)="logout()">
+                    <mat-icon>logout</mat-icon>
+                    <span>Çıxış</span>
+                </button>
+                <button mat-menu-item (click)="logoutAllDevices()">
+                    <mat-icon>devices</mat-icon>
+                    <span>Bütün cihazlardan çıxış</span>
+                </button>
+            </mat-menu>
         </mat-toolbar>
         <div class="content">
             <router-outlet></router-outlet>
