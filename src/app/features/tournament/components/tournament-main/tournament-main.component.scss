@@ -3,6 +3,12 @@
 .tournament-main {
     padding: 84px 20px;
     background: url('/assets/background.png') no-repeat center center fixed;
+    // in safari background not fixed, so we add this
+    background-size: cover;
+    // add option for fixed background in safari
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
     color: $darkWhite;
 
     &__tournament-info {
