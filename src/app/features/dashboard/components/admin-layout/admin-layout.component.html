@@ -1,49 +1,59 @@
-<mat-sidenav-container class="sidenav-container">
-    <mat-sidenav mode="side" opened class="sidenav">
+<mat-sidenav-container class="sidenav-container" [class.minimized-layout]="isSidenavMinimized && !isMobile">
+    <mat-sidenav 
+        #sidenav
+        [mode]="isMobile ? 'over' : 'side'" 
+        [opened]="!isMobile" 
+        class="sidenav"
+        [ngClass]="{'minimized': isSidenavMinimized && !isMobile}">
         <mat-toolbar color="primary">
-            <a routerLink="/" class="home-link">
+            <a routerLink="/" class="home-link" *ngIf="!isSidenavMinimized || isMobile">
                 <mat-icon>home</mat-icon>
                 <span>Ana səhifə</span>
             </a>
+            <mat-icon *ngIf="isSidenavMinimized && !isMobile" class="home-icon-minimized">home</mat-icon>
         </mat-toolbar>
         <div class="sidenav-content">
             <div mat-list-item routerLink="/admin/users" *ngIf="isAdminOrSuperAdmin$ | async" class="admin-list-item">
                 <mat-icon matListIcon>people</mat-icon>
-                <span>İstifadəçilər</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">İstifadəçilər</span>
             </div>
             <div mat-list-item routerLink="/admin/tournaments" *ngIf="isAdminOrSuperAdmin$ | async" class="admin-list-item">
                 <mat-icon matListIcon>emoji_events</mat-icon>
-                <span>Yarışlar</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Yarışlar</span>
             </div>
             <div mat-list-item routerLink="/admin/tours" class="admin-list-item">
                 <mat-icon matListIcon>tour</mat-icon>
-                <span>Turlar</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Turlar</span>
             </div>
             <div mat-list-item routerLink="/admin/teams" class="admin-list-item">
                 <mat-icon matListIcon>group</mat-icon>
-                <span>Komandalar</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Komandalar</span>
             </div>
             <div mat-list-item routerLink="/admin/players" class="admin-list-item">
                 <mat-icon matListIcon>person</mat-icon>
-                <span>Oyunçular</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Oyunçular</span>
             </div>
             <div mat-list-item routerLink="/admin/games" class="admin-list-item">
                 <mat-icon matListIcon>sports_volleyball</mat-icon>
-                <span>Oyunlar</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Oyunlar</span>
             </div>
             <!-- Add game locations -->
             <div mat-list-item routerLink="/admin/locations" class="admin-list-item">
                 <mat-icon matListIcon>location_on</mat-icon>
-                <span>Oyun yerləri</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Oyun yerləri</span>
             </div>
             <div mat-list-item routerLink="/admin/gallery" class="admin-list-item">
                 <mat-icon matListIcon>photo_library</mat-icon>
-                <span>Qalereya</span>
+                <span *ngIf="!isSidenavMinimized || isMobile">Qalereya</span>
             </div>
         </div>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary">
+            <button mat-icon-button (click)="toggleSidenav()" class="menu-toggle">
+                <mat-icon *ngIf="!isSidenavMinimized || isMobile">menu</mat-icon>
+                <mat-icon *ngIf="isSidenavMinimized && !isMobile">menu_open</mat-icon>
+            </button>
             <span>İdarəetmə paneli</span>
             <span class="spacer"></span>
             <button mat-icon-button [matMenuTriggerFor]="userMenu">

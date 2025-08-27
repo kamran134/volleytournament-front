@@ -1,0 +1,74 @@
+<div class="tours-container">
+    <div class="header">
+        <h2>Turların İdarə Edilməsi</h2>
+        <div class="filters">
+            <mat-select [(value)]="selectedTournament" (selectionChange)="onTournamentFilterChange()" placeholder="Turnir seç">
+                <option value="">Bütün turnirlər</option>
+                <option *ngFor="let tournament of tournaments" [value]="tournament._id">
+                    {{ tournament.name }}
+                </option>
+            </mat-select>
+            <button mat-raised-button color="primary" (click)="onTourCreate()">
+                Yeni Tur Yarat
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="tours-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Tur Adı</th>
+                <td mat-cell *matCellDef="let tour">{{ tour.name }}</td>
+            </ng-container>
+
+            <!-- Tournament Column -->
+            <ng-container matColumnDef="tournament">
+                <th mat-header-cell *matHeaderCellDef>Turnir</th>
+                <td mat-cell *matCellDef="let tour">{{ getTournamentName(tour.tournament) }}</td>
+            </ng-container>
+
+            <!-- Start Date Column -->
+            <ng-container matColumnDef="startDate">
+                <th mat-header-cell *matHeaderCellDef>Başlanğıc Tarixi</th>
+                <td mat-cell *matCellDef="let tour">{{ formatDate(tour.startDate) }}</td>
+            </ng-container>
+
+            <!-- End Date Column -->
+            <ng-container matColumnDef="endDate">
+                <th mat-header-cell *matHeaderCellDef>Bitiş Tarixi</th>
+                <td mat-cell *matCellDef="let tour">{{ formatDate(tour.endDate) }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Əməliyyatlar</th>
+                <td mat-cell *matCellDef="let tour">
+                    <div class="actions-container">
+                        <button mat-icon-button color="primary" 
+                                (click)="onTourUpdate(tour)"
+                                matTooltip="Redaktə et">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" 
+                                (click)="onTourDelete(tour)"
+                                matTooltip="Sil">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="dataSource.length === 0" class="no-data">
+            <p>Heç bir tur tapılmadı</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Cəmi: {{ totalCount }} tur</p>
+    </div>
+</div>

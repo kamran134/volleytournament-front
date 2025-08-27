@@ -57,7 +57,7 @@ export class TourEditDialogComponent implements OnInit {
             this.tournamentId = (this.dataSource as CreateTourDto).tournament;
         }
         else {
-            this.tournamentId = (this.dataSource as UpdateTourDto).tournament._id;
+            this.tournamentId = (this.dataSource as UpdateTourDto).tournament;
         }
     }
 

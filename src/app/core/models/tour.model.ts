@@ -26,7 +26,7 @@ export interface UpdateTourDto {
     name: string;
     startDate: Date;
     endDate: Date;
-    tournament: Tournament; // Tournament ID
+    tournament: string; // Tournament ID
     isNewTour?: boolean; // Flag to indicate if this is a new tour creation
 }
 

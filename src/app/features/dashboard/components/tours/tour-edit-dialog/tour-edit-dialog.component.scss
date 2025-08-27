@@ -1,0 +1,115 @@
+mat-dialog-content {
+    width: 500px;
+    min-height: 300px;
+    padding: 20px 0;
+    
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        
+        mat-form-field {
+            width: 100%;
+            
+            mat-label {
+                color: #1976d2;
+            }
+            
+            .mat-form-field-infix {
+                input, mat-select {
+                    color: #333;
+                }
+            }
+        }
+    }
+}
+
+mat-dialog-actions {
+    padding: 15px 0;
+    margin: 0;
+    
+    button {
+        margin-left: 10px;
+    }
+}
+
+h2[mat-dialog-title] {
+    color: #1976d2;
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+    mat-dialog-content {
+        width: 90vw;
+        max-width: 400px;
+        min-height: 250px;
+        padding: 15px 0;
+        
+        form {
+            gap: 12px;
+            
+            mat-form-field {
+                .mat-form-field-infix {
+                    input, mat-select {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+    }
+    
+    h2[mat-dialog-title] {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    mat-dialog-actions {
+        padding: 12px 0;
+        flex-direction: column;
+        gap: 8px;
+        
+        button {
+            margin: 0;
+            width: 100%;
+            
+            &:first-child {
+                order: 2;
+            }
+            
+            &:last-child {
+                order: 1;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    mat-dialog-content {
+        width: 95vw;
+        max-width: 350px;
+        
+        form {
+            gap: 10px;
+            
+            mat-form-field {
+                .mat-form-field-infix {
+                    input, mat-select {
+                        font-size: 14px;
+                    }
+                }
+                
+                mat-label {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+    
+    h2[mat-dialog-title] {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+}

@@ -3,10 +3,63 @@
 .home-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Гарантирует, что контент занимает всю высоту */
-    // нужно немного заблюрить фоновую картинку
-    background: url('/assets/background.png') no-repeat center center fixed;
-    background-size: cover; /* Обеспечивает покрытие всего контейнера */
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* iOS-compatible fixed background */
+.home-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('/assets/background.png') no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+    /* iOS Safari support with hardware acceleration */
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .home-container::before {
+        position: absolute;
+        height: 100vh;
+        min-height: 100vh;
+        background-attachment: scroll;
+        background-position: center center;
+        /* Force GPU acceleration on iOS */
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        /* Prevent background from jumping */
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    
+    /* Ensure container takes full height on iOS */
+    .home-container {
+        min-height: 100vh;
+        height: auto;
+    }
+}
+
+/* Fallback for very old iOS versions */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .home-container::before {
+        position: absolute !important;
+        background-attachment: scroll !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+    }
 }
 
 .background-blur {
@@ -15,10 +68,14 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('/assets/background.png') no-repeat center center fixed;
+    background: url('/assets/background.png') no-repeat center center;
     background-size: cover;
     filter: blur(8px);
-    z-index: -1;
+    z-index: -2;
+    /* iOS Safari support */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
 }
 
 

@@ -1,0 +1,206 @@
+.tours-container {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 20px;
+
+        h2 {
+            color: #1976d2;
+            margin: 0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+
+            mat-select {
+                min-width: 200px;
+                
+                .mat-select-trigger {
+                    color: #333;
+                }
+            }
+
+            button {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .table-container {
+        flex: 1;
+        overflow: auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        .tours-table {
+            width: 100%;
+            
+            th {
+                background-color: #1976d2;
+                color: white;
+                font-weight: 600;
+                padding: 15px;
+            }
+
+            td {
+                padding: 15px;
+                border-bottom: 1px solid #e0e0e0;
+                color: #333;
+            }
+
+            tr:hover {
+                background-color: rgba(0, 0, 0, 0.04);
+            }
+
+            .actions-container {
+                display: flex;
+                gap: 5px;
+
+                button {
+                    width: 36px;
+                    height: 36px;
+                    
+                    mat-icon {
+                        font-size: 18px;
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            
+            p {
+                margin: 0;
+                font-size: 16px;
+            }
+        }
+    }
+
+    .footer {
+        margin-top: 20px;
+        text-align: right;
+        color: #666;
+        
+        p {
+            margin: 0;
+            font-size: 14px;
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .tours-container {
+        padding: 15px;
+
+        .header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+            
+            h2 {
+                font-size: 20px;
+                text-align: center;
+            }
+            
+            .filters {
+                flex-direction: column;
+                gap: 12px;
+                
+                mat-select {
+                    min-width: 100%;
+                }
+                
+                button {
+                    width: 100%;
+                    padding: 12px;
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .table-container {
+            .tours-table {
+                th, td {
+                    padding: 10px 8px;
+                    font-size: 14px;
+                }
+
+                .actions-container {
+                    flex-direction: column;
+                    gap: 4px;
+                    
+                    button {
+                        width: 32px;
+                        height: 32px;
+                        
+                        mat-icon {
+                            font-size: 16px;
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .footer {
+            text-align: center;
+            
+            p {
+                font-size: 12px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .tours-container {
+        padding: 10px;
+
+        .header {
+            .filters {
+                button {
+                    padding: 14px;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .table-container {
+            overflow-x: auto;
+            
+            .tours-table {
+                min-width: 600px;
+                
+                th, td {
+                    padding: 8px 6px;
+                    font-size: 12px;
+                }
+                
+                th {
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
+                }
+            }
+        }
+    }
+}
