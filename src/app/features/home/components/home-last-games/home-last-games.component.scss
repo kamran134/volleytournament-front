@@ -9,46 +9,175 @@
     justify-content: center;
     align-items: center;
     color: $darkWhite;
-    // background: url('/assets/background.png') no-repeat center center;
 
-    h1 {
-        font-size: 24px;
-        margin-bottom: 12px;
-    }
-
-    .game {
-        border-bottom: 1px solid #ccc;
-        padding: 16px;
-
-        &__date {
-            color: $darkWhite;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-    }
-
-    .team {
-        font-weight: bold;
-        font-size: 18px;
-        display: flex;
-        justify-content: space-between;
-        gap: 100px;
-    }
-
-    .winner {
-        color: #09C87C;
-    }
-
-    .date {
-        color: gray;
-    }
-    
     mat-card {
         padding: 16px;
+        width: 100%;
+        max-width: 800px;
     }
     
     .mat-mdc-card {
-        background: rgba(255, 255, 255, 0.1) !important;
-        box-shadow: none;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 12px;
+    }
+
+    .mat-mdc-card-title {
+        color: $darkWhite;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .game-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .game-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid rgba(216, 194, 201, 0.2);
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(216, 194, 201, 0.4);
+            transform: translateY(-2px);
+        }
+    }
+
+    .game-score-line {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+
+        @media (max-width: 768px) {
+            gap: 8px;
+        }
+    }
+
+    .team-section {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 120px;
+
+        &.winner {
+            .team-name, .team-score {
+                color: #09C87C;
+                font-weight: bold;
+            }
+        }
+
+        &.team-section-reverse {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        @media (max-width: 480px) {
+            min-width: 100px;
+            gap: 4px;
+        }
+    }
+
+    .team-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(216, 194, 201, 0.3);
+        flex-shrink: 0;
+
+        @media (max-width: 480px) {
+            width: 28px;
+            height: 28px;
+        }
+    }
+
+    .team-logo-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        border: 2px solid rgba(216, 194, 201, 0.3);
+        flex-shrink: 0;
+
+        @media (max-width: 480px) {
+            width: 28px;
+            height: 28px;
+            font-size: 11px;
+        }
+    }
+
+    .team-name {
+        color: $darkWhite;
+        font-weight: 500;
+        font-size: 16px;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        @media (max-width: 480px) {
+            font-size: 14px;
+        }
+    }
+
+    .team-score {
+        color: $darkWhite;
+        font-weight: bold;
+        font-size: 18px;
+        min-width: 24px;
+        text-align: center;
+
+        @media (max-width: 480px) {
+            font-size: 16px;
+        }
+    }
+
+    .score-separator {
+        color: $darkWhite;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0 8px;
+
+        @media (max-width: 480px) {
+            font-size: 16px;
+            margin: 0 4px;
+        }
+    }
+
+    .game-date {
+        text-align: center;
+        color: #acacac;
+        font-size: 14px;
+        margin-top: 8px;
+
+        @media (max-width: 480px) {
+            font-size: 12px;
+        }
+    }
+
+    .no-games {
+        text-align: center;
+        padding: 40px 20px;
+        color: #acacac;
+        font-style: italic;
     }
 }

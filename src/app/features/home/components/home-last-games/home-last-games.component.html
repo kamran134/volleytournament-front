@@ -4,31 +4,54 @@
         <mat-divider></mat-divider>
 
         <div class="game-list" *ngIf="lastGames && lastGames.length > 0">
-            <div *ngFor="let game of lastGames">
-                <div matLine class="game">
-                    <div class="team" [ngClass]="{ 'winner': game.team1.name === (game.winner || {}).name }">
-                        <div class="team-name">
-                            <!-- <img *ngIf="game.team1.logoUrl" [src]="game.team1.logoUrl" alt="{{ game.team1.name }} logo" class="team-logo"> -->
-                            <span>{{ game.team1.name }}</span>
+            <div class="game-item" *ngFor="let game of lastGames">
+                <div class="game-score-line">
+                    <!-- Team 1 -->
+                    <div class="team-section" [ngClass]="{ 'winner': game.team1.name === (game.winner || {}).name }">
+                        <img 
+                            *ngIf="game.team1.logoUrl" 
+                            [src]="'https://volleytour.az/' + game.team1.logoUrl"
+                            [alt]="game.team1.name + ' logo'" 
+                            class="team-logo"
+                            (error)="onImageError($event)">
+                        <div 
+                            *ngIf="!game.team1.logoUrl" 
+                            class="team-logo-placeholder">
+                            {{ getTeamInitials(game.team1.name) }}
                         </div>
-                        <div class="team-score">
-                            {{ game.scoreTeam1 }}
-                        </div>
+                        <span class="team-name">{{ game.team1.name }}</span>
+                        <span class="team-score">{{ game.scoreTeam1 || 0 }}</span>
                     </div>
-                    <div class="team" [ngClass]="{ 'winner': game.team2.name === (game.winner || {}).name }">
-                        <div class="team-name">
-                            <!-- <img *ngIf="game.team2.logoUrl" [src]="game.team2.logoUrl" alt="{{ game.team2.name }} logo" class="team-logo"> -->
-                            <span>{{ game.team2.name }}</span>
+                    
+                    <!-- Score separator -->
+                    <div class="score-separator">:</div>
+                    
+                    <!-- Team 2 -->
+                    <div class="team-section team-section-reverse" [ngClass]="{ 'winner': game.team2.name === (game.winner || {}).name }">
+                        <img 
+                            *ngIf="game.team2.logoUrl" 
+                            [src]="'https://volleytour.az/' + game.team2.logoUrl" 
+                            [alt]="game.team2.name + ' logo'" 
+                            class="team-logo"
+                            (error)="onImageError($event)">
+                        <div 
+                            *ngIf="!game.team2.logoUrl" 
+                            class="team-logo-placeholder">
+                            {{ getTeamInitials(game.team2.name) }}
                         </div>
-                        <div class="team-score">
-                            {{ game.scoreTeam2 }}
-                        </div>
-                    </div>
-                    <div matLine class="game__date">
-                        {{ game.startDate | date: 'dd.MM.yyyy, HH:mm' }}
+                        <span class="team-name">{{ game.team2.name }}</span>
+                        <span class="team-score">{{ game.scoreTeam2 || 0 }}</span>
                     </div>
                 </div>
+                
+                <div class="game-date">
+                    {{ game.startDate | date: 'dd.MM.yyyy, HH:mm' }}
+                </div>
             </div>
+        </div>
+        
+        <div class="no-games" *ngIf="!lastGames || lastGames.length === 0">
+            <p>Henüz oyun bulunamadı.</p>
         </div>
     </mat-card>
 </div>
