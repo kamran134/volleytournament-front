@@ -1,4 +1,4 @@
-<div class="home-games">
+<div class="home-games" *ngIf="games && games.length > 0">
     <h2>Növbəti Oyunlar</h2>
     <div class="game-cards">
         <mat-card class="game-card" *ngFor="let game of games" (click)="onGameClick(game)">

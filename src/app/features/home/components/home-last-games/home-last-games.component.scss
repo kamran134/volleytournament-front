@@ -1,3 +1,5 @@
+@import "../../../../../variables.scss";
+
 .home-last-games {
     padding: 16px;
     padding-top: 100px;
@@ -6,6 +8,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: $darkWhite;
     // background: url('/assets/background.png') no-repeat center center;
 
     h1 {
@@ -18,7 +21,7 @@
         padding: 16px;
 
         &__date {
-            color: gray;
+            color: $darkWhite;
             font-size: 14px;
             margin-top: 8px;
         }
@@ -44,4 +47,8 @@
         padding: 16px;
     }
     
+    .mat-mdc-card {
+        background: rgba(255, 255, 255, 0.1) !important;
+        box-shadow: none;
+    }
 }

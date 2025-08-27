@@ -1,26 +1,5 @@
 @import '../../../../../variables.scss';
 
-/* 
-REFRESH TOKEN IMPLEMENTATION SUMMARY:
-=====================================
-This project currently uses a simple JWT token authentication system.
-To implement refresh tokens, see the detailed comments added to:
-
-1. /src/app/core/services/auth.service.ts - Main authentication service with refresh token methods
-2. /src/app/core/interceptors/auth.interceptor.ts - HTTP interceptor for automatic token refresh
-3. /src/app/core/models/response.model.ts - Response interfaces for auth endpoints
-4. /src/app/app.config.ts - Configuration to enable the interceptor
-5. /REFRESH_TOKEN_IMPLEMENTATION_GUIDE.md - Comprehensive implementation guide
-
-Key benefits of refresh tokens:
-- Enhanced security with short-lived access tokens
-- Better user experience with automatic token renewal
-- Proper session management and logout capabilities
-- Protection against token theft and misuse
-
-Please review the comments and implementation guide before proceeding.
-*/
-
 .tournament-main {
     padding: 84px 20px;
     background: url('/assets/background.png') no-repeat center center fixed;
