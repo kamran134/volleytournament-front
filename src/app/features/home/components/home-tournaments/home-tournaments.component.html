@@ -3,7 +3,7 @@
     <h2>Yarışlar</h2>
     <div class="tournament-cards">
         <div class="tournament-card" *ngFor="let tournament of tournaments" (click)="onTournamentClick(tournament)">
-            <img [src]="baseUrl + tournament.logoUrl" alt="{{ tournament.name }}" class="tournament-image">
+            <img [src]="tournament.logoUrl" alt="{{ tournament.name }}" class="tournament-image">
             <div class="tournament-details">
                 <h3 class="tournament-name">{{ tournament.name }}</h3>
                 <p class="tournament-date">{{ tournament.startDate | azeFullDate }}</p>

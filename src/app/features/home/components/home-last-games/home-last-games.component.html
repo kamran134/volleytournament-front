@@ -10,7 +10,7 @@
                     <div class="team-section" [ngClass]="{ 'winner': game.team1.name === (game.winner || {}).name }">
                         <img 
                             *ngIf="game.team1.logoUrl" 
-                            [src]="'https://volleytour.az/' + game.team1.logoUrl"
+                            [src]="game.team1.logoUrl"
                             [alt]="game.team1.name + ' logo'" 
                             class="team-logo"
                             (error)="onImageError($event)">
@@ -30,7 +30,7 @@
                     <div class="team-section team-section-reverse" [ngClass]="{ 'winner': game.team2.name === (game.winner || {}).name }">
                         <img 
                             *ngIf="game.team2.logoUrl" 
-                            [src]="'https://volleytour.az/' + game.team2.logoUrl" 
+                            [src]="game.team2.logoUrl" 
                             [alt]="game.team2.name + ' logo'" 
                             class="team-logo"
                             (error)="onImageError($event)">
