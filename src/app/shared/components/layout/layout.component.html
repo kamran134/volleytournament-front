@@ -11,9 +11,6 @@
                 <a mat-list-item *ngIf="isLoggedIn" (click)="logInOut(); sidenav.close()">
                     <mat-icon>logout</mat-icon> Çıxış
                 </a>
-                <a mat-list-item *ngIf="!isLoggedIn" routerLink="/login" (click)="sidenav.close()">
-                    <mat-icon>login</mat-icon> Giriş
-                </a>
             </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>
@@ -32,7 +29,6 @@
                     <a mat-button routerLink="/gallery">Qalereya</a>
                     <a mat-button routerLink="/admin" *ngIf="isLoggedIn">Admin paneli</a>
                     <a mat-button *ngIf="isLoggedIn" (click)="logInOut()"><mat-icon>logout</mat-icon> Çıxış</a>
-                    <a mat-button *ngIf="!isLoggedIn" routerLink="/login"><mat-icon>login</mat-icon> Giriş</a>
                 </div>
             </mat-toolbar>
             <main class="content">
