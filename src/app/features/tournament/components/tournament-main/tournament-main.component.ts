@@ -115,4 +115,26 @@ export class TournamentMainComponent implements OnInit {
             this.allGames = structuredClone(this.tournamentTable.games);
         }
     }
+
+    /**
+     * Handle image loading errors by setting a fallback
+     */
+    onImageError(event: any): void {
+        event.target.style.display = 'none';
+        // You could also set a default image
+        // event.target.src = 'assets/images/default-team-logo.png';
+    }
+
+    /**
+     * Get team initials for placeholder when logo is not available
+     */
+    getTeamInitials(teamName: string): string {
+        if (!teamName) return '';
+        
+        return teamName
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase())
+            .join('')
+            .substring(0, 2); // Limit to 2 characters
+    }
 }

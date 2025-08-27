@@ -19,7 +19,22 @@
                             </ng-container>
                             <ng-container matColumnDef="team">
                                 <th mat-header-cell *matHeaderCellDef>Komanda</th>
-                                <td mat-cell *matCellDef="let team">{{ team.team.name }}</td>
+                                <td mat-cell *matCellDef="let team" class="team-cell">
+                                    <div class="team-info">
+                                        <img 
+                                            *ngIf="team.team.logoUrl" 
+                                            [src]="team.team.logoUrl" 
+                                            [alt]="team.team.name + ' logo'" 
+                                            class="team-logo"
+                                            (error)="onImageError($event)">
+                                        <div 
+                                            *ngIf="!team.team.logoUrl" 
+                                            class="team-logo-placeholder">
+                                            {{ getTeamInitials(team.team.name) }}
+                                        </div>
+                                        <span class="team-name">{{ team.team.name }}</span>
+                                    </div>
+                                </td>
                             </ng-container>
                             <ng-container matColumnDef="points">
                                 <th mat-header-cell *matHeaderCellDef>Ballar</th>

@@ -85,6 +85,53 @@
                 }
             }
         }
+
+        // Team cell with logo styles
+        .team-cell {
+            text-align: left !important;
+            padding: 12px 8px !important;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 40px;
+        }
+
+        .team-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(216, 194, 201, 0.3);
+            flex-shrink: 0;
+        }
+
+        .team-logo-placeholder {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            border: 2px solid rgba(216, 194, 201, 0.3);
+            flex-shrink: 0;
+        }
+
+        .team-name {
+            font-weight: 500;
+            color: $darkWhite;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     &__tournament-games {
