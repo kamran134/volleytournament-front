@@ -1,116 +1,249 @@
-<!-- There is must be tournament information, tournament table (from games). Use Angular Material Components -->
- <div class="tournament-main">
-    <div class="tournament-main__tournament-info">
-        <h1>{{ tournament.name }}</h1>
-        <h2>Başlanma tarixi: {{ tournament.startDate | azeFullDate}}</h2>
+<!-- Modern Sports Tournament Page -->
+<div class="tournament-main">
+    <!-- Hero Section -->
+    <div class="tournament-hero">
+        <div class="tournament-hero__content">
+            <div class="tournament-badge">
+                <mat-icon>emoji_events</mat-icon>
+                <span>Yarış</span>
+            </div>
+            <h1 class="tournament-title">{{ tournament.name }}</h1>
+            <div class="tournament-meta">
+                <div class="tournament-meta__item">
+                    <mat-icon>calendar_today</mat-icon>
+                    <span>{{ tournament.startDate | azeFullDate}}</span>
+                </div>
+                <div class="tournament-meta__item" *ngIf="tournament.endDate">
+                    <mat-icon>event</mat-icon>
+                    <span>{{ tournament.endDate | azeFullDate}}</span>
+                </div>
+                <div class="tournament-meta__item" *ngIf="tournament.city">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ tournament.city }}, {{ tournament.country }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="tournament-hero__decoration">
+            <div class="volleyball-icon">🏐</div>
+        </div>
     </div>
-    <!-- We need two tabs Turnir cədvəli and Oyunlar -->
-    <div class="tournament-main__tabs">
-        <!-- Can we change to dark theme? -->
-        <mat-tab-group>
-            <mat-tab label="Turnir Cədvəli">
-                <ng-template matTabContent>
-                    <div class="tournament-main__tournament-table">
-                        <h2>Turnir Cədvəli</h2>
-                        <table mat-table [dataSource]="tournamentTable?.teams || []" class="mat-elevation-z8">
-                            <ng-container matColumnDef="place">
-                                <th mat-header-cell *matHeaderCellDef>Yerləşmə</th>
-                                <td mat-cell *matCellDef="let team; let i = index">{{ i + 1 }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="team">
-                                <th mat-header-cell *matHeaderCellDef>Komanda</th>
-                                <td mat-cell *matCellDef="let team" class="team-cell">
-                                    <div class="team-info">
-                                        <img 
-                                            *ngIf="team.team.logoUrl" 
-                                            [src]="team.team.logoUrl" 
-                                            [alt]="team.team.name + ' logo'" 
-                                            class="team-logo"
-                                            (error)="onImageError($event)">
-                                        <div 
-                                            *ngIf="!team.team.logoUrl" 
-                                            class="team-logo-placeholder">
-                                            {{ getTeamInitials(team.team.name) }}
-                                        </div>
-                                        <span class="team-name">{{ team.team.name }}</span>
-                                    </div>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="points">
-                                <th mat-header-cell *matHeaderCellDef>Ballar</th>
-                                <td mat-cell *matCellDef="let team">{{ team.points }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="matchesPlayed">
-                                <th mat-header-cell *matHeaderCellDef>Oyunlar</th>
-                                <td mat-cell *matCellDef="let team">{{ team.matchesPlayed }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="matchesWon">
-                                <th mat-header-cell *matHeaderCellDef>Qalibiyyətlər</th>
-                                <td mat-cell *matCellDef="let team">{{ team.matchesWon }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="matchesLost">
-                                <th mat-header-cell *matHeaderCellDef>Məğlubiyyətlər</th>
-                                <td mat-cell *matCellDef="let team">{{ team.matchesLost }}</td>
-                            </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="['place', 'team', 'points', 'matchesPlayed', 'matchesWon', 'matchesLost']"></tr>
-                            <tr mat-row *matRowDef="let row; columns: ['place', 'team', 'points', 'matchesPlayed', 'matchesWon', 'matchesLost']"></tr>
-                        </table>
-                    </div>
+    <!-- Tournament Content -->
+    <div class="tournament-content">
+        <mat-tab-group class="tournament-tabs" dynamicHeight>
+            <!-- Tournament Table Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>leaderboard</mat-icon>
+                    <span>Turnir Cədvəli</span>
                 </ng-template>
-            </mat-tab>
-            <mat-tab label="Oyunlar">
                 <ng-template matTabContent>
-                    <div class="tournament-main__tournament-games">
-                        <h2>Oyunlar</h2>
-                        <!-- Filter for team -->
-                        <div class="tournament-main__tournament-games-filter">
-                            <mat-form-field appearance="fill">
-                                <mat-label>Komanda</mat-label>
-                                <mat-select [(value)]="selectedTeamId" (selectionChange)="onTeamSelectChange($event.value)">
-                                    <mat-option [value]="null">Hamısı</mat-option>
-                                    <mat-option *ngFor="let team of tournamentTable?.teams" [value]="team.team._id">
-                                        {{ team.team.name }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                    <div class="tab-content">
+                        <div class="section-header">
+                            <h2>
+                                <mat-icon>emoji_events</mat-icon>
+                                Turnir Cədvəli
+                            </h2>
+                            <p>Komandaların mövcud vəziyyəti və nəticələri</p>
                         </div>
-                        <table mat-table [dataSource]="allGames" class="mat-elevation-z8">
-                            <ng-container matColumnDef="tour">
-                                <th mat-header-cell *matHeaderCellDef>Mərhələ</th>
-                                <td mat-cell *matCellDef="let game">{{ game.tour.name }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="team1">
-                                <th mat-header-cell *matHeaderCellDef>Komanda 1</th>
-                                <td mat-cell *matCellDef="let game">{{ game.team1.name }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="team2">
-                                <th mat-header-cell *matHeaderCellDef>Komanda 2</th>
-                                <td mat-cell *matCellDef="let game">{{ game.team2.name }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="score">
-                                <th mat-header-cell *matHeaderCellDef>Hesab</th>
-                                <td mat-cell *matCellDef="let game">{{ game.scoreTeam1 }} : {{ game.scoreTeam2 }}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="date">
-                                <th mat-header-cell *matHeaderCellDef>Tarix</th>
-                                <td mat-cell *matCellDef="let game">{{ game.startDate | azeFullDate }}</td>
-                            </ng-container>
+                        
+                        <div class="tournament-table-container">
+                            <mat-card class="tournament-table-card">
+                                <table mat-table [dataSource]="tournamentTable?.teams || []" class="tournament-table">
+                                    <!-- Position Column -->
+                                    <ng-container matColumnDef="place">
+                                        <th mat-header-cell *matHeaderCellDef class="position-header">
+                                            <mat-icon>format_list_numbered</mat-icon>
+                                            Mövqe
+                                        </th>
+                                        <td mat-cell *matCellDef="let team; let i = index" class="position-cell">
+                                            <div class="position-badge" [ngClass]="getPositionClass(i + 1)">
+                                                <span *ngIf="i < 3" class="position-medal">{{ getPositionMedal(i + 1) }}</span>
+                                                <span *ngIf="i >= 3">{{ i + 1 }}</span>
+                                            </div>
+                                        </td>
+                                    </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="['tour', 'team1', 'team2', 'score', 'date']"></tr>
-                            <tr mat-row *matRowDef="let row; columns: ['tour', 'team1', 'team2', 'score', 'date']"></tr>
-                        </table>
+                                    <!-- Team Column -->
+                                    <ng-container matColumnDef="team">
+                                        <th mat-header-cell *matHeaderCellDef class="team-header">
+                                            <mat-icon>groups</mat-icon>
+                                            Komanda
+                                        </th>
+                                        <td mat-cell *matCellDef="let team" class="team-cell">
+                                            <div class="team-info">
+                                                <img 
+                                                    *ngIf="team.team.logoUrl" 
+                                                    [src]="'https://volleytour.az/' + team.team.logoUrl" 
+                                                    [alt]="team.team.name + ' logo'" 
+                                                    class="team-logo"
+                                                    (error)="onImageError($event)">
+                                                <div 
+                                                    *ngIf="!team.team.logoUrl" 
+                                                    class="team-logo-placeholder">
+                                                    {{ getTeamInitials(team.team.name) }}
+                                                </div>
+                                                <div class="team-details">
+                                                    <span class="team-name">{{ team.team.name }}</span>
+                                                    <span class="team-short" *ngIf="team.team.shortName">{{ team.team.shortName }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Points Column -->
+                                    <ng-container matColumnDef="points">
+                                        <th mat-header-cell *matHeaderCellDef class="stats-header">
+                                            <mat-icon>star</mat-icon>
+                                            Xal
+                                        </th>
+                                        <td mat-cell *matCellDef="let team" class="points-cell">
+                                            <div class="points-badge">{{ team.points }}</div>
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Games Played -->
+                                    <ng-container matColumnDef="matchesPlayed">
+                                        <th mat-header-cell *matHeaderCellDef class="stats-header matches-played-header">
+                                            <mat-icon>sports_volleyball</mat-icon>
+                                            <span class="header-text-desktop">Oyun</span>
+                                            <span class="header-text-mobile">O</span>
+                                        </th>
+                                        <td mat-cell *matCellDef="let team" class="stats-cell matches-played-cell">{{ team.matchesPlayed }}</td>
+                                    </ng-container>
+
+                                    <!-- Wins -->
+                                    <ng-container matColumnDef="matchesWon">
+                                        <th mat-header-cell *matHeaderCellDef class="stats-header wins-header">
+                                            <mat-icon>check_circle</mat-icon>
+                                            <span class="header-text-desktop">Qələbə</span>
+                                            <span class="header-text-mobile">Q</span>
+                                        </th>
+                                        <td mat-cell *matCellDef="let team" class="wins-cell">{{ team.matchesWon }}</td>
+                                    </ng-container>
+
+                                    <!-- Losses -->
+                                    <ng-container matColumnDef="matchesLost">
+                                        <th mat-header-cell *matHeaderCellDef class="stats-header losses-header">
+                                            <mat-icon>cancel</mat-icon>
+                                            <span class="header-text-desktop">Məğlubiyyət</span>
+                                            <span class="header-text-mobile">M</span>
+                                        </th>
+                                        <td mat-cell *matCellDef="let team" class="losses-cell">{{ team.matchesLost }}</td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="['place', 'team', 'points', 'matchesPlayed', 'matchesWon', 'matchesLost']"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: ['place', 'team', 'points', 'matchesPlayed', 'matchesWon', 'matchesLost']" class="tournament-row"></tr>
+                                </table>
+                            </mat-card>
+                        </div>
                     </div>
                 </ng-template>
             </mat-tab>
-            <mat-tab label="Əsasnamə">
+
+            <!-- Games Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>sports_volleyball</mat-icon>
+                    <span>Oyunlar</span>
+                </ng-template>
                 <ng-template matTabContent>
-                    <div class="tournament-main__statute">
-                        <h2>Turnirin Əsasnaməsi</h2>
-                        <div class="tournament-main__statute-content" [innerHTML]="(tournament.statute || '') | safeHtml"></div>
+                    <div class="tab-content">
+                        <div class="section-header">
+                            <h2>
+                                <mat-icon>sports_volleyball</mat-icon>
+                                Oyunlar
+                            </h2>
+                            <p>Bütün oyunlar və nəticələr</p>
+                        </div>
+
+                        <!-- Games Table -->
+                        <div class="games-container">
+                            <!-- Games Filter -->
+                            <mat-card class="filter-card">
+                                <div class="filter-section">
+                                    <mat-icon>filter_list</mat-icon>
+                                    <mat-form-field appearance="outline" class="team-filter">
+                                        <mat-label>Komanda seçin</mat-label>
+                                        <mat-select [(value)]="selectedTeamId" (selectionChange)="onTeamSelectChange($event.value)">
+                                            <mat-option [value]="null">
+                                                <mat-icon>all_inclusive</mat-icon>
+                                                Hamısı
+                                            </mat-option>
+                                            <mat-option *ngFor="let team of tournamentTable?.teams" [value]="team.team._id">
+                                                {{ team.team.name }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </mat-card>
+
+                            <mat-card class="games-card">
+                                <table mat-table [dataSource]="allGames" class="games-table">
+                                    <!-- Tour Column -->
+                                    <ng-container matColumnDef="tour">
+                                        <th mat-header-cell *matHeaderCellDef class="tour-header">
+                                            <mat-icon>timeline</mat-icon>
+                                            Mərhələ
+                                        </th>
+                                        <td mat-cell *matCellDef="let game" class="tour-cell">
+                                            <div class="tour-badge">{{ game.tour.name }}</div>
+                                            <div class="date-info">
+                                                <span class="date">{{ game.startDate | azeFullDate }}</span>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+
+                                    <!-- Match Column -->
+                                    <ng-container matColumnDef="match">
+                                        <th mat-header-cell *matHeaderCellDef class="match-header">
+                                            <mat-icon>sports_volleyball</mat-icon>
+                                            Oyun
+                                        </th>
+                                        <td mat-cell *matCellDef="let game" class="match-cell">
+                                            <div class="match-info">
+                                                <div class="team-vs">
+                                                    <div class="team-name" [ngClass]="{'winner': game.winner?._id === game.team1._id}">{{ game.team1.name }}</div>
+                                                    <div class="vs-section">
+                                                        <span class="score">{{ game.scoreTeam1 || 0 }} : {{ game.scoreTeam2 || 0 }}</span>
+                                                    </div>
+                                                    <div class="team-name right" [ngClass]="{'winner': game.winner?._id === game.team2._id}">{{ game.team2.name }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="['tour', 'match']"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: ['tour', 'match']" class="game-row"></tr>
+                                </table>
+                            </mat-card>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Statute Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>description</mat-icon>
+                    <span>Əsasnamə</span>
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="tab-content">
+                        <div class="section-header">
+                            <h2>
+                                <mat-icon>description</mat-icon>
+                                Turnirin Əsasnaməsi
+                            </h2>
+                            <p>Turnirin qaydaları və şərtləri</p>
+                        </div>
+                        
+                        <mat-card class="statute-card">
+                            <div class="statute-content" [innerHTML]="(tournament.statute || 'Əsasnamə mövcud deyil.') | safeHtml"></div>
+                        </mat-card>
                     </div>
                 </ng-template>
             </mat-tab>
         </mat-tab-group>
     </div>
- </div>
+</div>

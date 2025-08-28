@@ -1,161 +1,983 @@
 @import '../../../../../variables.scss';
 
 .tournament-main {
-    padding: 84px 20px;
+    min-height: 100vh;
     background: url('/assets/background.png') no-repeat center center fixed;
-    // in safari background not fixed, so we add this
     background-size: cover;
-    // add option for fixed background in safari
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    color: $darkWhite;
+    position: relative;
 
-    &__tournament-info {
-        display: flex;
+    // Background overlay for better contrast
+    &::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: -1;
+    }
+}
+
+// Hero Section
+.tournament-hero {
+    padding: 120px 20px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+
+    @media (max-width: 768px) {
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 16px;
-
-        h3 {
-            width: 100%;
-            // if the line is too long, it should wrap
-            word-break: break-word;
-        }
+        padding: 100px 20px 40px;
+        gap: 20px;
     }
 
-    &__statute-content {
-        background-color: rgba(0, 0, 0, 0.1);
-        padding: 16px;
-    }
-
-    .mat-mdc-table {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .mat-mdc-table tbody, 
-    .mat-mdc-table tfoot, 
-    .mat-mdc-table thead, 
-    .mat-mdc-cell, .mat-mdc-footer-cell, 
-    .mat-mdc-header-row, .mat-mdc-row, 
-    .mat-mdc-footer-row, .mat-mdc-table 
-    .mat-mdc-header-cell {
+    &__content {
+        flex: 1;
         color: $darkWhite;
     }
 
-    // .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-    //     color: $tabActiveDarkThemeColor !important;
-    // }
+    &__decoration {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        @media (max-width: 768px) {
+            order: -1;
+        }
+    }
+}
+
+.tournament-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.tournament-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: $darkWhite;
+    margin: 0 0 24px 0;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+        font-size: 2.5rem;
+        text-align: center;
+    }
+}
+
+.tournament-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+        justify-content: center;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+
+        mat-icon {
+            color: #ff6b35;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+.volleyball-icon {
+    font-size: 6rem;
+    animation: bounce 2s infinite;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+
+    @media (max-width: 768px) {
+        font-size: 4rem;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+// Tournament Content
+.tournament-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+}
+
+// Tabs Styling
+.tournament-tabs {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px 16px 0 0;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+
+    ::ng-deep .mat-mdc-tab-group {
+        color: $darkWhite;
+    }
 
     ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
-        color: $tabActiveDarkThemeColor !important;
+        color: #ff6b35 !important;
     }
 
     ::ng-deep .mat-mdc-tab .mdc-tab__text-label {
         color: $darkWhite !important;
+        font-weight: 500;
     }
 
-    &__tournament-table {
-        margin-top: 16px;
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
+    ::ng-deep .mat-mdc-tab-header {
+        background: rgba(0, 0, 0, 0.2);
+    }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 16px;
+    ::ng-deep .mdc-tab-indicator__content--underline {
+        background-color: #ff6b35 !important;
+    }
+
+    ::ng-deep .mat-mdc-tab .mdc-tab__content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+// Tab Content
+.tab-content {
+    padding: 40px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: $darkWhite;
+
+    h2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-size: 2.5rem;
+        margin: 0 0 12px 0;
+        font-weight: 600;
+
+        mat-icon {
+            color: #ff6b35;
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
         }
 
-        table {
-            th, td {
-                padding: 8px;
-                text-align: center;
-                // border-bottom: 1px solid #ccc;
+        @media (max-width: 768px) {
+            font-size: 2rem;
+            
+            mat-icon {
+                font-size: 1.5rem;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    p {
+        font-size: 1.1rem;
+        opacity: 0.8;
+        margin: 0;
+    }
+}
+
+// Tournament Table Styling
+.tournament-table-container {
+    display: flex;
+    justify-content: center;
+}
+
+.tournament-table-card {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+
+    .tournament-table {
+        width: 100%;
+        background: transparent;
+
+        // Header Styling
+        .mat-mdc-header-cell {
+            background: rgba(0, 0, 0, 0.3);
+            color: $darkWhite !important;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            padding: 16px 8px;
+            // Fix vertical alignment for icons and text
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            text-align: center !important;
+
+            mat-icon {
+                font-size: 18px !important;
+                width: 18px !important;
+                height: 18px !important;
+                color: #ff6b35;
+                // Ensure icon aligns with text baseline
+                vertical-align: middle;
+                line-height: 1;
+                margin: 0;
             }
 
-            th {
-                background-color: rgba(0, 0, 0, 0.1);
+            // Special alignment for team header (left-aligned)
+            &.team-header {
+                justify-content: flex-start !important;
+                text-align: left !important;
             }
 
-            tr:first-child {
-                font-weight: bold;
-                td {
-                    color: #09C87C;
+            // Responsive header text
+            .header-text-mobile {
+                display: none;
+            }
+
+            .header-text-desktop {
+                display: inline;
+            }
+        }
+
+        // Cell Styling
+        .mat-mdc-cell {
+            color: $darkWhite !important;
+            border: none;
+            padding: 16px 8px;
+            font-size: 14px;
+        }
+
+        // Row Styling
+        .tournament-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: scale(1.01);
+            }
+
+            // Top 3 teams highlighting
+            &:nth-child(2) { // First place (index 1, since header is 0)
+                background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05));
+                
+                &:hover {
+                    background: linear-gradient(90deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.1));
+                }
+            }
+
+            &:nth-child(3) { // Second place
+                background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), rgba(192, 192, 192, 0.05));
+                
+                &:hover {
+                    background: linear-gradient(90deg, rgba(192, 192, 192, 0.3), rgba(192, 192, 192, 0.1));
+                }
+            }
+
+            &:nth-child(4) { // Third place
+                background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), rgba(205, 127, 50, 0.05));
+                
+                &:hover {
+                    background: linear-gradient(90deg, rgba(205, 127, 50, 0.3), rgba(205, 127, 50, 0.1));
                 }
             }
         }
+    }
+}
 
-        // Team cell with logo styles
-        .team-cell {
-            text-align: left !important;
-            padding: 12px 8px !important;
+// Position Badge Styling
+.position-cell {
+    text-align: center !important;
+}
+
+.position-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+
+    &.gold {
+        background: linear-gradient(45deg, #ffd700, #ffed4a);
+        color: #000;
+    }
+
+    &.silver {
+        background: linear-gradient(45deg, #c0c0c0, #e5e7eb);
+        color: #000;
+    }
+
+    &.bronze {
+        background: linear-gradient(45deg, #cd7f32, #d4a574);
+        color: #fff;
+    }
+
+    &.regular {
+        background: rgba(255, 255, 255, 0.2);
+        color: $darkWhite;
+    }
+}
+
+.position-medal {
+    font-size: 20px;
+}
+
+// Team Info Styling
+.team-cell {
+    text-align: left !important;
+    padding: 16px 12px !important;
+}
+
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+}
+
+.team-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.team-logo-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.team-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.team-name {
+    font-weight: 600;
+    color: $darkWhite;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.team-short {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+// Points Badge
+.points-cell {
+    text-align: center !important;
+}
+
+.points-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 16px;
+    min-width: 40px;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+}
+
+// Stats Cells
+.stats-cell {
+    text-align: center !important;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.wins-cell {
+    color: #10b981 !important;
+    font-weight: 600;
+}
+
+.losses-cell {
+    color: #ef4444 !important;
+    font-weight: 600;
+}
+
+// Filter Card
+.filter-card {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+    .filter-section {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+
+        mat-icon {
+            color: #ff6b35;
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    .team-filter {
+        min-width: 250px;
+        
+        ::ng-deep .mat-mdc-form-field {
+            .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .mat-mdc-form-field-focus-overlay {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .mdc-floating-label {
+                color: rgba(255, 255, 255, 0.7) !important;
+            }
+
+            .mat-mdc-select-value-text {
+                color: $darkWhite !important;
+            }
+
+            .mat-mdc-select-arrow {
+                color: $darkWhite !important;
+            }
+        }
+    }
+}
+
+// Games Table
+.games-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.games-card {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+
+    .games-table {
+        width: 100%;
+        background: transparent;
+
+            .mat-mdc-header-cell {
+                background: rgba(0, 0, 0, 0.3);
+                color: $darkWhite !important;
+                font-weight: 600;
+                font-size: 14px;
+                border: none;
+                padding: 16px 8px;
+                // Fix vertical alignment for icons and text
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 6px !important;
+                text-align: center !important;
+
+                mat-icon {
+                    font-size: 18px !important;
+                    width: 18px !important;
+                    height: 18px !important;
+                    color: #ff6b35;
+                    // Ensure icon aligns with text baseline
+                    vertical-align: middle;
+                    line-height: 1;
+                    margin: 0;
+                }
+
+                // Special alignment for team header (left-aligned)
+                &.team-header {
+                    justify-content: flex-start !important;
+                    text-align: left !important;
+                }
+            }
+
+        .mat-mdc-cell {
+            color: $darkWhite !important;
+            border: none;
+            padding: 16px 24px;
+            font-size: 14px;
         }
 
-        .team-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-height: 40px;
+        .game-row {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: scale(1.01);
+            }
+        }
+    }
+}
+
+.tour-badge {
+    background: linear-gradient(45deg, #667eea, #69aecf);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.match-info {
+    padding: 8px 0;
+}
+
+.team-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 250px;
+
+    .team-name {
+        flex: 1;
+        font-weight: 500;
+        text-align: start;
+
+        &.winner {
+            color: #10b981;
+            font-weight: 600;
         }
 
-        .team-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(216, 194, 201, 0.3);
-            flex-shrink: 0;
+        &.right {
+            text-align: end;
         }
+    }
 
-        .team-logo-placeholder {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+    .vs-section {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .score {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 12px;
-            border: 2px solid rgba(216, 194, 201, 0.3);
-            flex-shrink: 0;
+            font-size: 16px;
+            min-width: 60px;
+            text-align: center;
         }
+    }
+}
+
+.date-info {
+    margin-top: 5px;
+    .date {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+}
+
+// Statute Card
+.statute-card {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    .statute-content {
+        color: $darkWhite;
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 24px;
+
+        ::ng-deep {
+            h1, h2, h3, h4, h5, h6 {
+                color: #ff6b35;
+                margin: 20px 0 10px 0;
+            }
+
+            p {
+                margin-bottom: 16px;
+            }
+
+            ul, ol {
+                padding-left: 20px;
+                
+                li {
+                    margin-bottom: 8px;
+                }
+            }
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .tournament-main {
+        padding: 0;
+        
+        &::before {
+            position: absolute;
+        }
+    }
+
+    .tournament-hero {
+        padding: 80px 16px 32px;
+    }
+
+    .tournament-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .tournament-content {
+        padding: 0 16px 20px;
+    }
+
+    .tab-content {
+        padding: 20px 0;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+        
+        h2 {
+            font-size: 1.8rem;
+            
+            mat-icon {
+                font-size: 1.5rem;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    // Mobile Tournament Table
+    .tournament-table-card {
+        border-radius: 12px;
+        overflow-x: auto;
+        
+        .tournament-table {
+            min-width: 600px; // Prevent table from being too narrow
+            font-size: 12px;
+
+            .mat-mdc-header-cell {
+                padding: 12px 6px;
+                font-size: 12px;
+                gap: 4px !important;
+                
+                mat-icon {
+                    font-size: 16px !important;
+                    width: 16px !important;
+                    height: 16px !important;
+                }
+
+                // Switch to shorter text on mobile
+                .header-text-mobile {
+                    display: inline;
+                }
+
+                .header-text-desktop {
+                    display: none;
+                }
+
+                // Hide some columns on very small screens
+                &.matches-played-header,
+                &.wins-header,
+                &.losses-header {
+                    @media (max-width: 480px) {
+                        display: none;
+                    }
+                }
+            }
+
+            .mat-mdc-cell {
+                padding: 12px 6px;
+                font-size: 12px;
+
+                // Hide corresponding cells for hidden headers
+                &.matches-played-cell,
+                &.wins-cell,
+                &.losses-cell {
+                    @media (max-width: 480px) {
+                        display: none;
+                    }
+                }
+            }
+
+            .team-logo, .team-logo-placeholder {
+                width: 28px;
+                height: 28px;
+            }
+
+            .team-name {
+                font-size: 12px;
+            }
+
+            .team-short {
+                font-size: 10px;
+            }
+
+            .position-badge {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .position-medal {
+                font-size: 16px;
+            }
+
+            .points-badge {
+                padding: 6px 10px;
+                font-size: 14px;
+                min-width: 32px;
+            }
+        }
+    }
+
+    // Mobile Games Table
+    .games-card {
+        border-radius: 12px;
+        overflow-x: auto;
+        
+        .games-table {
+            //min-width: 500px;
+            font-size: 12px;
+
+            .mat-mdc-header-cell {
+                padding: 12px 6px;
+                font-size: 12px;
+                gap: 4px !important;
+                
+                mat-icon {
+                    font-size: 16px !important;
+                    width: 16px !important;
+                    height: 16px !important;
+                }
+            }
+
+            .mat-mdc-cell {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .team-vs {
+        flex-direction: column;
+        gap: 6px;
+        // min-width: auto;
+        width: 70%;
+        align-items: center;
 
         .team-name {
-            font-weight: 500;
-            color: $darkWhite;
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-
-    &__tournament-games {
-        margin-top: 16px;
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-
-        h2 {
             text-align: center;
-            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .vs-section .score {
+            font-size: 16px;
+            min-width: 45px;
+            padding: 3px 6px;
         }
     }
 
-    ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-        background-color: rgba(0, 0, 0, 0.1) !important;
-        border-color: rgba(0, 0, 0, 0.1) !important;
+    .tour-badge {
+        font-size: 10px;
+        padding: 4px 8px;
     }
 
-    ::ng-deep mat-label {
-        color: $darkWhite !important;
+    .date-info .date {
+        font-size: 12px;
     }
 
-    ::ng-deep mat-select {
-        color: $darkWhite !important;
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 12px;
+        padding: 12px 16px;
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .team-filter {
+            min-width: 200px;
+            width: 100%;
+        }
+    }
+
+    // Tab styling for mobile
+    .tournament-tabs {
+        ::ng-deep .mat-mdc-tab-header {
+            .mat-mdc-tab {
+                min-width: 80px;
+                
+                .mdc-tab__content {
+                    gap: 4px;
+                }
+                
+                .mdc-tab__text-label {
+                    font-size: 12px;
+                }
+                
+                mat-icon {
+                    font-size: 18px !important;
+                    width: 18px !important;
+                    height: 18px !important;
+                }
+            }
+        }
+    }
+
+    // Statute content mobile
+    .statute-card {
+        .statute-content {
+            padding: 16px;
+            font-size: 14px;
+        }
+    }
+}
+
+// Extra small screens
+@media (max-width: 480px) {
+    .tournament-hero {
+        padding: 70px 12px 24px;
+    }
+
+    .tournament-title {
+        font-size: 1.6rem;
+    }
+
+    .tournament-meta {
+        justify-content: center;
+        gap: 16px;
+
+        &__item {
+            font-size: 14px;
+            
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+
+    .tournament-content {
+        padding: 0 12px 16px;
+    }
+
+    .volleyball-icon {
+        font-size: 3rem;
+    }
+
+    .tournament-badge {
+        padding: 6px 12px;
+        font-size: 12px;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    // Ultra compact table for very small screens
+    .tournament-table-card .tournament-table {
+        min-width: 400px;
+        
+        // Show only essential columns on very small screens
+        .matches-played-header, .wins-header, .losses-header,
+        .matches-played-cell, .wins-cell, .losses-cell {
+            display: none;
+        }
+
+        .team-details {
+            .team-short {
+                display: none; // Hide team short name on very small screens
+            }
+        }
+    }
+
+    .games-table {
+        min-width: 350px;
     }
 }
