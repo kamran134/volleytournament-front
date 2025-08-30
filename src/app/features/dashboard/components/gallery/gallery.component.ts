@@ -54,6 +54,11 @@ export class GalleryComponent implements OnInit{
     displayedColumns: string[] = ['index', 'photo', 'tournament', 'tour', 'actions'];
     isAdminOrSuperAdmin$ = this.authService.isAdminOrSuperAdmin$;
 
+    // Pagination properties
+    currentPage: number = 0;
+    pageSize: number = 10;
+    pageSizeOptions: number[] = [5, 10, 25, 50];
+
     matSnackConfig: MatSnackBarConfig = {
         duration: 5000,
         horizontalPosition: 'center',
@@ -127,8 +132,8 @@ export class GalleryComponent implements OnInit{
             tournaments: this.selectedTournaments,
             tours: this.selectedTours,
             teams: this.selectedTeams,
-            page: 1,
-            size: 10
+            page: this.currentPage + 1, // Backend expects 1-based page numbers
+            size: this.pageSize
         };
 
         this.dashboardService.getPhotos(filters).subscribe({
@@ -151,17 +156,17 @@ export class GalleryComponent implements OnInit{
     onTournamentChange(tournamentIds: string[]): void {
         console.log('Selected Tournament IDs:', tournamentIds);
         this.selectedTournaments = tournamentIds;
-        this.loadPhotos();
+        this.resetPagination();
     }
 
     onTourChange(tourIds: string[]): void {
         this.selectedTours = tourIds;
-        this.loadPhotos();
+        this.resetPagination();
     }
 
     onTeamChange(teamIds: string[]): void {
         this.selectedTeams = teamIds;
-        this.loadPhotos();
+        this.resetPagination();
     }
 
     onAddPhoto(): void {
@@ -281,5 +286,16 @@ export class GalleryComponent implements OnInit{
 
     hasNoSelectedPhotos(): boolean {
         return this.dataSource.every(photo => !photo.selected);
+    }
+
+    onPageChange(event: any): void {
+        this.currentPage = event.pageIndex;
+        this.pageSize = event.pageSize;
+        this.loadPhotos();
+    }
+
+    resetPagination(): void {
+        this.currentPage = 0;
+        this.loadPhotos();
     }
 }

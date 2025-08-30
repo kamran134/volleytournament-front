@@ -16,3 +16,31 @@
     align-items: center;
     margin-bottom: 10px;
 }
+
+.filter-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    
+    mat-form-field {
+        flex: 1;
+        min-width: 200px;
+    }
+}
+
+mat-table {
+    margin-bottom: 16px;
+}
+
+mat-paginator {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
