@@ -30,23 +30,24 @@ export class AuthService {
     constructor(private configService: ConfigService) {
         if (isPlatformBrowser(this.platformId)) {
             const token = this.getToken();
-            const refreshToken = this.getRefreshToken();
             
-            if (token && refreshToken && !this.isTokenExpired()) {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                this.userRole.next(payload.role || null);
-                this.userId.next(payload.userId || payload.sub || null);
-                this.authStatus.next(true);
-                this.scheduleTokenRefresh();
-            } else if (refreshToken && this.isTokenExpired()) {
-                // Token expired but we have refresh token, try to refresh
+            if (token && !this.isTokenExpired()) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    this.userRole.next(payload.role || null);
+                    this.userId.next(payload.userId || payload.sub || null);
+                    this.authStatus.next(true);
+                    this.scheduleTokenRefresh();
+                } catch (error) {
+                    console.error('Error parsing token in constructor:', error);
+                    this.clearTokens();
+                }
+            } else {
+                // Token expired or missing, try to refresh using cookie-based refresh token
                 this.refreshAccessToken().subscribe({
                     next: () => console.log('Token refreshed on service init'),
                     error: () => this.clearTokens()
                 });
-            } else {
-                // No valid tokens, clear everything
-                this.clearTokens();
             }
         }
     }
@@ -123,22 +124,23 @@ export class AuthService {
     }
 
     private hasToken(): boolean {
+        // Check if we have an access token, regardless of expiration
+        // If expired, the refresh mechanism will handle it
         return isPlatformBrowser(this.platformId) && 
-               !!localStorage.getItem('accessToken') && 
-               !this.isTokenExpired();
+               !!localStorage.getItem('accessToken');
     }
 
     getRefreshToken(): string | null {
-        if (isPlatformBrowser(this.platformId)) {
-            return localStorage.getItem('refreshToken');
-        }
-        return null;
+        // Since we're using HTTP-only cookies, we can't access the refresh token directly
+        // The backend will handle refresh token validation via cookies
+        return 'cookie-based'; // Placeholder to indicate we have a cookie-based refresh token
     }
 
-    saveTokens(accessToken: string, refreshToken: string): void {
+    saveTokens(accessToken: string, refreshToken?: string): void {
         if (isPlatformBrowser(this.platformId)) {
+            // Only save access token to localStorage for Authorization header
+            // Refresh token is managed by HTTP-only cookies on the backend
             localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
             
             // Extract user info from token
             try {
@@ -158,7 +160,6 @@ export class AuthService {
     clearTokens(): void {
         if (isPlatformBrowser(this.platformId)) {
             localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             localStorage.removeItem('userId');
             localStorage.removeItem('role');
             this.clearTokenRefreshTimer();
@@ -280,7 +281,7 @@ export class AuthService {
             { withCredentials: true }
         ).pipe(
             tap(response => {
-                this.saveTokens(response.accessToken, response.refreshToken);
+                this.saveTokens(response.accessToken);
                 this.authStatus.next(true);
                 this.router.navigate(['/admin']);
             }),
@@ -292,12 +293,8 @@ export class AuthService {
     }
 
     refreshAccessToken(): Observable<RefreshTokenResponse> {
-        const refreshToken = this.getRefreshToken();
-        
-        if (!refreshToken) {
-            this.logout();
-            return throwError(() => new Error('No refresh token available'));
-        }
+        // Since we're using HTTP-only cookies, we don't need to send refresh token in the body
+        // The server will read it from the cookie
         
         if (this.isRefreshing.value) {
             // If already refreshing, wait for the current refresh to complete
@@ -313,15 +310,26 @@ export class AuthService {
         
         return this.http.post<RefreshTokenResponse>(
             `${this.configService.getAuthUrl()}/refresh-token`,
-            { refreshToken },
+            {}, // Empty body since token is in HTTP-only cookie
             { withCredentials: true }
         ).pipe(
             tap(response => {
-                if (response.accessToken && response.refreshToken) {
-                    this.saveTokens(response.accessToken, response.refreshToken);
-                } else if (response.accessToken) {
-                    // Only access token returned
-                    localStorage.setItem('accessToken', response.accessToken);
+                if (response.accessToken) {
+                    // Save new access token
+                    if (isPlatformBrowser(this.platformId)) {
+                        localStorage.setItem('accessToken', response.accessToken);
+                        
+                        // Extract user info from new token
+                        try {
+                            const payload = JSON.parse(atob(response.accessToken.split('.')[1]));
+                            localStorage.setItem('userId', payload.userId || payload.sub || '');
+                            localStorage.setItem('role', payload.role || '');
+                            this.userId.next(payload.userId || payload.sub || null);
+                            this.userRole.next(payload.role || null);
+                        } catch (error) {
+                            console.error('Error parsing token:', error);
+                        }
+                    }
                 }
                 this.refreshTokenSubject.next(response.accessToken);
                 this.isRefreshing.next(false);
@@ -356,15 +364,12 @@ export class AuthService {
     logout(): void {
         this.clearTokenRefreshTimer();
         
-        // Send logout request to backend if we have a refresh token
-        const refreshToken = this.getRefreshToken();
-        if (refreshToken) {
-            this.http.post(`${this.configService.getAuthUrl()}/logout-refresh`, { refreshToken }, { withCredentials: true })
-                .subscribe({
-                    next: () => console.log('Logout successful'),
-                    error: (error) => console.error('Logout error:', error)
-                });
-        }
+        // Send logout request to backend to clear HTTP-only cookies
+        this.http.post(`${this.configService.getAuthUrl()}/logout-refresh`, {}, { withCredentials: true })
+            .subscribe({
+                next: () => console.log('Logout successful'),
+                error: (error) => console.error('Logout error:', error)
+            });
         
         this.clearTokens();
         this.router.navigate(['/login']);

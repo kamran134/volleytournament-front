@@ -22,13 +22,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             setHeaders: { Authorization: `Bearer ${token}` },
             withCredentials: true
         });
+    } else if (!isAuthRequest) {
+        // Always send credentials for non-auth requests to include HTTP-only cookies
+        req = req.clone({
+            withCredentials: true
+        });
     }
     
     // Add automatic token refresh logic
     return next(req).pipe(
         catchError(error => {
             // If we get 401 Unauthorized and it's not an auth request
-            if (error.status === 401 && !isAuthRequest && authService.getRefreshToken()) {
+            if (error.status === 401 && !isAuthRequest) {
                 // Check if we're already refreshing
                 if (isRefreshingSubject.value) {
                     // Wait for the refresh to complete
